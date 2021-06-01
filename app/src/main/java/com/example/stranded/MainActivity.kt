@@ -12,8 +12,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val notifTester = NotificationTester()
+        //creating and registering the notification testing channel
+        //DELETE ONCE DONE TESTING
+        createChannel(this, "test", "Test Channel")
 
+        val notificationTester = NotificationTester(this)
 
+        notificationTester.scheduleNotifications(2)
     }
 }
