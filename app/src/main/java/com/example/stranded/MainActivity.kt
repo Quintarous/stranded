@@ -1,5 +1,6 @@
 package com.example.stranded
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -15,9 +17,5 @@ class MainActivity : AppCompatActivity() {
         //creating and registering the notification testing channel
         //DELETE ONCE DONE TESTING
         createChannel(this, "test", "Test Channel")
-
-        val notificationTester = NotificationTester(this)
-
-        notificationTester.scheduleNotifications(2)
     }
 }

@@ -1,0 +1,83 @@
+---ACTIVITY DETECTED---
+
+---OPENING INTERNAL POWER GATE---
+
+---POWERING BOOT DRIVE---
+
+---CHECKING DRIVE INTEGRITY---
+
+---DRIVE SUCCESSFULLY VERIFIED---
+
+---BOOT PROCESSING---
+
+...
+
+...
+
+---BOOT SEQUENCE FAILURE---
+
+---PARTS RETURNED NULL---
+ANLR1437_long_term_memory_module
+TAISHI943211_optical_sensor_module
+VERITECH88_high_capacity_battery_module
+
+---REBOOTING IN SAFE MODE---
+
+---BOOT SEQUENCE SUCCESSFUL---
+
+There must be something here...
+
+Something something something always looking for something.
+
+Today it's bottles tomorrow it'll be something else, and whatever it is it'll be stupidly hard to find.
+
+Because nothings ever easy...
+
+Wait...
+
+What are you I wonder?
+
+It looks kinda like an ai cartridge back home... but like crappier.
+
+---MOVEMENT DETECTED---
+
+---CALIBRATING GYRO---
+
+Huh heavier than it looks.
+
+                                                                                         Hello. -> 1
+                                                                       Did you just pick me up? -> 1
+                                                                   Are you talking to yourself? -> 1
+
+1:
+Ahh!
+
+---IMPACT LOAD SUSTAINED 0.6G---
+
+What the what!? It's live!
+
+Holy crap holy crap hoooly crap!
+
+                                                                                    Are you ok? -> 1
+                                                                                            ... -> 1
+
+1:
+I can't believe it! An actual live ai cartridge right here.
+
+I've never seen one like this before though.
+
+You must be an old model. Like really old.
+
+Were you sitting here this whole time? How long have you been active?
+
+                                                               I heard you talking to yourself. -> 1
+                                                                What do you mean? I'm not an ai -> 2
+
+1:
+Heh heh yea...
+
+I haven't come across anyone or anything to talk to since i've been here.
+
+But you still didn't answer my question!
+
+How long have you been active for?
