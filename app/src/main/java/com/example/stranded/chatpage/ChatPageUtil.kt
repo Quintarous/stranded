@@ -15,6 +15,7 @@ data class Set constructor(
 
 data class Line constructor(
     val id: Int,
+    val consoleLine: Boolean,
     val line: String,
     val next: Int,
     val nextType: String

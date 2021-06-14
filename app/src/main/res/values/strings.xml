@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">stranded</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
 </resources>

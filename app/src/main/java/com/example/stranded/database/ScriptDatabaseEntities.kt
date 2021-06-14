@@ -20,6 +20,7 @@ script line or a set of prompts next
 data class SequenceOneScript constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val consoleLine: Boolean = false,
     val line: String,
     val next: Int,
     val nextType: String = "script"
