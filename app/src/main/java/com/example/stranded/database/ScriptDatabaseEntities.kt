@@ -35,3 +35,16 @@ data class SequenceOnePrompts constructor(
     val next: Int,
     val nextType: String = "script"
 )
+
+/*
+table for storing the users "save game" note it will also have columns for every prompt set in the
+most prompt heavy sequence so it can track user choices from the currently saved sequence
+ */
+@Entity
+data class UserSave constructor(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val sequence: Int,
+    val line: Int,
+    val lineType: String,
+)

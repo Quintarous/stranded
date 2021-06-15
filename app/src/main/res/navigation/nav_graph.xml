@@ -7,5 +7,18 @@
     <fragment
         android:id="@+id/chatPageFragment"
         android:name="com.example.stranded.chatpage.ChatPageFragment"
-        android:label="ChatPageFragment" />
+        android:label="ChatPageFragment" >
+        <action
+            android:id="@+id/action_chatPageFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.stranded.settings.SettingsFragment"
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_chatPageFragment"
+            app:destination="@id/chatPageFragment" />
+    </fragment>
 </navigation>

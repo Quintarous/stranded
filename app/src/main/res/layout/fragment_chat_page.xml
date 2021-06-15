@@ -11,17 +11,18 @@
             android:id="@+id/console_recycler"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/testAnimation"
-            app:layout_constraintEnd_toStartOf="@+id/testAnimation"
+            app:layout_constraintBottom_toBottomOf="@+id/g_meter"
+            app:layout_constraintEnd_toStartOf="@+id/g_meter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/testAnimation"
+            android:id="@+id/g_meter"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/test"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_recycler"
