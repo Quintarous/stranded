@@ -18,6 +18,7 @@ class ChatPageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        //data binding boilerplate code
         val binding = DataBindingUtil.inflate<FragmentChatPageBinding>(
             inflater,
             R.layout.fragment_chat_page,
@@ -26,6 +27,13 @@ class ChatPageFragment: Fragment() {
         )
 
         binding.lifecycleOwner = viewLifecycleOwner
+
+        //giving the chat recycler it's adapter
+        val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
+        binding.chatRecycler.adapter = chatRecyclerAdapter
+
+        chatRecyclerAdapter.dataset.add("bruh")
+        chatRecyclerAdapter.notifyDataSetChanged()
 
         return binding.root
     }
