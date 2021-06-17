@@ -42,9 +42,9 @@ most prompt heavy sequence so it can track user choices from the currently saved
  */
 @Entity
 data class UserSave constructor(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
     val sequence: Int,
     val line: Int,
-    val lineType: String,
+    val lineType: String
 )

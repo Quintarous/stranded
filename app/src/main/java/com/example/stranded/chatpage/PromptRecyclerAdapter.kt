@@ -4,29 +4,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.stranded.R
-import com.example.stranded.databinding.ChatAdapterItemBinding
+import com.example.stranded.databinding.PromptAdapterItemBinding
 
-class ChatRecyclerAdapter(val dataset: MutableList<String>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PromptRecyclerAdapter(val dataset: MutableList<Line>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding = ChatAdapterItemBinding
+        val binding = PromptAdapterItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-        return ScriptLineViewHolder(binding)
+        return SetLineViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        holder as ScriptLineViewHolder
-        holder.bind(dataset[position])
+        holder as SetLineViewHolder
+        holder.bind(dataset[position].line)
     }
 
     override fun getItemCount(): Int = dataset.size
 
-    class ScriptLineViewHolder(private val viewBinding: ChatAdapterItemBinding)
-        : RecyclerView.ViewHolder(viewBinding.root) {
+    class SetLineViewHolder (private val binding: PromptAdapterItemBinding)
+        : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(text: String) {
-            viewBinding.lineText.text = text
+            binding.promptText.text = text
         }
     }
 }
