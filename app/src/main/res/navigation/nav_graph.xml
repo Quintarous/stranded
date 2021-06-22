@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_chatPageFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_chatPageFragment_to_nav_graph_power_on"
+            app:destination="@id/nav_graph_power_on" />
     </fragment>
 
     <fragment
@@ -21,4 +24,27 @@
             android:id="@+id/action_settingsFragment_to_chatPageFragment"
             app:destination="@id/chatPageFragment" />
     </fragment>
+
+    <navigation android:id="@+id/nav_graph_power_on"
+        app:startDestination="@id/powerOnFragment">
+        <fragment
+            android:id="@+id/settingsFragment"
+            android:name="com.example.stranded.settings.SettingsFragment"
+            android:label="SettingsFragment">
+            <action
+                android:id="@+id/action_settingsFragment_to_powerOnFragment"
+                app:destination="@id/powerOnFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/powerOnFragment"
+            android:name="com.example.stranded.startup.PowerOnFragment"
+            android:label="PowerOnFragment">
+            <action
+                android:id="@+id/action_powerOnFragment_to_chatPageFragment"
+                app:destination="@id/chatPageFragment" />
+            <action
+                android:id="@+id/action_powerOnFragment_to_settingsFragment2"
+                app:destination="@id/settingsFragment" />
+        </fragment>
+    </navigation>
 </navigation>

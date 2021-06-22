@@ -17,9 +17,10 @@ whether the "nextType" of a given line is "set" or "script" determines if the ap
 script line or a set of prompts next
  */
 @Entity
-data class SequenceOneScript constructor(
+data class SequenceScripts constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val sequence: Int,
     val consoleLine: Boolean = false,
     val line: String,
     val next: Int,
@@ -27,9 +28,10 @@ data class SequenceOneScript constructor(
 )
 
 @Entity
-data class SequenceOnePrompts constructor(
+data class SequencePrompts constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val sequence: Int,
     val set: Int,
     val line: String,
     val next: Int,
@@ -44,7 +46,8 @@ most prompt heavy sequence so it can track user choices from the currently saved
 data class UserSave constructor(
     @PrimaryKey
     val id: Int,
+    val isPowered: Boolean,
     val sequence: Int,
     val line: Int,
-    val lineType: String
+    val lineType: String = "script"
 )
