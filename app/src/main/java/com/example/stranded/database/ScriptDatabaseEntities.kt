@@ -17,9 +17,9 @@ whether the "nextType" of a given line is "set" or "script" determines if the ap
 script line or a set of prompts next
  */
 @Entity
-data class SequenceScripts constructor(
+data class ScriptLine constructor(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     val sequence: Int,
     val consoleLine: Boolean = false,
     val line: String,
@@ -28,9 +28,9 @@ data class SequenceScripts constructor(
 )
 
 @Entity
-data class SequencePrompts constructor(
+data class PromptLine constructor(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     val sequence: Int,
     val set: Int,
     val line: String,
@@ -39,13 +39,16 @@ data class SequencePrompts constructor(
 )
 
 @Entity
-data class Triggers constructor(
+data class Trigger constructor(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     val sequence: Int,
     val triggerId: Int,
     val triggerType: String,
-    //TODO add a "trigger" column that specifies what sound effect/animation is triggered
+    val action: String,
+    val resourceType: String?,
+    val resourceId: Int?,
+    val loop: Boolean?
 )
 
 /*

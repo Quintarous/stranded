@@ -3,6 +3,7 @@ package com.example.stranded
 import android.graphics.drawable.AnimationDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -54,8 +55,11 @@ class MainActivity : AppCompatActivity() {
 
         //initializing the in memory database with test data
         lifecycleScope.launch {
-            val testSaveData = UserSave(1, true, 1, 1)
+            val testSaveData = UserSave(1, true, 1, 0)
             repository.updateUserSaveData(testSaveData)
+            repository.insertTestScriptLines()
+            repository.insertTestPromptLines()
+            repository.insertTestTriggers()
         }
     }
 

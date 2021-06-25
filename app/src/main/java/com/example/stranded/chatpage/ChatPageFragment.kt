@@ -20,7 +20,7 @@ import java.io.Console
 class ChatPageFragment: Fragment() {
 
     private val viewModel: ChatPageViewModel by viewModels()
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
     private lateinit var gMeterUpAnimation: AnimationDrawable
 
     override fun onCreateView(
@@ -51,8 +51,6 @@ class ChatPageFragment: Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
-
-        mediaPlayer = MediaPlayer.create(context, R.raw.rain1)
 
         //setting up the chat recycler adapter
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
@@ -87,8 +85,6 @@ class ChatPageFragment: Fragment() {
             if (gMeterUpAnimation.isRunning) gMeterUpAnimation.stop()
             else gMeterUpAnimation.start()
         }
-        mediaPlayer.selectTrack(R.raw.rain1)
-        mediaPlayer.start()
 
         setHasOptionsMenu(true)
 
@@ -96,9 +92,18 @@ class ChatPageFragment: Fragment() {
     }
 
     override fun onStop() {
-        mediaPlayer.release()
+        if (mediaPlayer != null) mediaPlayer?.release()
         super.onStop()
     }
+
+    //functions for controlling the sound effects
+    fun startMediaPlayback(resource: Int, loop: Boolean) {
+        mediaPlayer = MediaPlayer.create(context, resource)
+        mediaPlayer?.isLooping = loop
+        mediaPlayer?.start()
+    }
+
+    fun stopMediaPlayback() = mediaPlayer?.stop()
 
     /*
     options menu used for adding test buttons delete if not needed

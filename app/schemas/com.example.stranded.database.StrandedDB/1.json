@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cb814e9fef776e9998cbdd89cda8d41f",
+    "identityHash": "3cf732578cbc4a7cb1f5587b51d9737a",
     "entities": [
       {
-        "tableName": "SequenceScripts",
+        "tableName": "ScriptLine",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `consoleLine` INTEGER NOT NULL, `line` TEXT NOT NULL, `next` INTEGER NOT NULL, `nextType` TEXT NOT NULL)",
         "fields": [
           {
@@ -55,7 +55,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "SequencePrompts",
+        "tableName": "PromptLine",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `set` INTEGER NOT NULL, `line` TEXT NOT NULL, `next` INTEGER NOT NULL, `nextType` TEXT NOT NULL)",
         "fields": [
           {
@@ -149,8 +149,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Triggers",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL)",
+        "tableName": "Trigger",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL, `action` TEXT NOT NULL, `resourceType` TEXT, `resourceId` INTEGER, `loop` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -175,6 +175,30 @@
             "columnName": "triggerType",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resourceType",
+            "columnName": "resourceType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "resourceId",
+            "columnName": "resourceId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loop",
+            "columnName": "loop",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -190,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cb814e9fef776e9998cbdd89cda8d41f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3cf732578cbc4a7cb1f5587b51d9737a')"
     ]
   }
 }

@@ -5,7 +5,8 @@ package com.example.stranded.chatpage
 
 data class Sequence constructor(
     val scriptLines: List<Line>,
-    val sets: List<Set>
+    val sets: List<Set>,
+    val triggers: List<Trigger>
 )
 
 data class Set constructor(
@@ -18,6 +19,15 @@ data class Line constructor(
     val line: String,
     val next: Int,
     val nextType: String
+)
+
+data class Trigger constructor(
+    val triggerId: Int,
+    val triggerType: String,
+    val action: String,
+    val resourceType: String?,
+    val resourceId: Int?,
+    val loop: Boolean?
 )
 
 //returns a placeholder Line object for testing purposes

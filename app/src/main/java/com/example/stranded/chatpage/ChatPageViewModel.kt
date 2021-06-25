@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatPageViewModel @Inject constructor (val repository: Repository): ViewModel() {
+class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
     val userSave = repository.userSave
 }

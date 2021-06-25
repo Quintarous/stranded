@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities =
-        [SequenceScripts::class, SequencePrompts::class, UserSave::class, Triggers::class],
+        [ScriptLine::class, PromptLine::class, UserSave::class, Trigger::class],
         version = 1,
         exportSchema = true
 )
