@@ -13,11 +13,4 @@ import javax.inject.Inject
 class ChatPageViewModel @Inject constructor (val repository: Repository): ViewModel() {
 
     val userSave = repository.userSave
-
-    fun initializeDatabase() {
-        viewModelScope.launch {
-            val testSaveData = UserSave(1, true, 1, 0)
-            repository.updateUserSaveData(testSaveData)
-        }
-    }
 }

@@ -38,6 +38,16 @@ data class SequencePrompts constructor(
     val nextType: String = "script"
 )
 
+@Entity
+data class Triggers constructor(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val sequence: Int,
+    val triggerId: Int,
+    val triggerType: String,
+    //TODO add a "trigger" column that specifies what sound effect/animation is triggered
+)
+
 /*
 table for storing the users "save game" note it will also have columns for every prompt set in the
 most prompt heavy sequence so it can track user choices from the currently saved sequence

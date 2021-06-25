@@ -1,6 +1,7 @@
 package com.example.stranded.chatpage
 
 import android.graphics.drawable.AnimationDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,6 +20,7 @@ import java.io.Console
 class ChatPageFragment: Fragment() {
 
     private val viewModel: ChatPageViewModel by viewModels()
+    private lateinit var mediaPlayer: MediaPlayer
     private lateinit var gMeterUpAnimation: AnimationDrawable
 
     override fun onCreateView(
@@ -26,6 +28,17 @@ class ChatPageFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        //startup navigation logic
+        viewModel.userSave.observe(viewLifecycleOwner, Observer { userSave ->
+            if (userSave != null) {
+                if (userSave.isPowered) {
+                    if (userSave.line == 0) findNavController()
+                        .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+                }
+                else findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+            }
+        })
 
         //data binding boilerplate code
         val binding = DataBindingUtil.inflate<FragmentChatPageBinding>(
@@ -37,20 +50,9 @@ class ChatPageFragment: Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
 
-        //getting the ViewModel
-//        val viewModel: ChatPageViewModel by viewModels()
-
         binding.viewModel = viewModel
 
-        //startup navigation logic
-        viewModel.userSave.observe(viewLifecycleOwner, Observer { userSave ->
-            if (userSave != null) {
-                if (userSave.isPowered) {
-                    if (userSave.line == 0) findNavController()
-                        .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
-                }
-            }
-        })
+        mediaPlayer = MediaPlayer.create(context, R.raw.rain1)
 
         //setting up the chat recycler adapter
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
@@ -85,11 +87,21 @@ class ChatPageFragment: Fragment() {
             if (gMeterUpAnimation.isRunning) gMeterUpAnimation.stop()
             else gMeterUpAnimation.start()
         }
+        mediaPlayer.selectTrack(R.raw.rain1)
+        mediaPlayer.start()
 
         setHasOptionsMenu(true)
 
         return binding.root
     }
+
+    override fun onStop() {
+        mediaPlayer.release()
+        super.onStop()
+    }
+
+    /*
+    options menu used for adding test buttons delete if not needed
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -107,4 +119,5 @@ class ChatPageFragment: Fragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+    */
 }

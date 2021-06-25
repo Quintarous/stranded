@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
@@ -13,9 +14,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.stranded.database.UserSave
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val repository = Repository(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -32,7 +40,10 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
 
-        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.chatPageFragment, R.id.powerOnFragment, R.id.noPowerFragment),
+            drawerLayout
+        )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
@@ -40,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         //creating and registering the notification testing channel
         //DELETE ONCE DONE TESTING
         createChannel(this, "test", "Test Channel")
+
+        //initializing the in memory database with test data
+        lifecycleScope.launch {
+            val testSaveData = UserSave(1, true, 1, 1)
+            repository.updateUserSaveData(testSaveData)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

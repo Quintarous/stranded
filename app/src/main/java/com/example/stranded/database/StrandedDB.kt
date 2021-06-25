@@ -5,7 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [SequenceScripts::class, SequencePrompts::class, UserSave::class], version = 1, exportSchema = true)
+@Database(
+    entities =
+        [SequenceScripts::class, SequencePrompts::class, UserSave::class, Triggers::class],
+        version = 1,
+        exportSchema = true
+)
 abstract class StrandedDB: RoomDatabase() {
     abstract fun getDao(): StrandedDao
 }
