@@ -2,6 +2,7 @@ package com.example.stranded
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.example.stranded.chatpage.Sequence
 import com.example.stranded.chatpage.Set
 import com.example.stranded.database.*
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,12 +15,14 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
     val userSave: LiveData<UserSave> = dao.getUserSave()
 
-    suspend fun getSequence(sequence: Int) {
+    suspend fun getSequence(sequence: Int): Sequence {
         val scriptLines = dao.getScriptLines(sequence)
         val promptLines = dao.getPromptLines(sequence)
         val triggers = dao.getTriggers(sequence)
 
-        //TODO sort the prompt lines into their Set objects and put those Set objects in a list
+        val sets = createSetsList(promptLines)
+
+        return Sequence(scriptLines, sets, triggers)
     }
 
     //TODO test all these database loading methods to see if the database got loaded correctly
@@ -54,7 +57,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
     }
 
     suspend fun insertTestPromptLines() {
-        val list = mutableListOf<PromptLine>(
+        val list = listOf(
             PromptLine(0, 1, 1, "goes to line 4", 4),
             PromptLine(0, 1, 1, "goes to line 4 and triggers animation", 4),
             PromptLine(0, 1, 1, "goes to prompt set 2", 2, "prompt"),

@@ -26,7 +26,7 @@ interface StrandedDao {
     @Query("SELECT * FROM ScriptLine WHERE sequence = :sequence")
     suspend fun getScriptLines(sequence: Int): List<Line>
     @Query("SELECT * FROM PromptLine WHERE sequence = :sequence")
-    suspend fun getPromptLines(sequence: Int): List<Line>
+    suspend fun getPromptLines(sequence: Int): List<PromptLine>
     @Query("SELECT * FROM `Trigger` WHERE sequence = :sequence")
     suspend fun getTriggers(sequence: Int): List<Trigger>
 }

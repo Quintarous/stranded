@@ -65,7 +65,7 @@ class ChatPageFragment: Fragment() {
         val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf())
         binding.promptRecycler.adapter = promptRecyclerAdapter
 
-        promptRecyclerAdapter.dataset.addAll(placeholderSet().lines)
+        promptRecyclerAdapter.dataset.addAll(placeholderSet(1).lines)
         promptRecyclerAdapter.notifyDataSetChanged()
 
         //setting up the console recycler adapter

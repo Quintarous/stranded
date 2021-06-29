@@ -1,17 +1,20 @@
 package com.example.stranded.chatpage
 
+import com.example.stranded.database.PromptLine
+import com.example.stranded.database.Trigger
+
 //the repository will build a sequence object from the raw database
 //tables for that sequence
 
 data class Sequence constructor(
     val scriptLines: List<Line>,
-    val sets: List<Set>,
+    val sets: MutableList<Set>,
     val triggers: List<Trigger>
 )
 
 data class Set constructor(
     val number: Int,
-    val lines: List<Line>
+    val lines: MutableList<PromptLine>
 )
 
 data class Line constructor(
@@ -19,15 +22,6 @@ data class Line constructor(
     val line: String,
     val next: Int,
     val nextType: String
-)
-
-data class Trigger constructor(
-    val triggerId: Int,
-    val triggerType: String,
-    val action: String,
-    val resourceType: String?,
-    val resourceId: Int?,
-    val loop: Boolean?
 )
 
 //returns a placeholder Line object for testing purposes
@@ -40,16 +34,23 @@ fun placeholderLine(id: Int): Line {
     )
 }
 
+fun placeholderPromptLine(id: Int, set: Int): PromptLine {
+    return PromptLine(
+        id,
+        1,
+        set,
+        "bruh prompt",
+        2,
+        "script"
+    )
+}
+
 //returns a placeholder Set object for testing purposes
-fun placeholderSet(): Set {
-    val linesList = listOf<Line>(
-        placeholderLine(1),
-        placeholderLine(2),
-        placeholderLine(3)
+fun placeholderSet(id: Int): Set {
+    val linesList = mutableListOf(
+        placeholderPromptLine(1, id),
+        placeholderPromptLine(2, id)
     )
 
-    return Set(
-        1,
-        linesList
-    )
+    return Set(id, linesList)
 }
