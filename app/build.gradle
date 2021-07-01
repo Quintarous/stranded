@@ -25,6 +25,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         kapt {
+            correctErrorTypes true
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
@@ -62,7 +63,15 @@ dependencies {
 
     //hilt - a dependency injection library built on dagger
     implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-compiler:$hilt_version")
+
+    // For instrumentation tests
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.37'
+    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.37'
+
+    // For local unit tests
+    testImplementation 'com.google.dagger:hilt-android-testing:2.37'
+    kaptTest 'com.google.dagger:hilt-compiler:2.37'
 
     //room
     implementation "androidx.room:room-runtime:$room_version"
@@ -76,6 +85,8 @@ dependencies {
     //Mockito framework
     testImplementation("org.mockito:mockito-core:1.10.19")
 
+    //fade in textview https://github.com/chtgupta/FadeInTextView-Android
+    implementation ("com.github.chtgupta:FadeInTextView-Android:2.1.0")
 
     //general dependencies
     implementation("androidx.core:core-ktx:1.5.0")

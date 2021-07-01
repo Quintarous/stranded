@@ -24,7 +24,7 @@ interface StrandedDao {
     @Query("SELECT * FROM UserSave")
     fun getUserSave(): LiveData<UserSave>
     @Query("SELECT * FROM ScriptLine WHERE sequence = :sequence")
-    suspend fun getScriptLines(sequence: Int): List<Line>
+    suspend fun getScriptLines(sequence: Int): List<ScriptLine>
     @Query("SELECT * FROM PromptLine WHERE sequence = :sequence")
     suspend fun getPromptLines(sequence: Int): List<PromptLine>
     @Query("SELECT * FROM `Trigger` WHERE sequence = :sequence")
