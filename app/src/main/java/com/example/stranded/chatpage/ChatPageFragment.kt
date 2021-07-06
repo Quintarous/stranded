@@ -56,11 +56,6 @@ class ChatPageFragment: Fragment() {
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
-        chatRecyclerAdapter.dataset.add("bruh")
-        chatRecyclerAdapter.notifyDataSetChanged()
-
-        chatRecyclerAdapter.dataset.add("hi")
-
         //setting up the prompt recycler adapter
         val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf())
         binding.promptRecycler.adapter = promptRecyclerAdapter
@@ -72,8 +67,41 @@ class ChatPageFragment: Fragment() {
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf())
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
-        consoleRecyclerAdapter.dataset.addAll(listOf("<<< MESSAGE ONE >>>", "<<< MESSAGE TWO >>>"))
-        consoleRecyclerAdapter.notifyDataSetChanged()
+        //viewModel observers go here
+
+        //chat recyclers' dataset is updated through here
+        viewModel.chatDataset.observe(viewLifecycleOwner, { stringList ->
+            if (stringList.isNotEmpty()) {
+
+                //if adapter dataset is already populated just add the new value to save resources
+                if (chatRecyclerAdapter.dataset.size == stringList.size - 1) {
+                    chatRecyclerAdapter.dataset.add(stringList.last())
+                    chatRecyclerAdapter.notifyItemInserted(chatRecyclerAdapter.itemCount - 1)
+                }
+                //else copy the whole list from the viewModel
+                else {
+                    chatRecyclerAdapter.dataset.addAll(stringList)
+                    chatRecyclerAdapter.notifyDataSetChanged()
+                }
+            }
+        })
+
+        //same as chat recycler dataset above^^^
+        viewModel.consoleDataset.observe(viewLifecycleOwner, { stringList ->
+            val dataset = consoleRecyclerAdapter.dataset
+
+            if (stringList.isNotEmpty()) {
+
+                if (dataset.size == stringList.size - 1) {
+                    dataset.add(stringList.last())
+                    consoleRecyclerAdapter.notifyItemInserted(dataset.size - 1)
+                }
+                else {
+                    dataset.addAll(stringList)
+                    consoleRecyclerAdapter.notifyDataSetChanged()
+                }
+            }
+        })
 
         //g meter animation
         binding.gMeter.apply {

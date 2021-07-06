@@ -1,5 +1,7 @@
 package com.example.stranded
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.stranded.chatpage.Set
 import com.example.stranded.database.PromptLine
 
@@ -14,4 +16,8 @@ fun createSetsList(sets: List<PromptLine>): MutableList<Set> {
     for (line in sets) { list[line.set - 1].lines.add(line) }
 
     return list
+}
+
+fun <T> MutableLiveData<T>.notifyObserver() {
+    this.value = this.value
 }

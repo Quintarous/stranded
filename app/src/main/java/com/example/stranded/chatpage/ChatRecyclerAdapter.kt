@@ -3,6 +3,7 @@ package com.example.stranded.chatpage
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.R
 import com.example.stranded.databinding.ChatAdapterItemBinding

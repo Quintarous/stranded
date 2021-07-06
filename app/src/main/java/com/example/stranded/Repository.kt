@@ -45,6 +45,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
                     next = 2
                     nextType = "prompt"
                 }
+
+                6 -> consoleLine = true
             }
 
             val line =
