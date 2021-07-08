@@ -1,13 +1,12 @@
 package com.example.stranded.chatpage
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stranded.Repository
 import com.example.stranded.database.PromptLine
-import com.example.stranded.database.UserSave
+import com.example.stranded.database.ScriptLine
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,27 +26,43 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val consoleDataset: LiveData<MutableList<String>>
         get() = _consoleDataset
 
-    //TODO implement prompt display
     private val _promptDataset = MutableLiveData<MutableList<PromptLine>>(mutableListOf())
     val promptDataset: LiveData<MutableList<PromptLine>>
         get() = _promptDataset
+
+    private lateinit var lastLine: ScriptLine
 
     init {
         //grabbing the sequence from the repository
         viewModelScope.launch {
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
 
-            for (scriptLine in sequence.scriptLines) {
-
-                if (scriptLine.consoleLine) {
-                    _consoleDataset.value!!.add(scriptLine.line)
-                    _consoleDataset.notifyObserver()
-                }
-                else {
-                    _chatDataset.value!!.add(scriptLine.line)
-                    _chatDataset.notifyObserver()
-                }
-            }
+            if (sequence.scriptLines.isNotEmpty()) displayScriptLine(sequence.scriptLines[0])
         }
+    }
+    //TODO add functionality for the user to interact with prompts and add infrastructure in the
+    //viewmodel so when they do the app takes the appropriate action (ie: displays the next line)
+    fun userTouch() {
+        if (lastLine.nextType == "script") displayScriptLine(sequence.scriptLines[lastLine.next])
+        else displayPromptSet(sequence.sets[lastLine.next])
+    }
+
+    private fun displayScriptLine(scriptLine: ScriptLine) {
+        if (scriptLine.consoleLine) {
+            _consoleDataset.value!!.add(scriptLine.line)
+            lastLine = scriptLine
+            _consoleDataset.notifyObserver()
+        }
+
+        else {
+            _chatDataset.value!!.add(scriptLine.line)
+            lastLine = scriptLine
+            _chatDataset.notifyObserver()
+        }
+    }
+
+    private fun displayPromptSet(set: Set) {
+        _promptDataset.value = set.lines
+        _promptDataset.notifyObserver()
     }
 }

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.database.PromptLine
 import com.example.stranded.databinding.PromptAdapterItemBinding
 
-class PromptRecyclerAdapter(val dataset: MutableList<PromptLine>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PromptRecyclerAdapter(var dataset: MutableList<PromptLine>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = PromptAdapterItemBinding

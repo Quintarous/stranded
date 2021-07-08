@@ -11,10 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.Console
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
@@ -33,10 +34,13 @@ class ChatPageFragment: Fragment() {
         viewModel.userSave.observe(viewLifecycleOwner, Observer { userSave ->
             if (userSave != null) {
                 if (userSave.isPowered) {
-                    if (userSave.line == 0) findNavController()
-                        .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+                    if (userSave.line == 0)
+                        findNavController()
+                            .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
                 }
-                else findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+                else
+                    findNavController()
+                        .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
             }
         })
 
@@ -56,12 +60,43 @@ class ChatPageFragment: Fragment() {
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
+        //adding a custom OnItemTouchListener to the chat recycler view
+        //this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
+        //it only acts when the motion event action is ACTION_DOWN or ACTION_UP
+        var lastDownTouchx: Float? = null
+        var lastDownTouchy: Float? = null
+        binding.chatRecycler.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(recyclerView: RecyclerView, motionEvent: MotionEvent): Boolean {
+                //checking if the event is a "finger down" and storing it's location if it was one
+                if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    lastDownTouchx = motionEvent.x
+                    lastDownTouchy = motionEvent.y
+                }
+
+                //if the event is "finger up" then get the difference between the locations of the
+                //original finger down and this finger up then only take action if they're close together
+                //this is done to avoid taking action on "swipes" and other gestures
+                else if (motionEvent.action == MotionEvent.ACTION_UP && lastDownTouchx != null && lastDownTouchy != null) {
+                    val xDelta = abs(lastDownTouchx!! - motionEvent.x)
+                    val yDelta = abs(lastDownTouchy!! - motionEvent.y)
+
+                    if (xDelta < 30 && yDelta < 30) {
+                        //telling the viewModel that the user tapped on this recycler view
+                        viewModel.userTouch()
+                        return true
+                    }
+                }
+                //otherwise return false when we're not doing anything with the touch event
+                return false
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+            override fun onTouchEvent(recyclerView: RecyclerView, motionEvent: MotionEvent) {}
+        })
+
         //setting up the prompt recycler adapter
         val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf())
         binding.promptRecycler.adapter = promptRecyclerAdapter
-
-        promptRecyclerAdapter.dataset.addAll(placeholderSet(1).lines)
-        promptRecyclerAdapter.notifyDataSetChanged()
 
         //setting up the console recycler adapter
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf())
@@ -101,6 +136,11 @@ class ChatPageFragment: Fragment() {
                     consoleRecyclerAdapter.notifyDataSetChanged()
                 }
             }
+        })
+
+        viewModel.promptDataset.observe(viewLifecycleOwner, { promptList ->
+            promptRecyclerAdapter.dataset = promptList
+            promptRecyclerAdapter.notifyDataSetChanged()
         })
 
         //g meter animation
