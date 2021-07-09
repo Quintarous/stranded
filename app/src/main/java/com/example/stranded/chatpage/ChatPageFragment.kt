@@ -95,7 +95,7 @@ class ChatPageFragment: Fragment() {
         })
 
         //setting up the prompt recycler adapter
-        val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf())
+        val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf(), viewModel)
         binding.promptRecycler.adapter = promptRecyclerAdapter
 
         //setting up the console recycler adapter
@@ -103,19 +103,18 @@ class ChatPageFragment: Fragment() {
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
         //viewModel observers go here
-
         //chat recyclers' dataset is updated through here
-        viewModel.chatDataset.observe(viewLifecycleOwner, { stringList ->
-            if (stringList.isNotEmpty()) {
+        viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
+            if (lineList.isNotEmpty()) {
 
                 //if adapter dataset is already populated just add the new value to save resources
-                if (chatRecyclerAdapter.dataset.size == stringList.size - 1) {
-                    chatRecyclerAdapter.dataset.add(stringList.last())
+                if (chatRecyclerAdapter.dataset.size == lineList.size - 1) {
+                    chatRecyclerAdapter.dataset.add(lineList.last())
                     chatRecyclerAdapter.notifyItemInserted(chatRecyclerAdapter.itemCount - 1)
                 }
                 //else copy the whole list from the viewModel
                 else {
-                    chatRecyclerAdapter.dataset.addAll(stringList)
+                    chatRecyclerAdapter.dataset.addAll(lineList)
                     chatRecyclerAdapter.notifyDataSetChanged()
                 }
             }

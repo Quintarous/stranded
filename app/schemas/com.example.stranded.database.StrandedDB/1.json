@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3cf732578cbc4a7cb1f5587b51d9737a",
+    "identityHash": "9f871781651d919bf27afac6fc568daf",
     "entities": [
       {
         "tableName": "ScriptLine",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `consoleLine` INTEGER NOT NULL, `line` TEXT NOT NULL, `next` INTEGER NOT NULL, `nextType` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `type` TEXT NOT NULL, `line` TEXT NOT NULL, `next` INTEGER NOT NULL, `nextType` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,9 +21,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "consoleLine",
-            "columnName": "consoleLine",
-            "affinity": "INTEGER",
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -214,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3cf732578cbc4a7cb1f5587b51d9737a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f871781651d919bf27afac6fc568daf')"
     ]
   }
 }

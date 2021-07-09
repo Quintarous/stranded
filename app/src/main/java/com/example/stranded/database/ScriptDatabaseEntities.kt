@@ -21,7 +21,7 @@ data class ScriptLine constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val sequence: Int,
-    val consoleLine: Boolean = false,
+    val type: String,
     val line: String,
     val next: Int,
     val nextType: String = "script"

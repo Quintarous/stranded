@@ -3,7 +3,6 @@ package com.example.stranded
 import android.content.Context
 import androidx.lifecycle.LiveData
 import com.example.stranded.chatpage.Sequence
-import com.example.stranded.chatpage.Set
 import com.example.stranded.database.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -30,12 +29,12 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         val list = mutableListOf<ScriptLine>()
 
         for (i in (1..10)) {
-            var consoleLine = false
+            var type = "script"
             var next = i + 1
             var nextType = "script"
 
             when (i) {
-                1 -> consoleLine = true
+                1 -> type = "console"
 
                 3 -> {
                     next = 1
@@ -45,12 +44,11 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
                     next = 2
                     nextType = "prompt"
                 }
-
-                6 -> consoleLine = true
+                10 -> nextType = "end"
             }
 
             val line =
-                ScriptLine(0, 1, consoleLine, "script line $i", next, nextType)
+                ScriptLine(0, 1, type, "script line $i", next, nextType)
 
             list.add(line)
         }
@@ -63,8 +61,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             PromptLine(0, 1, 1, "goes to line 4", 4),
             PromptLine(0, 1, 1, "goes to line 4 and triggers animation", 4),
             PromptLine(0, 1, 1, "goes to prompt set 2", 2, "prompt"),
-            PromptLine(0, 1, 2, "prompt line 4", 5),
-            PromptLine(0, 1, 2, "prompt line 5", 5)
+            PromptLine(0, 1, 2, "prompt line 4", 6),
+            PromptLine(0, 1, 2, "prompt line 5", 6)
         )
 
         dao.insertTestPromptLines(list)
