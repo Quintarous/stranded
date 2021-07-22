@@ -45,10 +45,10 @@ data class Trigger constructor(
     val sequence: Int,
     val triggerId: Int,
     val triggerType: String,
-    val action: String,
-    val resourceType: String?,
+    val resourceType: String,
     val resourceId: Int?,
-    val loop: Boolean?
+    val loop: Boolean?,
+    val oneAndDone: Boolean?
 )
 
 /*

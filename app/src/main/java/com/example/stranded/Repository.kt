@@ -24,7 +24,6 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         return Sequence(scriptLines, sets, triggers)
     }
 
-    //TODO test all these database loading methods to see if the database got loaded correctly
     suspend fun insertTestScriptLines() {
         val list = mutableListOf<ScriptLine>()
 

@@ -142,6 +142,24 @@ class ChatPageFragment: Fragment() {
             promptRecyclerAdapter.notifyDataSetChanged()
         })
 
+        //observers for starting and stopping sound effects
+        viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
+        viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
+            startSound(trigger.resourceId!!, trigger.loop!!)
+        })
+        viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
+            startSoundOneAndDone(trigger.resourceId!!, trigger.loop!!)
+        })
+
+        //observers for starting and stopping animations
+        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
+        viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
+            startAnim(trigger.resourceId!!, trigger.loop!!)
+        })
+        viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
+            startAnimOneAndDone(trigger.resourceId!!, trigger.loop!!)
+        })
+
         //g meter animation
         binding.gMeter.apply {
             setBackgroundResource(R.drawable.g_meter_up_animation)
@@ -158,19 +176,29 @@ class ChatPageFragment: Fragment() {
         return binding.root
     }
 
+    //methods for starting and stopping sound effects
+    fun stopSound() {Log.i("bruh", "stopSound()")}
+    fun startSound(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSound()")}
+    fun startSoundOneAndDone(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSoundOneAndDone()")}
+
+    //methods for starting and stopping animations
+    fun stopAnim() { Log.i("bruh", "stopAnim()") }
+    fun startAnim(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnim()")}
+    fun startAnimOneAndDone(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnimOneAndDone()")}
+
     override fun onStop() {
         if (mediaPlayer != null) mediaPlayer?.release()
         super.onStop()
     }
 
     //functions for controlling the sound effects
-    fun startMediaPlayback(resource: Int, loop: Boolean) {
+    private fun startMediaPlayback(resource: Int, loop: Boolean) {
         mediaPlayer = MediaPlayer.create(context, resource)
         mediaPlayer?.isLooping = loop
         mediaPlayer?.start()
     }
 
-    fun stopMediaPlayback() = mediaPlayer?.stop()
+    private fun stopMediaPlayback() = mediaPlayer?.stop()
 
     /*
     options menu used for adding test buttons delete if not needed

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.stranded.Repository
 import com.example.stranded.database.PromptLine
 import com.example.stranded.database.ScriptLine
+import com.example.stranded.database.Trigger
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -31,16 +32,51 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val promptDataset: LiveData<MutableList<PromptLine>>
         get() = _promptDataset
 
+    //observed live data for starting and stopping animations and sound effects
+    private val _stopSound = MutableLiveData<Trigger>()
+    val stopSound: LiveData<Trigger>
+        get() = _stopSound
+
+    private val _startSound = MutableLiveData<Trigger>()
+    val startSound: LiveData<Trigger>
+        get() = _startSound
+
+    private val _startSoundOneAndDone = MutableLiveData<Trigger>()
+    val startSoundOneAndDone: LiveData<Trigger>
+        get() = _startSoundOneAndDone
+
+    private val _stopAnim = MutableLiveData<Trigger>()
+    val stopAnim: LiveData<Trigger>
+        get() = _stopAnim
+
+    private val _startAnim = MutableLiveData<Trigger>()
+    val startAnim: LiveData<Trigger>
+        get() = _startAnim
+
+    private val _startAnimOneAndDone = MutableLiveData<Trigger>()
+    val startAnimOneAndDone: LiveData<Trigger>
+        get() = _startAnimOneAndDone
+
     private lateinit var lastLine: ScriptLine
+
+    private lateinit var scriptTriggers: MutableList<Trigger>
+    private lateinit var promptTriggers: MutableList<Trigger>
 
     init {
         //grabbing the sequence from the repository
         viewModelScope.launch {
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
-            Log.i("bruh", "$sequence")
 
             //running the first line from the sequence
             if (sequence.scriptLines.isNotEmpty()) displayScriptLine(sequence.scriptLines[0])
+
+            //sorting the sequence triggers into script and prompt trigger lists
+            for (trigger in sequence.triggers) {
+                when (trigger.triggerType) {
+                    "Script" -> scriptTriggers.add(trigger)
+                    else -> promptTriggers.add(trigger)
+                }
+            }
         }
     }
 
@@ -63,6 +99,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.value!!.clear()
         _promptDataset.notifyObserver()
 
+        //displaying the user selected prompt in the chat recycler
         displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, 0))
 
         when (promptLine.nextType) {
@@ -71,6 +108,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+    //TODO add the trigger checks to this function
     private fun displayScriptLine(scriptLine: ScriptLine) {
         //displaying console lines
         when (scriptLine.type) {
@@ -80,15 +118,52 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 _consoleDataset.notifyObserver()
             }
 
-            "user" -> {
-                _chatDataset.value!!.add(scriptLine)
-                _chatDataset.notifyObserver()
-            }
-
             else -> {
                 _chatDataset.value!!.add(scriptLine)
                 lastLine = scriptLine
                 _chatDataset.notifyObserver()
+            }
+        }
+
+        //TODO test this to see if it's working!
+        //checking to see if we need to fire any triggers on this script line and firing them if we do
+        for (trigger in scriptTriggers) {
+            if (trigger.triggerId == scriptLine.id) {
+                when (trigger.resourceType) {
+                    "sound" -> {
+                        if (trigger.resourceId == null) {
+                            _stopSound.value = trigger
+                            _stopSound.notifyObserver()
+                        }
+                        else {
+                            if (trigger.oneAndDone!!) {
+                                _startSoundOneAndDone.value = trigger
+                                _startSoundOneAndDone.notifyObserver()
+                            }
+                            else {
+                                _startSound.value = trigger
+                                _startSound.notifyObserver()
+                            }
+                        }
+                    }
+
+                    "animation" -> {
+                        if (trigger.resourceId == null) {
+                            _stopAnim.value = trigger
+                            _stopAnim.notifyObserver()
+                        }
+                        else {
+                            if (trigger.oneAndDone!!) {
+                                _startAnimOneAndDone.value = trigger
+                                _startAnimOneAndDone.notifyObserver()
+                            }
+                            else {
+                                _startAnim.value = trigger
+                                _startAnim.notifyObserver()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
