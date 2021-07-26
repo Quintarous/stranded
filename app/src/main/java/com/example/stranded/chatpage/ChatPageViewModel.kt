@@ -59,8 +59,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     private lateinit var lastLine: ScriptLine
 
-    private lateinit var scriptTriggers: MutableList<Trigger>
-    private lateinit var promptTriggers: MutableList<Trigger>
+    private val scriptTriggers: MutableList<Trigger> = mutableListOf()
+    private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
         //grabbing the sequence from the repository
@@ -73,7 +73,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             //sorting the sequence triggers into script and prompt trigger lists
             for (trigger in sequence.triggers) {
                 when (trigger.triggerType) {
-                    "Script" -> scriptTriggers.add(trigger)
+                    "script" -> scriptTriggers.add(trigger)
                     else -> promptTriggers.add(trigger)
                 }
             }
@@ -102,13 +102,49 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         //displaying the user selected prompt in the chat recycler
         displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, 0))
 
+        //checking for any triggers that need to be fired
+        for (trigger in promptTriggers) {
+            if (trigger.triggerId == promptLine.id) {
+                when (trigger.resourceType) {
+                    "sound" -> {
+                        if (trigger.resourceId == null) {
+                            _stopSound.value = trigger
+                        }
+                        else {
+                            if (trigger.oneAndDone!!) {
+                                _startSoundOneAndDone.value = trigger
+                            }
+                            else {
+                                _startSound.value = trigger
+                            }
+                        }
+                    }
+
+                    "animation" -> {
+                        if (trigger.resourceId == null) {
+                            _stopAnim.value = trigger
+                        }
+                        else {
+                            if (trigger.oneAndDone!!) {
+                                _startAnimOneAndDone.value = trigger
+                            }
+                            else {
+                                _startAnim.value = trigger
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //displaying the next script line or prompt
         when (promptLine.nextType) {
             "script" -> displayScriptLine(sequence.scriptLines[promptLine.next - 1])
             else -> displayPromptSet(sequence.sets[promptLine.next - 1])
         }
+
     }
 
-    //TODO add the trigger checks to this function
     private fun displayScriptLine(scriptLine: ScriptLine) {
         //displaying console lines
         when (scriptLine.type) {
@@ -125,7 +161,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        //TODO test this to see if it's working!
         //checking to see if we need to fire any triggers on this script line and firing them if we do
         for (trigger in scriptTriggers) {
             if (trigger.triggerId == scriptLine.id) {
@@ -133,16 +168,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     "sound" -> {
                         if (trigger.resourceId == null) {
                             _stopSound.value = trigger
-                            _stopSound.notifyObserver()
                         }
                         else {
                             if (trigger.oneAndDone!!) {
                                 _startSoundOneAndDone.value = trigger
-                                _startSoundOneAndDone.notifyObserver()
                             }
                             else {
                                 _startSound.value = trigger
-                                _startSound.notifyObserver()
                             }
                         }
                     }
@@ -150,16 +182,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     "animation" -> {
                         if (trigger.resourceId == null) {
                             _stopAnim.value = trigger
-                            _stopAnim.notifyObserver()
                         }
                         else {
                             if (trigger.oneAndDone!!) {
                                 _startAnimOneAndDone.value = trigger
-                                _startAnimOneAndDone.notifyObserver()
                             }
                             else {
                                 _startAnim.value = trigger
-                                _startAnim.notifyObserver()
                             }
                         }
                     }

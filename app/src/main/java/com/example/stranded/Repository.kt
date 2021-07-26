@@ -67,11 +67,13 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         dao.insertTestPromptLines(list)
     }
 
+    //TODO fix these for testing purposes!
     suspend fun insertTestTriggers() {
         val list = mutableListOf<Trigger>(
-            Trigger(0, 1, 2, "script", "start", "sound", R.raw.fire_birds, true),
-            Trigger(0, 1, 2, "prompt", "start", "animation", R.drawable.g_meter_up_animation, null),
-            Trigger(0, 1, 9, "script", "stop", "sound", null, null)
+            Trigger(0, 1, 2, "script", "sound", R.raw.fire_birds, loop = true, oneAndDone = false),
+            Trigger(0, 1, 4, "script", "sound", R.raw.rain1, loop = false, oneAndDone = true),
+            Trigger(0, 1, 2, "prompt", "animation", R.drawable.g_meter_up_animation, loop = true, oneAndDone = false),
+            Trigger(0, 1, 9, "script", "sound", null, null, null)
         )
 
         dao.insertTestTriggers(list)

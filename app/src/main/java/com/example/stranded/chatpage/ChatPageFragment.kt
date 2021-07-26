@@ -178,13 +178,13 @@ class ChatPageFragment: Fragment() {
 
     //methods for starting and stopping sound effects
     fun stopSound() {Log.i("bruh", "stopSound()")}
-    fun startSound(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSound()")}
-    fun startSoundOneAndDone(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSoundOneAndDone()")}
+    fun startSound(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSound($sound, $isLooping)")}
+    fun startSoundOneAndDone(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSoundOneAndDone($sound, $isLooping)")}
 
     //methods for starting and stopping animations
     fun stopAnim() { Log.i("bruh", "stopAnim()") }
-    fun startAnim(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnim()")}
-    fun startAnimOneAndDone(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnimOneAndDone()")}
+    fun startAnim(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnim($animation, $isLooping)")}
+    fun startAnimOneAndDone(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnimOneAndDone($animation, $isLooping)")}
 
     override fun onStop() {
         if (mediaPlayer != null) mediaPlayer?.release()

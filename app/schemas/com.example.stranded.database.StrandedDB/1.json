@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9f871781651d919bf27afac6fc568daf",
+    "identityHash": "5e890b53c977b76f3eb093c43ae3f963",
     "entities": [
       {
         "tableName": "ScriptLine",
@@ -150,7 +150,7 @@
       },
       {
         "tableName": "Trigger",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL, `action` TEXT NOT NULL, `resourceType` TEXT, `resourceId` INTEGER, `loop` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL, `resourceType` TEXT NOT NULL, `resourceId` INTEGER, `loop` INTEGER, `oneAndDone` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -177,16 +177,10 @@
             "notNull": true
           },
           {
-            "fieldPath": "action",
-            "columnName": "action",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "resourceType",
             "columnName": "resourceType",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "resourceId",
@@ -197,6 +191,12 @@
           {
             "fieldPath": "loop",
             "columnName": "loop",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oneAndDone",
+            "columnName": "oneAndDone",
             "affinity": "INTEGER",
             "notNull": false
           }
@@ -214,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f871781651d919bf27afac6fc568daf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e890b53c977b76f3eb093c43ae3f963')"
     ]
   }
 }
