@@ -5,14 +5,15 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.R
+import com.example.stranded.database.Trigger
 import com.example.stranded.databinding.FragmentChatPageBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
@@ -22,7 +23,7 @@ class ChatPageFragment: Fragment() {
 
     private val viewModel: ChatPageViewModel by viewModels()
     private var mediaPlayer: MediaPlayer? = null
-    private lateinit var gMeterUpAnimation: AnimationDrawable
+    private lateinit var gMeterAnimation: AnimationDrawable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,32 +145,25 @@ class ChatPageFragment: Fragment() {
 
         //observers for starting and stopping sound effects
         viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
+
         viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
             startSound(trigger.resourceId!!, trigger.loop!!)
         })
+
         viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            startSoundOneAndDone(trigger.resourceId!!, trigger.loop!!)
+            startSoundOneAndDone(trigger.resourceId!!)
         })
 
         //observers for starting and stopping animations
-        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
+        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim(binding.gMeter) })
+
         viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            startAnim(trigger.resourceId!!, trigger.loop!!)
+            startAnim(binding.gMeter, trigger.resourceId!!, trigger.loop!!)
         })
+
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            startAnimOneAndDone(trigger.resourceId!!, trigger.loop!!)
+            startAnimOneAndDone(binding.gMeter, trigger.resourceId!!)
         })
-
-        //g meter animation
-        binding.gMeter.apply {
-            setBackgroundResource(R.drawable.g_meter_up_animation)
-            gMeterUpAnimation = background as AnimationDrawable
-        }
-
-        binding.gMeter.setOnClickListener {
-            if (gMeterUpAnimation.isRunning) gMeterUpAnimation.stop()
-            else gMeterUpAnimation.start()
-        }
 
         setHasOptionsMenu(true)
 
@@ -177,28 +171,76 @@ class ChatPageFragment: Fragment() {
     }
 
     //methods for starting and stopping sound effects
-    fun stopSound() {Log.i("bruh", "stopSound()")}
-    fun startSound(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSound($sound, $isLooping)")}
-    fun startSoundOneAndDone(sound: Int, isLooping: Boolean) {Log.i("bruh", "startSoundOneAndDone($sound, $isLooping)")}
+    fun stopSound() {
+        Log.i("bruh", "stopSound()")
+
+        if (mediaPlayer != null) {
+            if (mediaPlayer!!.isPlaying) {
+                mediaPlayer?.stop()
+            }
+        }
+    }
+
+    fun startSound(sound: Int, isLooping: Boolean) {
+        Log.i("bruh", "startSound($sound, $isLooping)")
+        stopSound()
+        startMediaPlayback(sound, isLooping)
+    }
+
+    fun startSoundOneAndDone(sound: Int) {
+        Log.i("bruh", "startSoundOneAndDone($sound)")
+        val lastSoundTrigger = viewModel.startSound.value!!
+
+        stopSound()
+        startMediaPlayback(sound, false)
+
+        mediaPlayer?.setOnCompletionListener {
+            startMediaPlayback(lastSoundTrigger.resourceId!!, lastSoundTrigger.loop!!)
+        }
+    }
 
     //methods for starting and stopping animations
-    fun stopAnim() { Log.i("bruh", "stopAnim()") }
-    fun startAnim(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnim($animation, $isLooping)")}
-    fun startAnimOneAndDone(animation: Int, isLooping: Boolean) {Log.i("bruh", "startAnimOneAndDone($animation, $isLooping)")}
+    fun stopAnim(view: ImageView) {
+        Log.i("bruh", "stopAnim()")
+        view.setBackgroundResource(R.drawable.g_idle)
+    }
+
+    fun startAnim(view: ImageView, animation: Int, isLooping: Boolean) {
+        Log.i("bruh", "startAnim()")
+        startAnimation(view, animation, isLooping)
+    }
+
+    fun startAnimOneAndDone(view: ImageView, animation: Int) {
+        Log.i("bruh", "startAnimOneAndDone()")
+        val lastAnimTrigger = viewModel.startAnim.value
+
+        //TODO queue the last animation when this one finishes
+        startAnimation(view, animation, false)
+    }
 
     override fun onStop() {
-        if (mediaPlayer != null) mediaPlayer?.release()
+        Log.i("bruh", "onStop() called")
+        if (mediaPlayer != null) {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
         super.onStop()
     }
 
-    //functions for controlling the sound effects
+    //functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
         mediaPlayer = MediaPlayer.create(context, resource)
         mediaPlayer?.isLooping = loop
         mediaPlayer?.start()
     }
 
-    private fun stopMediaPlayback() = mediaPlayer?.stop()
+    private fun startAnimation(view: ImageView, animation: Int, isLooping: Boolean) {
+        view.setBackgroundResource(animation)
+        gMeterAnimation = view.background as AnimationDrawable
+        gMeterAnimation.isOneShot = !isLooping
+
+        gMeterAnimation.start()
+    }
 
     /*
     options menu used for adding test buttons delete if not needed
