@@ -1,5 +1,7 @@
 package com.example.stranded
 
+import android.graphics.drawable.AnimationDrawable
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.stranded.chatpage.Set
@@ -20,4 +22,15 @@ fun createSetsList(sets: List<PromptLine>): MutableList<Set> {
 
 fun <T> MutableLiveData<T>.notifyObserver() {
     this.value = this.value
+}
+
+//TODO("learn how this works it is related to the oneAndDone animation functionality")
+fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
+    var duration: Long = 0
+    for (i in 0..numberOfFrames) {
+        duration += getDuration(i)
+    }
+    Handler().postDelayed({
+        block()
+    }, duration + 200)
 }

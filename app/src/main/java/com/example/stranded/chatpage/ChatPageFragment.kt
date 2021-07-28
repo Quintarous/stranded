@@ -1,5 +1,6 @@
 package com.example.stranded.chatpage
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -12,19 +13,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.stranded.AnimationDrawable2
+import com.example.stranded.AnimationDrawable3
 import com.example.stranded.R
 import com.example.stranded.database.Trigger
 import com.example.stranded.databinding.FragmentChatPageBinding
+import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class ChatPageFragment: Fragment() {
+class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener {
 
     private val viewModel: ChatPageViewModel by viewModels()
     private var mediaPlayer: MediaPlayer? = null
+
+    private lateinit var gMeter: ImageView
     private lateinit var gMeterAnimation: AnimationDrawable
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,6 +63,9 @@ class ChatPageFragment: Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
+
+        //making the gMeter available throughout the class
+        gMeter = binding.gMeter
 
         //setting up the chat recycler adapter
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
@@ -155,14 +165,14 @@ class ChatPageFragment: Fragment() {
         })
 
         //observers for starting and stopping animations
-        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim(binding.gMeter) })
+        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
 
         viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            startAnim(binding.gMeter, trigger.resourceId!!, trigger.loop!!)
+            startAnim(trigger.resourceId!!, trigger.loop!!)
         })
 
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            startAnimOneAndDone(binding.gMeter, trigger.resourceId!!)
+            startAnimOneAndDone(trigger.resourceId!!)
         })
 
         setHasOptionsMenu(true)
@@ -171,7 +181,7 @@ class ChatPageFragment: Fragment() {
     }
 
     //methods for starting and stopping sound effects
-    fun stopSound() {
+    private fun stopSound() {
         Log.i("bruh", "stopSound()")
 
         if (mediaPlayer != null) {
@@ -181,13 +191,13 @@ class ChatPageFragment: Fragment() {
         }
     }
 
-    fun startSound(sound: Int, isLooping: Boolean) {
+    private fun startSound(sound: Int, isLooping: Boolean) {
         Log.i("bruh", "startSound($sound, $isLooping)")
         stopSound()
         startMediaPlayback(sound, isLooping)
     }
 
-    fun startSoundOneAndDone(sound: Int) {
+    private fun startSoundOneAndDone(sound: Int) {
         Log.i("bruh", "startSoundOneAndDone($sound)")
         val lastSoundTrigger = viewModel.startSound.value!!
 
@@ -200,22 +210,24 @@ class ChatPageFragment: Fragment() {
     }
 
     //methods for starting and stopping animations
-    fun stopAnim(view: ImageView) {
+    private fun stopAnim() {
         Log.i("bruh", "stopAnim()")
-        view.setBackgroundResource(R.drawable.g_idle)
+        gMeter.setBackgroundResource(R.drawable.g_idle)
     }
 
-    fun startAnim(view: ImageView, animation: Int, isLooping: Boolean) {
+    private fun startAnim(animation: Int, isLooping: Boolean) {
         Log.i("bruh", "startAnim()")
-        startAnimation(view, animation, isLooping)
+        startAnimation(animation, isLooping)
     }
 
-    fun startAnimOneAndDone(view: ImageView, animation: Int) {
+    private fun startAnimOneAndDone(animation: Int) {
         Log.i("bruh", "startAnimOneAndDone()")
         val lastAnimTrigger = viewModel.startAnim.value
 
-        //TODO queue the last animation when this one finishes
-        startAnimation(view, animation, false)
+        startAnimation(animation, false)
+
+        //TODO this function is located in util also remember to deal with the custom AnimationDrawable classes you made
+        gMeterAnimation.onAnimationFinished { Log.i("bruh", "hi") }
     }
 
     override fun onStop() {
@@ -234,12 +246,17 @@ class ChatPageFragment: Fragment() {
         mediaPlayer?.start()
     }
 
-    private fun startAnimation(view: ImageView, animation: Int, isLooping: Boolean) {
-        view.setBackgroundResource(animation)
-        gMeterAnimation = view.background as AnimationDrawable
+    private fun startAnimation(animation: Int, isLooping: Boolean) {
+        gMeter.setBackgroundResource(animation)
+        gMeterAnimation = gMeter.background as AnimationDrawable
         gMeterAnimation.isOneShot = !isLooping
 
         gMeterAnimation.start()
+    }
+
+    //callback for one and done animations
+    override fun onAnimationFinished() {
+        startAnimation(viewModel.startAnim.value!!.resourceId!!, true)
     }
 
     /*
