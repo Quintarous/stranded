@@ -13,17 +13,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.stranded.AnimationDrawable2
-import com.example.stranded.AnimationDrawable3
 import com.example.stranded.R
-import com.example.stranded.database.Trigger
 import com.example.stranded.databinding.FragmentChatPageBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener {
+class ChatPageFragment: Fragment() {
 
     private val viewModel: ChatPageViewModel by viewModels()
     private var mediaPlayer: MediaPlayer? = null
@@ -182,7 +179,6 @@ class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener 
 
     //methods for starting and stopping sound effects
     private fun stopSound() {
-        Log.i("bruh", "stopSound()")
 
         if (mediaPlayer != null) {
             if (mediaPlayer!!.isPlaying) {
@@ -192,13 +188,13 @@ class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener 
     }
 
     private fun startSound(sound: Int, isLooping: Boolean) {
-        Log.i("bruh", "startSound($sound, $isLooping)")
         stopSound()
         startMediaPlayback(sound, isLooping)
     }
 
+    //meant for interrupting looping sounds with one sound that plays one time
+    //then goes back to the original loop it was on before
     private fun startSoundOneAndDone(sound: Int) {
-        Log.i("bruh", "startSoundOneAndDone($sound)")
         val lastSoundTrigger = viewModel.startSound.value!!
 
         stopSound()
@@ -211,27 +207,29 @@ class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener 
 
     //methods for starting and stopping animations
     private fun stopAnim() {
-        Log.i("bruh", "stopAnim()")
         gMeter.setBackgroundResource(R.drawable.g_idle)
     }
 
     private fun startAnim(animation: Int, isLooping: Boolean) {
-        Log.i("bruh", "startAnim()")
         startAnimation(animation, isLooping)
     }
 
+    //meant for interrupting looping animations with one animation that plays one time then goes
+    //back to the original loop it was on before
     private fun startAnimOneAndDone(animation: Int) {
-        Log.i("bruh", "startAnimOneAndDone()")
         val lastAnimTrigger = viewModel.startAnim.value
 
         startAnimation(animation, false)
 
-        //TODO this function is located in util also remember to deal with the custom AnimationDrawable classes you made
-        gMeterAnimation.onAnimationFinished { Log.i("bruh", "hi") }
+        gMeterAnimation.onAnimationFinished {
+
+            if (lastAnimTrigger != null){
+                startAnimation(lastAnimTrigger.resourceId!!, lastAnimTrigger.loop!!)
+            } else { stopAnim() }
+        }
     }
 
     override fun onStop() {
-        Log.i("bruh", "onStop() called")
         if (mediaPlayer != null) {
             mediaPlayer?.release()
             mediaPlayer = null
@@ -252,11 +250,6 @@ class ChatPageFragment: Fragment(), AnimationDrawable3.IAnimationFinishListener 
         gMeterAnimation.isOneShot = !isLooping
 
         gMeterAnimation.start()
-    }
-
-    //callback for one and done animations
-    override fun onAnimationFinished() {
-        startAnimation(viewModel.startAnim.value!!.resourceId!!, true)
     }
 
     /*

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.stranded.chatpage.Set
 import com.example.stranded.database.PromptLine
+import kotlinx.coroutines.*
 
 fun createSetsList(sets: List<PromptLine>): MutableList<Set> {
     var count = 0
@@ -24,13 +25,14 @@ fun <T> MutableLiveData<T>.notifyObserver() {
     this.value = this.value
 }
 
-//TODO("learn how this works it is related to the oneAndDone animation functionality")
 fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
     var duration: Long = 0
     for (i in 0..numberOfFrames) {
         duration += getDuration(i)
     }
-    Handler().postDelayed({
+
+    GlobalScope.launch {
+        delay(duration + 200)
         block()
-    }, duration + 200)
+    }
 }
