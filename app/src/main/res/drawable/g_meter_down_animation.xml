@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/g_transition_down1" android:duration="100"/>
-    <item android:drawable="@drawable/g_transition_down2" android:duration="100"/>
     <item android:drawable="@drawable/g_down1" android:duration="100"/>
     <item android:drawable="@drawable/g_down2" android:duration="100"/>
-    <item android:drawable="@drawable/g_down1" android:duration="100"/>
-    <item android:drawable="@drawable/g_down4" android:duration="100"/>
     <item android:drawable="@drawable/g_down3" android:duration="100"/>
+    <item android:drawable="@drawable/g_down4" android:duration="100"/>
+    <item android:drawable="@drawable/g_down5" android:duration="100"/>
+    <item android:drawable="@drawable/g_down6" android:duration="100"/>
+    <item android:drawable="@drawable/g_down7" android:duration="100"/>
+    <item android:drawable="@drawable/g_down8" android:duration="100"/>
+    <item android:drawable="@drawable/g_down9" android:duration="100"/>
+    <item android:drawable="@drawable/g_down10" android:duration="100"/>
 </animation-list>
