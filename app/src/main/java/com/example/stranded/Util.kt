@@ -2,6 +2,7 @@ package com.example.stranded
 
 import android.graphics.drawable.AnimationDrawable
 import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.stranded.chatpage.Set
@@ -27,7 +28,7 @@ fun <T> MutableLiveData<T>.notifyObserver() {
 
 fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
     var duration: Long = 0
-    for (i in 0..numberOfFrames) {
+    for (i in 0 until numberOfFrames) {
         duration += getDuration(i)
     }
 
