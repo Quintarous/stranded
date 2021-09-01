@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/g_down_small_animation.xml" value="0.5205897305541434" />
         <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/g_meter_down_animation.xml" value="0.5333333333333333" />
+        <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/g_run_animation.xml" value="0.5205897305541434" />
         <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/g_walk_animation.xml" value="0.5205897305541434" />
         <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/g_wobble_animation.xml" value="0.5205897305541434" />
         <entry key="..\:/Mobile_Dev/stranded/app/src/main/res/drawable/textview_background.xml" value="0.5333333333333333" />

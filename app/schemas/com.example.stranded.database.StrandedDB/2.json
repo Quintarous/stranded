@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "5e890b53c977b76f3eb093c43ae3f963",
+    "version": 2,
+    "identityHash": "ef37328731ec2d8a6621f89141329acf",
     "entities": [
       {
         "tableName": "ScriptLine",
@@ -150,7 +150,7 @@
       },
       {
         "tableName": "Trigger",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL, `resourceType` TEXT NOT NULL, `resourceId` INTEGER, `loop` INTEGER, `oneAndDone` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sequence` INTEGER NOT NULL, `triggerId` INTEGER NOT NULL, `triggerType` TEXT NOT NULL, `resourceType` TEXT NOT NULL, `resourceId` INTEGER, `loop` INTEGER NOT NULL, `oneAndDone` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -192,13 +192,13 @@
             "fieldPath": "loop",
             "columnName": "loop",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "oneAndDone",
             "columnName": "oneAndDone",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -214,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e890b53c977b76f3eb093c43ae3f963')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ef37328731ec2d8a6621f89141329acf')"
     ]
   }
 }

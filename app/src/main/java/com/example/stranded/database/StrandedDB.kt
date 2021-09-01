@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities =
         [ScriptLine::class, PromptLine::class, UserSave::class, Trigger::class],
-        version = 1,
+        version = 2,
         exportSchema = true
 )
 abstract class StrandedDB: RoomDatabase() {

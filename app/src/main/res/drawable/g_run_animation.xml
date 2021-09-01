@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/g_walk1" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk2" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk3" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk4" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk5" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk6" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk7" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk8" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk9" android:duration="50"  />
+    <item android:drawable="@drawable/g_walk10" android:duration="50" />
+    <item android:drawable="@drawable/g_walk11" android:duration="50" />
+    <item android:drawable="@drawable/g_walk12" android:duration="50" />
+    <item android:drawable="@drawable/g_walk13" android:duration="50" />
+    <item android:drawable="@drawable/g_walk14" android:duration="50" />
+    <item android:drawable="@drawable/g_walk15" android:duration="50" />
+    <item android:drawable="@drawable/g_walk16" android:duration="50" />
+    <item android:drawable="@drawable/g_walk17" android:duration="50" />
+    <item android:drawable="@drawable/g_walk18" android:duration="50" />
+    <item android:drawable="@drawable/g_walk19" android:duration="50" />
+    <item android:drawable="@drawable/g_walk20" android:duration="50" />
+</animation-list>

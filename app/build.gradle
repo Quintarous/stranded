@@ -25,7 +25,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         kapt {
-            correctErrorTypes true
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
