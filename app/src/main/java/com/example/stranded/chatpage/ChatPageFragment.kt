@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageBinding
@@ -65,6 +66,10 @@ class ChatPageFragment: Fragment() {
         gMeter = binding.gMeter
 
         //setting up the chat recycler adapter
+        binding.chatRecycler.layoutManager = LinearLayoutManager(this.context).also {
+            it.stackFromEnd = true
+        }
+
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
@@ -107,23 +112,31 @@ class ChatPageFragment: Fragment() {
         binding.promptRecycler.adapter = promptRecyclerAdapter
 
         //setting up the console recycler adapter
+        binding.consoleRecycler.layoutManager = LinearLayoutManager(this.context).also {
+            it.stackFromEnd = true
+        }
+
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf())
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
         //viewModel observers go here
         //chat recyclers' dataset is updated through here
         viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
+            val dataset = chatRecyclerAdapter.dataset
+
             if (lineList.isNotEmpty()) {
 
                 //if adapter dataset is already populated just add the new value to save resources
-                if (chatRecyclerAdapter.dataset.size == lineList.size - 1) {
-                    chatRecyclerAdapter.dataset.add(lineList.last())
-                    chatRecyclerAdapter.notifyItemInserted(chatRecyclerAdapter.itemCount - 1)
+                if (dataset.size == lineList.size - 1) {
+                    dataset.add(lineList.last())
+                    chatRecyclerAdapter.notifyItemInserted(dataset.size - 1)
+                    binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
                 //else copy the whole list from the viewModel
                 else {
-                    chatRecyclerAdapter.dataset.addAll(lineList)
+                    dataset.addAll(lineList)
                     chatRecyclerAdapter.notifyDataSetChanged()
+                    binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
             }
         })
@@ -137,10 +150,12 @@ class ChatPageFragment: Fragment() {
                 if (dataset.size == stringList.size - 1) {
                     dataset.add(stringList.last())
                     consoleRecyclerAdapter.notifyItemInserted(dataset.size - 1)
+                    binding.consoleRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
                 else {
                     dataset.addAll(stringList)
                     consoleRecyclerAdapter.notifyDataSetChanged()
+                    binding.consoleRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
             }
         })

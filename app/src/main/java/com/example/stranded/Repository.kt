@@ -52,7 +52,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             list.add(line)
         }
 
-        dao.insertTestScriptLines(getScriptLineList())
+        dao.insertTestScriptLines(getScriptLineList1())
     }
 
     suspend fun insertTestPromptLines() {
@@ -64,7 +64,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             PromptLine(0, 1, 2, "prompt line 5", 6)
         )
 
-        dao.insertTestPromptLines(getPromptLineList())
+        dao.insertTestPromptLines(getPromptLineList1())
     }
 
     //TODO fix these for testing purposes!
@@ -79,12 +79,12 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             Trigger(0, 1, 9, "script", "sound", null)
         )
 
-        dao.insertTestTriggers(getTriggerList())
+        dao.insertTestTriggers(getTriggerList1())
     }
 
     suspend fun updateUserSaveData(saveData: UserSave) = dao.insertTestSaveData(saveData)
 
-    fun getScriptLineList(): List<ScriptLine> {
+    fun getScriptLineList1(): List<ScriptLine> {
         return mutableListOf(
             //1-23
             ScriptLine(0, 1, "console", "---POWERING BOOT DRIVE---", 2, "script"),
@@ -207,7 +207,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         //ScriptLine(0, 1, "script", "", 0),
     }
 
-    fun getPromptLineList(): List<PromptLine> {
+    fun getPromptLineList1(): List<PromptLine> {
         return mutableListOf(
             //sequence 1
             //set 1
@@ -269,9 +269,9 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         //PromptLine(0, 1, 0, "", 0),
     }
 
-    fun getTriggerList(): List<Trigger> {
+    fun getTriggerList1(): List<Trigger> {
         return mutableListOf(
-            Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation),
+            Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation, loop=false, oneAndDone = true),
             Trigger(0, 1, 56, "script", "animation", R.drawable.g_walk_animation, true)
         )
     }

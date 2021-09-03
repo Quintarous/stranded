@@ -5,4 +5,14 @@
     <item android:drawable="@drawable/g_up3" android:duration="100" />
     <item android:drawable="@drawable/g_up4" android:duration="100" />
     <item android:drawable="@drawable/g_up5" android:duration="100" />
+    <item android:drawable="@drawable/g_up1" android:duration="100" />
+    <item android:drawable="@drawable/g_up2" android:duration="100" />
+    <item android:drawable="@drawable/g_up3" android:duration="100" />
+    <item android:drawable="@drawable/g_up4" android:duration="100" />
+    <item android:drawable="@drawable/g_up5" android:duration="100" />
+    <item android:drawable="@drawable/g_up1" android:duration="100" />
+    <item android:drawable="@drawable/g_up2" android:duration="100" />
+    <item android:drawable="@drawable/g_up3" android:duration="100" />
+    <item android:drawable="@drawable/g_up4" android:duration="100" />
+    <item android:drawable="@drawable/g_up5" android:duration="100" />
 </animation-list>
