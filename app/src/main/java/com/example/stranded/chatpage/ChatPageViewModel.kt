@@ -80,6 +80,49 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+    //function to progress up to the user save point if further than the first script line
+    fun restoreSave() {
+        val userSave = userSave.value!!
+
+        if (userSave.line == 1) return
+
+        //adding all the script lines
+        for (scriptLine in sequence.scriptLines) {
+
+            //if the next script line we would display is greater than the save point break the loop
+            if (userSave.lineType == "script" && scriptLine.id > userSave.line) break
+
+            when (scriptLine.type) {
+                "console" -> _consoleDataset.value!!.add(scriptLine.line)
+
+                else -> _chatDataset.value!!.add(scriptLine)
+            }
+
+            //adding a user response in before the next script line if we need to
+            if (scriptLine.nextType == "prompt") {
+                val set: Set = sequence.sets[scriptLine.next - 1]
+
+                //if this is the prompt we need to stop on than simply display the prompt and break
+                if (userSave.lineType == "prompt" && set.number == userSave.line) {
+                    displayPromptSet(set)
+                    break
+                }
+
+                //else throw the saved user response in the chat window and keep on moving
+                else {
+                    val promptLine: PromptLine = set.lines[userSave.promptChoices[set.number - 1]]
+
+                    _chatDataset.value!!
+                        .add(ScriptLine(0, userSave.sequence, "user", promptLine.line, 0))
+                }
+            }
+        }
+
+        _chatDataset.notifyObserver()
+        _consoleDataset.notifyObserver()
+        _promptDataset.notifyObserver()
+    }
+
     //callback that displays the next line/prompt when the user taps the chat recycler view
     fun userTouch() {
         when (lastLine.nextType) {
@@ -111,7 +154,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                             _stopSound.value = trigger
                         }
                         else {
-                            if (trigger.oneAndDone!!) {
+                            if (trigger.oneAndDone) {
                                 _startSoundOneAndDone.value = trigger
                             }
                             else {
@@ -125,7 +168,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                             _stopAnim.value = trigger
                         }
                         else {
-                            if (trigger.oneAndDone!!) {
+                            if (trigger.oneAndDone) {
                                 _startAnimOneAndDone.value = trigger
                             }
                             else {
@@ -143,6 +186,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             else -> displayPromptSet(sequence.sets[promptLine.next - 1])
         }
 
+        //updating the user save
+        viewModelScope.launch {
+            repository.updateUserSaveData(userSave.value!!.apply {
+                this.promptChoices.add(index)
+            })
+        }
     }
 
     private fun displayScriptLine(scriptLine: ScriptLine) {
@@ -170,7 +219,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                             _stopSound.value = trigger
                         }
                         else {
-                            if (trigger.oneAndDone!!) {
+                            if (trigger.oneAndDone) {
                                 _startSoundOneAndDone.value = trigger
                             }
                             else {
@@ -184,7 +233,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                             _stopAnim.value = trigger
                         }
                         else {
-                            if (trigger.oneAndDone!!) {
+                            if (trigger.oneAndDone) {
                                 _startAnimOneAndDone.value = trigger
                             }
                             else {
@@ -195,10 +244,26 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
             }
         }
+
+        //updating the user save
+        viewModelScope.launch {
+            repository.updateUserSaveData(userSave.value!!.apply {
+                this.line = scriptLine.id
+                this.lineType = "script"
+            })
+        }
     }
 
     private fun displayPromptSet(set: Set) {
         _promptDataset.value = set.lines
         _promptDataset.notifyObserver()
+
+        //updating the user save
+        viewModelScope.launch {
+            repository.updateUserSaveData(userSave.value!!.apply {
+                this.line = set.number
+                this.lineType = "prompt"
+            })
+        }
     }
 }

@@ -52,15 +52,25 @@ data class Trigger constructor(
 )
 
 /*
-table for storing the users "save game" note it will also have columns for every prompt set in the
-most prompt heavy sequence so it can track user choices from the currently saved sequence
+table for storing the users "save game"
  */
 @Entity
 data class UserSave constructor(
     @PrimaryKey
     val id: Int,
-    val isPowered: Boolean,
-    val sequence: Int,
-    val line: Int,
-    val lineType: String = "script"
+    var isPowered: Boolean,
+    var sequence: Int,
+    var line: Int,
+    var lineType: String = "script",
+/*
+TODO databases cannot support lists. So instead we need to add prompt set result columns for
+every prompt in the biggest sequence (prompt wise). These set result fields will simply contain
+the index of whatever promptLine the user chose.
+
+1. in promptSelected() tell the repo "user picked x index!"
+2. have repo save the index
+3. add processing in the repo so when it hands the user save over to the ViewModel all the set results
+are in a nice list
+*/
+    var promptChoices: MutableList<Int>
 )

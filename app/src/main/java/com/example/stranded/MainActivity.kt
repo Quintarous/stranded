@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         //initializing the in memory database with test data
         lifecycleScope.launch {
-            val testSaveData = UserSave(1, true, 1, 0)
+            val testSaveData = UserSave(1, true, 1, 0, promptChoices = mutableListOf())
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()

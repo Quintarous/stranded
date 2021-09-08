@@ -275,4 +275,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             Trigger(0, 1, 56, "script", "animation", R.drawable.g_walk_animation, true)
         )
     }
+
+    fun getScriptLineList2(): List<ScriptLine> {
+        return listOf(
+
+        )
+    }
 }
