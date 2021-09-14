@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stranded.Repository
 import com.example.stranded.database.PromptLine
+import com.example.stranded.database.PromptResult
 import com.example.stranded.database.ScriptLine
 import com.example.stranded.database.Trigger
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +21,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     val userSave = repository.userSave
     lateinit var sequence: Sequence
+    lateinit var promptResults: List<Int>
 
     private val _chatDataset = MutableLiveData(mutableListOf<ScriptLine>())
     val chatDataset: LiveData<MutableList<ScriptLine>>
@@ -63,12 +66,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
-        //grabbing the sequence from the repository
+        //grabbing the sequence and prompt results from the repository
         viewModelScope.launch {
+            //TODO remove this it's for the in memory database to populate
+            delay(1000)
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
+            promptResults = repository.getPromptResults().map { it.result }
 
-            //running the first line from the sequence
-            if (sequence.scriptLines.isNotEmpty()) displayScriptLine(sequence.scriptLines[0])
+            //restoring the user to their last save point or just displaying line 1 if they haven't
+            //yet started the sequence
+            restoreSave()
 
             //sorting the sequence triggers into script and prompt trigger lists
             for (trigger in sequence.triggers) {
@@ -84,18 +91,25 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     fun restoreSave() {
         val userSave = userSave.value!!
 
-        if (userSave.line == 1) return
+        if (userSave.line <= 1) {
+            displayScriptLine(sequence.scriptLines[0])
+            return
+        }
 
         //adding all the script lines
         for (scriptLine in sequence.scriptLines) {
 
-            //if the next script line we would display is greater than the save point break the loop
-            if (userSave.lineType == "script" && scriptLine.id > userSave.line) break
 
             when (scriptLine.type) {
                 "console" -> _consoleDataset.value!!.add(scriptLine.line)
 
                 else -> _chatDataset.value!!.add(scriptLine)
+            }
+
+            //if the next script line we would display is greater than the save point break the loop
+            if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
+                lastLine = scriptLine
+                break
             }
 
             //adding a user response in before the next script line if we need to
@@ -110,7 +124,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                 //else throw the saved user response in the chat window and keep on moving
                 else {
-                    val promptLine: PromptLine = set.lines[userSave.promptChoices[set.number - 1]]
+                    val promptLine: PromptLine = set.lines[promptResults[set.number - 1]]
 
                     _chatDataset.value!!
                         .add(ScriptLine(0, userSave.sequence, "user", promptLine.line, 0))
@@ -186,11 +200,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             else -> displayPromptSet(sequence.sets[promptLine.next - 1])
         }
 
-        //updating the user save
+        //updating the PromptResult database table
         viewModelScope.launch {
-            repository.updateUserSaveData(userSave.value!!.apply {
-                this.promptChoices.add(index)
-            })
+            repository.insertPromptResult(index)
         }
     }
 

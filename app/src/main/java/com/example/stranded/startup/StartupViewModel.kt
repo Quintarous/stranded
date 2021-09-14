@@ -13,8 +13,10 @@ class StartupViewModel @Inject constructor(val repository: Repository): ViewMode
 
     fun startSequence() {
         viewModelScope.launch {
-            val startupSaveData = UserSave(1, true, 1, 1)
-            repository.updateUserSaveData(startupSaveData)
+            //TODO this is very bad cuz it will always start sequence one every time
+            val newUserSave = UserSave(0, true, 1, 1)
+
+            repository.updateUserSaveData(newUserSave)
         }
     }
 }

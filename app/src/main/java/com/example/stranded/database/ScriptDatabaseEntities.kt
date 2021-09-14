@@ -72,5 +72,11 @@ the index of whatever promptLine the user chose.
 3. add processing in the repo so when it hands the user save over to the ViewModel all the set results
 are in a nice list
 */
-    var promptChoices: MutableList<Int>
+)
+
+@Entity
+data class PromptResult constructor(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val result: Int
 )

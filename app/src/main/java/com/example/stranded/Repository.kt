@@ -1,6 +1,7 @@
 package com.example.stranded
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.stranded.chatpage.Sequence
 import com.example.stranded.database.*
@@ -23,6 +24,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
         return Sequence(scriptLines, sets, triggers)
     }
+
+    //methods for retrieving from and adding to the PromptResult table
+    suspend fun getPromptResults() = dao.getPromptResults()
+    suspend fun insertPromptResult(result: Int) = dao.insertPromptResult(PromptResult(0, result))
 
     suspend fun insertTestScriptLines() {
         val list = mutableListOf<ScriptLine>()

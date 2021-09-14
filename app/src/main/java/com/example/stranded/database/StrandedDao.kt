@@ -2,7 +2,6 @@ package com.example.stranded.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.stranded.chatpage.Line
 
 @Dao
 interface StrandedDao {
@@ -16,6 +15,8 @@ interface StrandedDao {
     suspend fun insertTestPromptLines(promptLine: List<PromptLine>)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTestTriggers(trigger: List<Trigger>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPromptResult(input: PromptResult)
 
     //get methods
     @Query("SELECT * FROM UserSave")
@@ -26,4 +27,6 @@ interface StrandedDao {
     suspend fun getPromptLines(sequence: Int): List<PromptLine>
     @Query("SELECT * FROM `Trigger` WHERE sequence = :sequence")
     suspend fun getTriggers(sequence: Int): List<Trigger>
+    @Query("SELECT * FROM PromptResult")
+    suspend fun getPromptResults(): List<PromptResult>
 }
