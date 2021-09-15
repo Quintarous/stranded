@@ -25,9 +25,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         return Sequence(scriptLines, sets, triggers)
     }
 
-    //methods for retrieving from and adding to the PromptResult table
+    //methods for retrieving from and adding to and clearing the PromptResult table
     suspend fun getPromptResults() = dao.getPromptResults()
     suspend fun insertPromptResult(result: Int) = dao.insertPromptResult(PromptResult(0, result))
+    suspend fun clearPromptResult() = dao.clearPromptResults()
 
     suspend fun insertTestScriptLines() {
         val list = mutableListOf<ScriptLine>()

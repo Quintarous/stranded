@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             //good test spot is line 34
             val testSaveData = UserSave(1, true, 1, 0, "script")
+            repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity() {
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
-            repository.updateUserSaveData(testSaveData)
         }
     }
 

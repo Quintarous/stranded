@@ -134,7 +134,6 @@ class ChatPageFragment: Fragment() {
                 }
                 //else copy the whole list from the viewModel
                 else {
-                    Log.i("bruh", "dataset = ${dataset.size} lineList = ${lineList.size}")
                     dataset.addAll(lineList)
                     chatRecyclerAdapter.notifyDataSetChanged()
                     binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)

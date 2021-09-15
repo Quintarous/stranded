@@ -6,10 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stranded.Repository
-import com.example.stranded.database.PromptLine
-import com.example.stranded.database.PromptResult
-import com.example.stranded.database.ScriptLine
-import com.example.stranded.database.Trigger
+import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -66,10 +63,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
+        Log.i("bruh", "chat page userSave = ${userSave.value}")
         //grabbing the sequence and prompt results from the repository
         viewModelScope.launch {
             //TODO remove this it's for the in memory database to populate
             delay(1000)
+            Log.i("bruh", "coroutine chat page userSave = ${userSave.value}")
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
             promptResults = repository.getPromptResults().map { it.result }
 
@@ -140,9 +139,25 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     //callback that displays the next line/prompt when the user taps the chat recycler view
     fun userTouch() {
         when (lastLine.nextType) {
-            //TODO implement an actual procedure for ending a narrative sequence
-            "end" -> return //do nothing
+            "end" -> {
+                viewModelScope.launch {
+                    val sequence = userSave.value!!.sequence
+
+                    //if the current sequence is not the last one
+                    if (sequence < 8) {
+                        repository.updateUserSaveData(
+                            UserSave(1, false, sequence + 1, 0)
+                        )
+
+                        repository.clearPromptResult()
+                    }
+
+                    //else TODO do something when the user completes the story
+                }
+            }
+
             "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
+
             else -> displayPromptSet(sequence.sets[lastLine.next - 1])
         }
     }

@@ -29,4 +29,8 @@ interface StrandedDao {
     suspend fun getTriggers(sequence: Int): List<Trigger>
     @Query("SELECT * FROM PromptResult")
     suspend fun getPromptResults(): List<PromptResult>
+
+    //clearing the promptChoices table
+    @Query("DELETE FROM PromptResult")
+    suspend fun clearPromptResults()
 }
