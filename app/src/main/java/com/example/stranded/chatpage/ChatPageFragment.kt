@@ -169,7 +169,7 @@ class ChatPageFragment: Fragment() {
         viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
 
         viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
-            startSound(trigger.resourceId!!, trigger.loop!!)
+            startSound(trigger.resourceId!!, trigger.loop)
         })
 
         viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
@@ -180,7 +180,7 @@ class ChatPageFragment: Fragment() {
         viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
 
         viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            startAnim(trigger.resourceId!!, trigger.loop!!)
+            startAnim(trigger.resourceId!!, trigger.loop)
         })
 
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->

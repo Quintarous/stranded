@@ -63,12 +63,10 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
-        Log.i("bruh", "chat page userSave = ${userSave.value}")
         //grabbing the sequence and prompt results from the repository
         viewModelScope.launch {
             //TODO remove this it's for the in memory database to populate
             delay(1000)
-            Log.i("bruh", "coroutine chat page userSave = ${userSave.value}")
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
             promptResults = repository.getPromptResults().map { it.result }
 
@@ -176,6 +174,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
         //checking for any triggers that need to be fired
         for (trigger in promptTriggers) {
+            //TODO find an equivalent way to do this like with the script line version or remove the ability to fire triggers on prompts
             if (trigger.triggerId == promptLine.id) {
                 when (trigger.resourceType) {
                     "sound" -> {
@@ -239,7 +238,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
         //checking to see if we need to fire any triggers on this script line and firing them if we do
         for (trigger in scriptTriggers) {
-            if (trigger.triggerId == scriptLine.id) {
+            if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
                 when (trigger.resourceType) {
                     "sound" -> {
                         if (trigger.resourceId == null) {
