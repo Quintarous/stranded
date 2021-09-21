@@ -9,8 +9,8 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
-private val NOTIFICATION_ID = 0
-private val CHANNEL_ID = "test"
+private const val NOTIFICATION_ID = 0
+private const val CHANNEL_ID = "main"
 
 //creates and publishes a default looking notification with the given message body
 fun NotificationManager.sendNotification(context: Context, messageBody: String) {
@@ -49,7 +49,7 @@ fun createChannel(context: Context, channelId: String, channelName: String) {
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.GREEN
         notificationChannel.enableVibration(true)
-        notificationChannel.description = "Test Channel"
+        notificationChannel.description = "The one and only notification channel"
 
         val notificationManager = context.getSystemService(
             NotificationManager::class.java

@@ -8,7 +8,9 @@ interface StrandedDao {
 
     //insert methods
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTestSaveData(newSaveData: UserSave)
+    suspend fun insertSaveData(newSaveData: UserSave)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun noSuspendInsertSaveData(newSaveData: UserSave)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTestScriptLines(scriptLine: List<ScriptLine>)
     @Insert(onConflict = OnConflictStrategy.REPLACE)

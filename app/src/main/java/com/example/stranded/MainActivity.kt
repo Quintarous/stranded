@@ -49,19 +49,30 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
-        //creating and registering the notification testing channel
-        //DELETE ONCE DONE TESTING
-        createChannel(this, "test", "Test Channel")
+        //creating and registering the notification channel
+        createChannel(this, "main", "Main Channel")
 
         //initializing the in memory database with test data
         lifecycleScope.launch {
-            //good test spot is line 34
-            val testSaveData = UserSave(1, true, 2, 0, "script")
+            //good test spot is sequence 1 line 80
+            val testSaveData = UserSave(1, true, 1, 80, "script")
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
             repository.insertPromptResult(2)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)

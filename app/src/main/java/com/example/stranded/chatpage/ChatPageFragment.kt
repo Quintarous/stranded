@@ -1,12 +1,18 @@
 package com.example.stranded.chatpage
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
+import android.icu.util.Calendar
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import androidx.core.app.AlarmManagerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,10 +20,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.stranded.PowerOnBroadcastReceiver
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageBinding
 import com.example.stranded.onAnimationFinished
+import com.example.stranded.workers.PowerOnNotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -185,6 +196,28 @@ class ChatPageFragment: Fragment() {
 
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
             startAnimOneAndDone(trigger.resourceId!!)
+        })
+
+        //schedules notification work for the view model when a sequence is completed
+        viewModel.scheduleNotification.observe(viewLifecycleOwner, {
+            if (it) {
+                //getting the alarmManager instance
+                val alarmManager =
+                    context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                //generating the time for the alarm to go off
+                //TODO actually generate a calendar this is just for testing
+                val calendar = Calendar.getInstance()
+
+                //getting the pending intent
+                val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
+                val pendingIntent = PendingIntent
+                    .getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                Log.i("bruh", "alarm scheduled with calendar = ${calendar.get(Calendar.MINUTE)}")
+                //scheduling the alarm
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
         })
 
         setHasOptionsMenu(true)

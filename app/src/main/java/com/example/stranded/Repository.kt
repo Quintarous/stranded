@@ -1,7 +1,6 @@
 package com.example.stranded
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.stranded.chatpage.Sequence
 import com.example.stranded.database.*
@@ -90,7 +89,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
         dao.insertTestTriggers(getTriggerList1())
     }
 
-    suspend fun updateUserSaveData(saveData: UserSave) = dao.insertTestSaveData(saveData)
+    suspend fun updateUserSaveData(saveData: UserSave) = dao.insertSaveData(saveData)
+    fun noSuspendUpdateUserSaveData(saveData: UserSave) = dao.noSuspendInsertSaveData(saveData)
 
     fun getScriptLineList1(): List<ScriptLine> {
         return mutableListOf(

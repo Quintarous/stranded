@@ -1,10 +1,6 @@
 package com.example.stranded.chatpage
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.stranded.Repository
 import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
@@ -56,6 +52,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val _startAnimOneAndDone = MutableLiveData<Trigger>()
     val startAnimOneAndDone: LiveData<Trigger>
         get() = _startAnimOneAndDone
+
+    //need this to have the fragment schedule work for us
+    val scheduleNotification = MutableLiveData(false)
 
     private lateinit var lastLine: ScriptLine
 
@@ -148,6 +147,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         )
 
                         repository.clearPromptResult()
+
+                        //telling the fragment to schedule notification + powerOn work
+                        scheduleNotification.value = true
                     }
 
                     //else TODO do something when the user completes the story
