@@ -12,7 +12,9 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
     private val db: StrandedDB = getDatabase(context)
     private val dao: StrandedDao = db.getDao()
 
-    val userSave: LiveData<UserSave> = dao.getUserSave()
+    val userSave: LiveData<UserSave> = dao.getLiveDataUserSave()
+    //this is a synchronous blocking method for the PowerOnNotificationWorker
+    fun getUserSave(): UserSave = dao.getUserSave()
 
     suspend fun getSequence(sequence: Int): Sequence {
         val scriptLines = dao.getScriptLines(sequence)

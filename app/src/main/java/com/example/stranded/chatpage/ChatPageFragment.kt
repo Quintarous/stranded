@@ -28,8 +28,11 @@ import com.example.stranded.databinding.FragmentChatPageBinding
 import com.example.stranded.onAnimationFinished
 import com.example.stranded.workers.PowerOnNotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import kotlin.random.Random
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
@@ -206,15 +209,16 @@ class ChatPageFragment: Fragment() {
                     context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                 //generating the time for the alarm to go off
-                //TODO actually generate a calendar this is just for testing
-                val calendar = Calendar.getInstance()
+                val calendar = Calendar.getInstance().apply {
+                    add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 12))
+                }
 
                 //getting the pending intent
                 val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
                 val pendingIntent = PendingIntent
-                    .getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    .getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
-                Log.i("bruh", "alarm scheduled with calendar = ${calendar.get(Calendar.MINUTE)}")
+                Log.i("bruh", "alarm scheduled with calendar = ${calendar.time}")
                 //scheduling the alarm
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
