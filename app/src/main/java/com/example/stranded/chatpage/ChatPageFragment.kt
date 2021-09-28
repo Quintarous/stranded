@@ -229,6 +229,21 @@ class ChatPageFragment: Fragment() {
         return binding.root
     }
 
+    // if the fragment is paused (ie: user goes home or closes their phone) but not destroyed
+    // (like when the user navigates to the settings screen) then the view model observers won't
+    // fire and thus no sound is played even when it should.
+
+    // so to fix this we're checking if there is a valid start sound trigger in the view model
+    // and playing it if so
+    override fun onStart() {
+        if (viewModel.startSound.value != null) {
+            val trigger = viewModel.startSound.value!!
+
+            if(trigger.resourceId != null) startMediaPlayback(trigger.resourceId, trigger.loop)
+        }
+        super.onStart()
+    }
+
     //methods for starting and stopping sound effects
     private fun stopSound() {
 
@@ -253,7 +268,7 @@ class ChatPageFragment: Fragment() {
         startMediaPlayback(sound, false)
 
         mediaPlayer?.setOnCompletionListener {
-            startMediaPlayback(lastSoundTrigger.resourceId!!, lastSoundTrigger.loop!!)
+            startMediaPlayback(lastSoundTrigger.resourceId!!, lastSoundTrigger.loop)
         }
     }
 
@@ -283,6 +298,7 @@ class ChatPageFragment: Fragment() {
 
     override fun onStop() {
         if (mediaPlayer != null) {
+            Log.i("bruh", "mediaPlayer released")
             mediaPlayer?.release()
             mediaPlayer = null
         }
@@ -291,6 +307,7 @@ class ChatPageFragment: Fragment() {
 
     //functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
+        Log.i("bruh", "startMediaPlayback() called")
         mediaPlayer = MediaPlayer.create(context, resource)
         mediaPlayer?.isLooping = loop
         mediaPlayer?.start()
