@@ -210,7 +210,7 @@ class ChatPageFragment: Fragment() {
 
                 //generating the time for the alarm to go off
                 val calendar = Calendar.getInstance().apply {
-                    add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 12))
+                    add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 13))
                 }
 
                 //getting the pending intent

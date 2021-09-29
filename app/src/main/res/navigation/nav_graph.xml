@@ -46,5 +46,8 @@
             android:id="@+id/noPowerFragment"
             android:name="com.example.stranded.startup.NoPowerFragment"
             android:label="NoPowerFragment" />
+        <action
+            android:id="@+id/action_noPowerFragment_to_powerOnFragment"
+            app:destination="@id/nav_graph_power_on" />
     </navigation>
 </navigation>

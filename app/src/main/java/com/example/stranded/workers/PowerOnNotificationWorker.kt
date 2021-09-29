@@ -19,9 +19,9 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
         val repository = Repository(context)
 
         //updating the database
+        // TODO test that this user save database change has the intended effect with a real (not in memory) database
         val oldUserSave = repository.getUserSave()
         val newUserSave = oldUserSave.apply { isPowered = true }
-
         repository.noSuspendUpdateUserSaveData(newUserSave)
 
         //firing the notification
@@ -32,6 +32,7 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
             ) as NotificationManager
 
         notificationManager.sendNotification(context, "--- INTERNAL POWER RECHARGED ---")
+        Log.i("bruh", "notification fired")
 
         return Result.success()
     }
