@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <com.example.stranded.CustomTextView
             android:id="@+id/line_text"
             style="@style/StrandedTextStyle"
             android:layout_width="wrap_content"
