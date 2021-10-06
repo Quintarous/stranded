@@ -21,7 +21,6 @@ class ChatRecyclerAdapter(val dataset: MutableList<ScriptLine>): RecyclerView.Ad
                 UserLineViewHolder(binding)
             }
 
-            //inflating a UserLineViewHolder when viewType is a script line
             else -> {
                 val binding = ChatAdapterItemBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)

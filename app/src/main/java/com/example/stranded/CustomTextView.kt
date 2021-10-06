@@ -6,17 +6,19 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.getSpans
 import androidx.core.view.ViewCompat
+import believe.cht.fadeintextview.TextView
 import believe.cht.fadeintextview.TextViewListener
 // TODO this custom view is not being inflated (it's coming in as null in the adapters view binding
-class CustomTextView(context: Context, attributeSet: AttributeSet): AppCompatTextView(context) {
+class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTextView(context, attributeSet) {
 
     private var start: Long = 0
-    private val letterDuration = 250
+    private val letterDuration = 100
     private var isAnimating = false
     private lateinit var characterSequence: CharSequence
     private lateinit var spannableString: SpannableString
@@ -44,7 +46,7 @@ class CustomTextView(context: Context, attributeSet: AttributeSet): AppCompatTex
         textViewListener?.onTextStart()
 
         // attaching the Letter class to every character in the string
-        for (index in (0..length)) {
+        for (index in (0 until length)) {
 
             spannableString
                 .setSpan(Letter(), index, index + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
@@ -74,16 +76,19 @@ class CustomTextView(context: Context, attributeSet: AttributeSet): AppCompatTex
 
             val length = letters.size
 
-            for (index in (0..length)) {
+            for (index in (0 until length)) {
 
-                if (delta >= (index * letterDuration)) letters[index].setAlpha(1.0f)
-
-                else letters[index].setAlpha(0.0f)
+                if (delta >= (index * letterDuration)) {
+                    letters[index].setAlpha(1.0f)
+                } else {
+                    letters[index].setAlpha(0.0f)
+                }
             }
 
             if (letters.last().getAlpha() == 1.0f) {
                 isAnimating = false
                 textViewListener?.onTextFinish()
+                ViewCompat.postInvalidateOnAnimation(this)
             }
 
             else ViewCompat.postInvalidateOnAnimation(this)
