@@ -52,7 +52,7 @@ class ChatRecyclerAdapter(val dataset: MutableList<ScriptLine>): RecyclerView.Ad
         }
     }
 
-    class ScriptLineViewHolder(private val viewBinding: ChatAdapterItemBinding)
+    class ScriptLineViewHolder(val viewBinding: ChatAdapterItemBinding)
         : RecyclerView.ViewHolder(viewBinding.root) {
 
         fun bind(text: String) {
@@ -60,7 +60,7 @@ class ChatRecyclerAdapter(val dataset: MutableList<ScriptLine>): RecyclerView.Ad
         }
     }
 
-    class UserLineViewHolder(private val viewBinding: ChatAdapterUserItemBinding)
+    class UserLineViewHolder(val viewBinding: ChatAdapterUserItemBinding)
         : RecyclerView.ViewHolder(viewBinding.root) {
 
         fun bind(text: String) {

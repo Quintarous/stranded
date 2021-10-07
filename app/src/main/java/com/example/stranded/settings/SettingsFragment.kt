@@ -11,6 +11,7 @@ import com.example.stranded.databinding.FragmentSettingsBinding
 
 class SettingsFragment: Fragment() {
 
+    // TODO add a setting for customizing the custom text view speed
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

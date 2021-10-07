@@ -14,7 +14,7 @@ import androidx.core.text.getSpans
 import androidx.core.view.ViewCompat
 import believe.cht.fadeintextview.TextView
 import believe.cht.fadeintextview.TextViewListener
-// TODO this custom view is not being inflated (it's coming in as null in the adapters view binding
+
 class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTextView(context, attributeSet) {
 
     private var start: Long = 0
@@ -94,6 +94,28 @@ class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTe
             else ViewCompat.postInvalidateOnAnimation(this)
         }
     }
+
+
+    // immediately makes every letter visible essentially "skipping" the animation
+    fun skipAnimation() {
+
+        if (isAnimating) {
+            isAnimating = false
+
+            val letters = spannableString
+                .getSpans(0, spannableString.length, Letter::class.java)
+
+            for (letter in letters) {
+                letter.setAlpha(1.0f)
+            }
+
+            textViewListener?.onTextFinish()
+            ViewCompat.postInvalidateOnAnimation(this)
+        }
+    }
+
+
+    fun getAnimationStatus() = isAnimating
 
 
     fun setListener(listener: TextViewListener) {

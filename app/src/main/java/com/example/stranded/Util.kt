@@ -32,8 +32,8 @@ fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
         duration += getDuration(i)
     }
 
-    GlobalScope.launch {
-        delay(duration + 200)
-        block()
-    }
+//    GlobalScope.launch {
+//        delay(duration + 200)
+//        block()
+//    }
 }

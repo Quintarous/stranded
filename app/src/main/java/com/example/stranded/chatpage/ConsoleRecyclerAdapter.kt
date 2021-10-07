@@ -20,11 +20,11 @@ class ConsoleRecyclerAdapter(val dataset: MutableList<String>): RecyclerView.Ada
 
     override fun getItemCount(): Int = dataset.size
 
-    class ConsoleLineViewHolder(val binding: ConsoleAdapterItemBinding)
-        : RecyclerView.ViewHolder(binding.root) {
+    class ConsoleLineViewHolder(val viewBinding: ConsoleAdapterItemBinding)
+        : RecyclerView.ViewHolder(viewBinding.root) {
 
             fun bind(text: String) {
-                binding.consoleLine.text = text
+                viewBinding.consoleLine.text = text
             }
         }
 }

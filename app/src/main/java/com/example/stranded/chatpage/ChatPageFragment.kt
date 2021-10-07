@@ -12,7 +12,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
-import androidx.core.app.AlarmManagerCompat
+import android.widget.TextView
+import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,17 +21,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import com.example.stranded.CustomTextView
 import com.example.stranded.PowerOnBroadcastReceiver
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageBinding
 import com.example.stranded.onAnimationFinished
-import com.example.stranded.workers.PowerOnNotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -108,8 +104,37 @@ class ChatPageFragment: Fragment() {
                     val yDelta = abs(lastDownTouchy!! - motionEvent.y)
 
                     if (xDelta < 30 && yDelta < 30) {
-                        //telling the viewModel that the user tapped on this recycler view
-                        viewModel.userTouch()
+
+                        if (viewModel.lastLine.type == "script") {
+
+                            val holder = binding.chatRecycler.findViewHolderForAdapterPosition(
+                                    binding.chatRecycler.size - 1
+                                )
+
+                            val textView = when (holder) {
+
+                                is ChatRecyclerAdapter.ScriptLineViewHolder -> {
+                                    holder.viewBinding.lineText
+                                }
+
+                                else -> {
+                                    holder as ChatRecyclerAdapter.UserLineViewHolder
+                                    holder.viewBinding.lineText
+                                }
+                            }
+
+                            viewModel.userTouch(textView)
+                        } else {
+
+                            val holder = binding.consoleRecycler.findViewHolderForAdapterPosition(
+                                binding.consoleRecycler.size - 1
+                            ) as ConsoleRecyclerAdapter.ConsoleLineViewHolder
+
+                            val textView: CustomTextView = holder.viewBinding.consoleLine
+
+                            viewModel.userTouch(textView)
+                        }
+
                         return true
                     }
                 }
@@ -133,8 +158,8 @@ class ChatPageFragment: Fragment() {
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf())
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
-        //viewModel observers go here
-        //chat recyclers' dataset is updated through here
+        // viewModel observers go here
+        // chat recyclers' dataset is updated through here
         viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
             val dataset = chatRecyclerAdapter.dataset
 
@@ -201,6 +226,7 @@ class ChatPageFragment: Fragment() {
             startAnimOneAndDone(trigger.resourceId!!)
         })
 
+        // TODO notifications need to be thoroughly tested
         //schedules notification work for the view model when a sequence is completed
         viewModel.scheduleNotification.observe(viewLifecycleOwner, {
             if (it) {

@@ -1,6 +1,8 @@
 package com.example.stranded.chatpage
 
+import android.util.Log
 import androidx.lifecycle.*
+import com.example.stranded.CustomTextView
 import com.example.stranded.Repository
 import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
@@ -56,7 +58,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     //need this to have the fragment schedule work for us
     val scheduleNotification = MutableLiveData(false)
 
-    private lateinit var lastLine: ScriptLine
+    lateinit var lastLine: ScriptLine
 
     private val scriptTriggers: MutableList<Trigger> = mutableListOf()
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
@@ -134,31 +136,38 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
     //callback that displays the next line/prompt when the user taps the chat recycler view
-    fun userTouch() {
-        when (lastLine.nextType) {
-            "end" -> {
-                viewModelScope.launch {
-                    val sequence = userSave.value!!.sequence
+    fun userTouch(textView: CustomTextView) {
 
-                    //if the current sequence is not the last one
-                    if (sequence < 8) {
-                        repository.updateUserSaveData(
-                            UserSave(1, false, sequence + 1, 0)
-                        )
+        if (textView.getAnimationStatus()) {
 
-                        repository.clearPromptResult()
+            textView.skipAnimation()
+        } else {
 
-                        //telling the fragment to schedule notification + powerOn work
-                        scheduleNotification.value = true
+            when (lastLine.nextType) {
+                "end" -> {
+                    viewModelScope.launch {
+                        val sequence = userSave.value!!.sequence
+
+                        //if the current sequence is not the last one
+                        if (sequence < 8) {
+                            repository.updateUserSaveData(
+                                UserSave(1, false, sequence + 1, 0)
+                            )
+
+                            repository.clearPromptResult() // clearing the users saved choices
+
+                            //telling the fragment to schedule notification + powerOn work
+                            scheduleNotification.value = true
+                        }
+
+                        //else TODO do something when the user completes the story
                     }
-
-                    //else TODO do something when the user completes the story
                 }
+
+                "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
+
+                else -> displayPromptSet(sequence.sets[lastLine.next - 1])
             }
-
-            "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
-
-            else -> displayPromptSet(sequence.sets[lastLine.next - 1])
         }
     }
 
