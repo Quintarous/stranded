@@ -14,7 +14,7 @@ import androidx.core.text.getSpans
 import androidx.core.view.ViewCompat
 import believe.cht.fadeintextview.TextView
 import believe.cht.fadeintextview.TextViewListener
-
+// TODO make it so these textviews only animate once
 class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTextView(context, attributeSet) {
 
     private var start: Long = 0

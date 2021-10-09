@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -24,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.CustomTextView
 import com.example.stranded.PowerOnBroadcastReceiver
 import com.example.stranded.R
-import com.example.stranded.databinding.FragmentChatPageBinding
+import com.example.stranded.databinding.FragmentChatPageNewBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
@@ -61,9 +60,9 @@ class ChatPageFragment: Fragment() {
         })
 
         //data binding boilerplate code
-        val binding = DataBindingUtil.inflate<FragmentChatPageBinding>(
+        val binding = DataBindingUtil.inflate<FragmentChatPageNewBinding>(
             inflater,
-            R.layout.fragment_chat_page,
+            R.layout.fragment_chat_page_new,
             container,
             false
         )
@@ -108,7 +107,7 @@ class ChatPageFragment: Fragment() {
                         if (viewModel.lastLine.type == "script") {
 
                             val holder = binding.chatRecycler.findViewHolderForAdapterPosition(
-                                    binding.chatRecycler.size - 1
+                                    viewModel.chatDataset.value?.size?.minus(1) ?: 0
                                 )
 
                             val textView = when (holder) {
@@ -117,20 +116,30 @@ class ChatPageFragment: Fragment() {
                                     holder.viewBinding.lineText
                                 }
 
-                                else -> {
-                                    holder as ChatRecyclerAdapter.UserLineViewHolder
+                                is ChatRecyclerAdapter.UserLineViewHolder -> {
                                     holder.viewBinding.lineText
+                                }
+
+                                else -> {
+                                    throw Exception("chat recycler returned invalid viewHolder in ChatPageFragment")
                                 }
                             }
 
                             viewModel.userTouch(textView)
                         } else {
 
-                            val holder = binding.consoleRecycler.findViewHolderForAdapterPosition(
-                                binding.consoleRecycler.size - 1
-                            ) as ConsoleRecyclerAdapter.ConsoleLineViewHolder
+                            val textView: CustomTextView
 
-                            val textView: CustomTextView = holder.viewBinding.consoleLine
+                            val holder = binding.consoleRecycler.findViewHolderForAdapterPosition(
+                                viewModel.consoleDataset.value?.size?.minus(1) ?: 0
+                            )
+
+                            if (holder is ConsoleRecyclerAdapter.ConsoleLineViewHolder) {
+                                textView = holder.viewBinding.consoleLine
+                            } else {
+                                throw Exception("console recycler returned invalid viewHolder in ChatPageFragment")
+                            }
+
 
                             viewModel.userTouch(textView)
                         }

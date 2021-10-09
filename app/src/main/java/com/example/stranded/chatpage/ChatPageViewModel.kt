@@ -10,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+// TODO get prompt selected to not automatically play the next script line
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -135,7 +135,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.notifyObserver()
     }
 
-    //callback that displays the next line/prompt when the user taps the chat recycler view
+    // callback that displays the next line/prompt when the user taps the chat recycler view
     fun userTouch(textView: CustomTextView) {
 
         if (textView.getAnimationStatus()) {
@@ -173,17 +173,17 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     //callback that displays the next line/prompt when the user taps on a prompt button
     fun promptSelected(index: Int) {
-        val promptLine = promptDataset.value!![index]
+        val promptLine = promptDataset.value!![index] // grabbing the selected prompt
 
-        if (promptLine.nextType == "end") return
+        if (promptLine.nextType == "end") return // do nothing if this prompt ends the sequence
 
-        _promptDataset.value!!.clear()
+        _promptDataset.value!!.clear() // getting the prompt buttons off the screen
         _promptDataset.notifyObserver()
 
-        //displaying the user selected prompt in the chat recycler
+        // generating a ScriptLine object to display the users dialogue choice
         displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, 0))
 
-        //checking for any triggers that need to be fired
+        // checking for any triggers that need to be fired
         for (trigger in promptTriggers) {
             //TODO find an equivalent way to do this like with the script line version or remove the ability to fire triggers on prompts
             if (trigger.triggerId == promptLine.id) {
@@ -219,13 +219,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        //displaying the next script line or prompt
+        // displaying the next script line or prompt
         when (promptLine.nextType) {
             "script" -> displayScriptLine(sequence.scriptLines[promptLine.next - 1])
             else -> displayPromptSet(sequence.sets[promptLine.next - 1])
         }
 
-        //updating the PromptResult database table
+        // updating the PromptResult database table with the users dialogue choice
         viewModelScope.launch {
             repository.insertPromptResult(index)
         }
