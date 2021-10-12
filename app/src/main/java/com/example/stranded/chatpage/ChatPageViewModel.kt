@@ -22,15 +22,19 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val chatDataset: LiveData<MutableList<ScriptLine>>
         get() = _chatDataset
 
+    val chatLastItemAnimated = MutableLiveData<Int>() // adapter observes this to tell if the last item has been animated already or not
+
     private val _consoleDataset = MutableLiveData<MutableList<String>>(mutableListOf())
     val consoleDataset: LiveData<MutableList<String>>
         get() = _consoleDataset
+
+    val consoleLastItemAnimated = MutableLiveData<Int>() // adapter observes this to tell if the last item has been animated already or not
 
     private val _promptDataset = MutableLiveData<MutableList<PromptLine>>(mutableListOf())
     val promptDataset: LiveData<MutableList<PromptLine>>
         get() = _promptDataset
 
-    //observed live data for starting and stopping animations and sound effects
+// observed live data for starting and stopping animations and sound effects
     private val _stopSound = MutableLiveData<Trigger>()
     val stopSound: LiveData<Trigger>
         get() = _stopSound
@@ -55,7 +59,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val startAnimOneAndDone: LiveData<Trigger>
         get() = _startAnimOneAndDone
 
-    //need this to have the fragment schedule work for us
+// need this to have the fragment schedule work for us
     val scheduleNotification = MutableLiveData(false)
 
     lateinit var lastLine: ScriptLine
@@ -135,39 +139,42 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.notifyObserver()
     }
 
-    // callback that displays the next line/prompt when the user taps the chat recycler view
-    fun userTouch(textView: CustomTextView) {
+// callback that displays the next line/prompt when the user taps the chat recycler view
+// textView is the last line that was displayed
+    fun userTouch(textView: CustomTextView?) {
 
-        if (textView.getAnimationStatus()) {
+        if (textView != null) {
 
-            textView.skipAnimation()
-        } else {
-
-            when (lastLine.nextType) {
-                "end" -> {
-                    viewModelScope.launch {
-                        val sequence = userSave.value!!.sequence
-
-                        //if the current sequence is not the last one
-                        if (sequence < 8) {
-                            repository.updateUserSaveData(
-                                UserSave(1, false, sequence + 1, 0)
-                            )
-
-                            repository.clearPromptResult() // clearing the users saved choices
-
-                            //telling the fragment to schedule notification + powerOn work
-                            scheduleNotification.value = true
-                        }
-
-                        //else TODO do something when the user completes the story
-                    }
-                }
-
-                "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
-
-                else -> displayPromptSet(sequence.sets[lastLine.next - 1])
+            if (textView.getAnimationStatus()) { // skipping the animation if it's still running
+                textView.skipAnimation()
+                return
             }
+        }
+
+// displaying the next line/prompt set or ending the sequence
+        when (lastLine.nextType) {
+            "end" -> {
+                viewModelScope.launch {
+                    val sequence = userSave.value!!.sequence
+
+                    if (sequence < 8) { // if the current sequence is not the last one
+                        repository.updateUserSaveData(
+                            UserSave(1, false, sequence + 1, 0)
+                        )
+
+                        repository.clearPromptResult() // clearing the users saved choices
+
+                        // telling the fragment to schedule notification + powerOn work
+                        scheduleNotification.value = true
+                    }
+
+                    // else TODO do something when the user completes the story
+                }
+            }
+
+            "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
+
+            else -> displayPromptSet(sequence.sets[lastLine.next - 1])
         }
     }
 

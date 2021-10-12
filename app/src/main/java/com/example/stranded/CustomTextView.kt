@@ -18,7 +18,7 @@ import believe.cht.fadeintextview.TextViewListener
 class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTextView(context, attributeSet) {
 
     private var start: Long = 0
-    private val letterDuration = 100
+    private val letterDuration = 70
     private var isAnimating = false
     private lateinit var characterSequence: CharSequence
     private lateinit var spannableString: SpannableString

@@ -77,8 +77,7 @@ class MainActivity : AppCompatActivity() {
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
-
-             */
+            */
         }
     }
 

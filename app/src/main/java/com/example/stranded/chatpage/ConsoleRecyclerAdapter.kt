@@ -5,7 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.databinding.ConsoleAdapterItemBinding
 
-class ConsoleRecyclerAdapter(val dataset: MutableList<String>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ConsoleRecyclerAdapter(
+    val dataset: MutableList<String>,
+    val viewModel: ChatPageViewModel
+    ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ConsoleAdapterItemBinding
@@ -16,6 +19,19 @@ class ConsoleRecyclerAdapter(val dataset: MutableList<String>): RecyclerView.Ada
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as ConsoleLineViewHolder
         holder.bind(dataset[position])
+
+// same code as in the ChatRecyclerAdapter look there for explanation
+        if (position != dataset.size - 1) {
+
+            holder.skipAnimation()
+        } else {
+
+            if (viewModel.consoleLastItemAnimated.value == position) {
+                holder.skipAnimation()
+            } else {
+                viewModel.consoleLastItemAnimated.value = position
+            }
+        }
     }
 
     override fun getItemCount(): Int = dataset.size
@@ -25,6 +41,10 @@ class ConsoleRecyclerAdapter(val dataset: MutableList<String>): RecyclerView.Ada
 
             fun bind(text: String) {
                 viewBinding.consoleLine.text = text
+            }
+
+            fun skipAnimation() {
+                viewBinding.consoleLine.skipAnimation()
             }
         }
 }

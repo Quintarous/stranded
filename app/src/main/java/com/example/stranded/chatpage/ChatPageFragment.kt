@@ -79,7 +79,7 @@ class ChatPageFragment: Fragment() {
             it.stackFromEnd = true
         }
 
-        val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf())
+        val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf(), viewModel)
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
         //adding a custom OnItemTouchListener to the chat recycler view
@@ -104,13 +104,14 @@ class ChatPageFragment: Fragment() {
 
                     if (xDelta < 30 && yDelta < 30) {
 
+// grabbing the CustomTextView from the most recent line item and handing it to the ViewModel
                         if (viewModel.lastLine.type == "script") {
 
                             val holder = binding.chatRecycler.findViewHolderForAdapterPosition(
                                     viewModel.chatDataset.value?.size?.minus(1) ?: 0
                                 )
 
-                            val textView = when (holder) {
+                            val textView: CustomTextView? = when (holder) {
 
                                 is ChatRecyclerAdapter.ScriptLineViewHolder -> {
                                     holder.viewBinding.lineText
@@ -121,25 +122,24 @@ class ChatPageFragment: Fragment() {
                                 }
 
                                 else -> {
-                                    throw Exception("chat recycler returned invalid viewHolder in ChatPageFragment")
+                                    null
                                 }
                             }
 
                             viewModel.userTouch(textView)
                         } else {
 
-                            val textView: CustomTextView
+                            val textView: CustomTextView?
 
                             val holder = binding.consoleRecycler.findViewHolderForAdapterPosition(
                                 viewModel.consoleDataset.value?.size?.minus(1) ?: 0
                             )
 
-                            if (holder is ConsoleRecyclerAdapter.ConsoleLineViewHolder) {
-                                textView = holder.viewBinding.consoleLine
+                            textView = if (holder is ConsoleRecyclerAdapter.ConsoleLineViewHolder) {
+                                holder.viewBinding.consoleLine
                             } else {
-                                throw Exception("console recycler returned invalid viewHolder in ChatPageFragment")
+                                null
                             }
-
 
                             viewModel.userTouch(textView)
                         }
@@ -164,7 +164,7 @@ class ChatPageFragment: Fragment() {
             it.stackFromEnd = true
         }
 
-        val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf())
+        val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf(), viewModel)
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
         // viewModel observers go here
