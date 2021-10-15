@@ -68,18 +68,18 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
-        //grabbing the sequence and prompt results from the repository
+        // grabbing the sequence and prompt results from the repository
         viewModelScope.launch {
             //TODO remove this it's for the in memory database to populate
             delay(1000)
             sequence = repository.getSequence(userSave.value?.sequence ?: 1)
             promptResults = repository.getPromptResults().map { it.result }
 
-            //restoring the user to their last save point or just displaying line 1 if they haven't
-            //yet started the sequence
+            // restoring the user to their last save point or just displaying line 1 if they haven't
+            // yet started the sequence
             restoreSave()
 
-            //sorting the sequence triggers into script and prompt trigger lists
+            // sorting the sequence triggers into script and prompt trigger lists
             for (trigger in sequence.triggers) {
                 when (trigger.triggerType) {
                     "script" -> scriptTriggers.add(trigger)
@@ -89,7 +89,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    //function to progress up to the user save point if further than the first script line
+// function to progress up to the user save point if further than the first script line
     fun restoreSave() {
         val userSave = userSave.value!!
 
@@ -98,7 +98,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             return
         }
 
-        //adding all the script lines
+// adding all the script lines
         for (scriptLine in sequence.scriptLines) {
 
 
@@ -108,28 +108,42 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 else -> _chatDataset.value!!.add(scriptLine)
             }
 
-            //if the next script line we would display is greater than the save point break the loop
+// if the next script line we would display is greater than the save point break the loop
             if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
                 lastLine = scriptLine
                 break
             }
 
-            //adding a user response in before the next script line if we need to
+// adding a user response in before the next script line if we need to
             if (scriptLine.nextType == "prompt") {
                 val set: Set = sequence.sets[scriptLine.next - 1]
 
-                //if this is the prompt we need to stop on than simply display the prompt and break
+// if this is the prompt we need to stop on than simply display the prompt and break
                 if (userSave.lineType == "prompt" && set.number == userSave.line) {
                     displayPromptSet(set)
                     break
                 }
 
-                //else throw the saved user response in the chat window and keep on moving
+// else throw the saved user response in the chat window and keep on moving
                 else {
                     val promptLine: PromptLine = set.lines[promptResults[set.number - 1]]
 
-                    _chatDataset.value!!
-                        .add(ScriptLine(0, userSave.sequence, "user", promptLine.line, 0))
+                    val generatedScriptLine = ScriptLine(
+                        0,
+                        userSave.sequence,
+                        "user",
+                        promptLine.line,
+                        promptLine.next,
+                        promptLine.nextType
+                    )
+
+                    _chatDataset.value!!.add(generatedScriptLine)
+
+// stopping the loop if we need to stop on the prompt response
+                    if (userSave.lineType == "response" && set.number == userSave.line) {
+                        lastLine = generatedScriptLine
+                        break
+                    }
                 }
             }
         }
@@ -163,8 +177,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         )
 
                         repository.clearPromptResult() // clearing the users saved choices
-
-                        // telling the fragment to schedule notification + powerOn work
+                        
+// telling the fragment to schedule notification + powerOn work
                         scheduleNotification.value = true
                     }
 
@@ -178,7 +192,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    //callback that displays the next line/prompt when the user taps on a prompt button
+    // callback that displays the next line/prompt when the user taps on a prompt button
     fun promptSelected(index: Int) {
         val promptLine = promptDataset.value!![index] // grabbing the selected prompt
 
@@ -188,7 +202,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.notifyObserver()
 
         // generating a ScriptLine object to display the users dialogue choice
-        displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, 0))
+        displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, promptLine.next, promptLine.nextType))
 
         // checking for any triggers that need to be fired
         for (trigger in promptTriggers) {
@@ -226,13 +240,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        // displaying the next script line or prompt
-        when (promptLine.nextType) {
-            "script" -> displayScriptLine(sequence.scriptLines[promptLine.next - 1])
-            else -> displayPromptSet(sequence.sets[promptLine.next - 1])
-        }
-
-        // updating the PromptResult database table with the users dialogue choice
+// updating the PromptResult database table with the users dialogue choice
         viewModelScope.launch {
             repository.insertPromptResult(index)
         }
@@ -254,7 +262,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        //checking to see if we need to fire any triggers on this script line and firing them if we do
+// checking to see if we need to fire any triggers on this script line and firing them if we do
         for (trigger in scriptTriggers) {
             if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
                 when (trigger.resourceType) {
@@ -289,12 +297,22 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        //updating the user save
+// updating the user save
         viewModelScope.launch {
-            repository.updateUserSaveData(userSave.value!!.apply {
-                this.line = scriptLine.id
-                this.lineType = "script"
-            })
+// if the line being displayed is a user response leave the UserSave.line as the prompt set #
+// and only change the lineType to "response" (to indicate the user ended on a prompt response
+// as opposed to the prompt set itself)
+            if (scriptLine.type == "user") {
+                repository.updateUserSaveData(userSave.value!!.apply {
+                    this.lineType = "response"
+                })
+// else update the user save with the most recent script lines data as normal
+            } else {
+                repository.updateUserSaveData(userSave.value!!.apply {
+                    this.line = scriptLine.id
+                    this.lineType = "script"
+                })
+            }
         }
     }
 
@@ -302,7 +320,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.value = set.lines
         _promptDataset.notifyObserver()
 
-        //updating the user save
+// updating the user save
         viewModelScope.launch {
             repository.updateUserSaveData(userSave.value!!.apply {
                 this.line = set.number

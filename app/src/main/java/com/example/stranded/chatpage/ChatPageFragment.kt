@@ -82,9 +82,9 @@ class ChatPageFragment: Fragment() {
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf(), viewModel)
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
-        //adding a custom OnItemTouchListener to the chat recycler view
-        //this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
-        //it only acts when the motion event action is ACTION_DOWN or ACTION_UP
+// adding a custom OnItemTouchListener to the chat recycler view
+// this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
+// it only acts when the motion event action is ACTION_DOWN or ACTION_UP
         var lastDownTouchx: Float? = null
         var lastDownTouchy: Float? = null
         binding.chatRecycler.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -95,9 +95,9 @@ class ChatPageFragment: Fragment() {
                     lastDownTouchy = motionEvent.y
                 }
 
-                //if the event is "finger up" then get the difference between the locations of the
-                //original finger down and this finger up then only take action if they're close together
-                //this is done to avoid taking action on "swipes" and other gestures
+// if the event is "finger up" then get the difference between the locations of the
+// original finger down and this finger up then only take action if they're close together
+// this is done to avoid taking action on "swipes" and other gestures
                 else if (motionEvent.action == MotionEvent.ACTION_UP && lastDownTouchx != null && lastDownTouchy != null) {
                     val xDelta = abs(lastDownTouchx!! - motionEvent.x)
                     val yDelta = abs(lastDownTouchy!! - motionEvent.y)
@@ -105,7 +105,7 @@ class ChatPageFragment: Fragment() {
                     if (xDelta < 30 && yDelta < 30) {
 
 // grabbing the CustomTextView from the most recent line item and handing it to the ViewModel
-                        if (viewModel.lastLine.type == "script") {
+                        if (viewModel.lastLine.type != "console") {
 
                             val holder = binding.chatRecycler.findViewHolderForAdapterPosition(
                                     viewModel.chatDataset.value?.size?.minus(1) ?: 0
