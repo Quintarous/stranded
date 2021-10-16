@@ -235,26 +235,25 @@ class ChatPageFragment: Fragment() {
             startAnimOneAndDone(trigger.resourceId!!)
         })
 
-        // TODO notifications need to be thoroughly tested
-        //schedules notification work for the view model when a sequence is completed
+// TODO notifications need to be thoroughly tested with real database
+// schedules notification work for the view model when a sequence is completed
         viewModel.scheduleNotification.observe(viewLifecycleOwner, {
             if (it) {
-                //getting the alarmManager instance
+// getting the alarmManager instance
                 val alarmManager =
                     context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                //generating the time for the alarm to go off
+// generating the time for the alarm to go off
                 val calendar = Calendar.getInstance().apply {
                     add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 13))
                 }
 
-                //getting the pending intent
+// getting the pending intent
                 val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
                 val pendingIntent = PendingIntent
                     .getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
-                Log.i("bruh", "alarm scheduled with calendar = ${calendar.time}")
-                //scheduling the alarm
+// scheduling the alarm
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
         })

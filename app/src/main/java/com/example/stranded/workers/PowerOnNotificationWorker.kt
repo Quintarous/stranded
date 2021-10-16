@@ -15,16 +15,8 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        Log.i("bruh", "doWork called")
-        val repository = Repository(context)
 
-        //updating the database
-        // TODO test that this user save database change has the intended effect with a real (not in memory) database
-        val oldUserSave = repository.getUserSave()
-        val newUserSave = oldUserSave.apply { isPowered = true }
-        repository.noSuspendUpdateUserSaveData(newUserSave)
-
-        //firing the notification
+// firing the notification
         val notificationManager =
             ContextCompat.getSystemService(
                 context,
@@ -32,7 +24,15 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
             ) as NotificationManager
 
         notificationManager.sendNotification(context, "--- INTERNAL POWER RECHARGED ---")
-        Log.i("bruh", "notification fired")
+
+        val repository = Repository(context)
+
+// updating the database
+// TODO test that this user save database change has the intended effect with a real (not in memory) database
+        val oldUserSave = repository.getUserSave()
+        val newUserSave = oldUserSave.apply { isPowered = true }
+        repository.noSuspendUpdateUserSaveData(newUserSave)
+
 
         return Result.success()
     }

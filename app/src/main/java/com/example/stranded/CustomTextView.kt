@@ -5,23 +5,31 @@ import android.graphics.Canvas
 import android.text.SpannableString
 import android.text.Spanned
 import android.util.AttributeSet
-import android.util.Log
-import android.view.View
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.text.getSpans
 import androidx.core.view.ViewCompat
-import believe.cht.fadeintextview.TextView
 import believe.cht.fadeintextview.TextViewListener
-class CustomTextView(context: Context, attributeSet: AttributeSet) : AppCompatTextView(context, attributeSet) {
+class CustomTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {
 
     private var start: Long = 0
-    private val letterDuration = 70
+    private var letterDuration: Int
     private var isAnimating = false
     private lateinit var characterSequence: CharSequence
     private lateinit var spannableString: SpannableString
     private var textViewListener: TextViewListener? = null
+
+
+    init {
+// grabbing the attributes from the AttributeSet
+        val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.CustomTextView, 0, 0)
+
+// grabbing the custom value for letterDuration or just setting it to 70 if there is none
+        try {
+            letterDuration = typedArray.getInteger(R.styleable.CustomTextView_letterDuration, 70)
+        } finally {
+            typedArray.recycle()
+        }
+    }
 
 
     override fun setText(text: CharSequence, type: BufferType?) {

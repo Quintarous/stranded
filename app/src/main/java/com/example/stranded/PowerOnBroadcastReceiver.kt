@@ -13,10 +13,8 @@ import javax.inject.Inject
 
 class PowerOnBroadcastReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i("bruh", "broadcast receiver triggered")
 
-        //scheduling the work with work manager
-        val workManager = WorkManager.getInstance(context!!)
+        val workManager = WorkManager.getInstance(context!!) // scheduling the work with work manager
         val workRequest = OneTimeWorkRequestBuilder<PowerOnNotificationWorker>()
 
         workManager.enqueue(workRequest.build())
