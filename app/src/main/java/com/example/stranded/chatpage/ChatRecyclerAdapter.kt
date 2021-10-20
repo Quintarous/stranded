@@ -35,11 +35,10 @@ class ChatRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ScriptLineViewHolder -> {
-                holder.bind(dataset[position].line)
+                holder.bind(dataset[position].line, viewModel)
 
 // auto skipping the animation if the ViewHolder is not the last one in the dataset
                 if (position != dataset.size - 1) {
-
                     holder.skipAnimation()
                 } else {
 
@@ -53,12 +52,19 @@ class ChatRecyclerAdapter(
                 }
             }
 
+// same as above just for the UserLineViewHolder instead
             else -> {
                 holder as UserLineViewHolder
-                holder.bind(dataset[position].line)
+                holder.bind(dataset[position].line, viewModel)
 
                 if (position != dataset.size - 1) {
                     holder.skipAnimation()
+                } else {
+                    if (viewModel.chatLastItemAnimated.value == position) {
+                        holder.skipAnimation()
+                    } else {
+                        viewModel.chatLastItemAnimated.value = position
+                    }
                 }
             }
         }
@@ -79,7 +85,8 @@ class ChatRecyclerAdapter(
     class ScriptLineViewHolder(val viewBinding: ChatAdapterItemBinding)
         : RecyclerView.ViewHolder(viewBinding.root) {
 
-        fun bind(text: String) {
+        fun bind(text: String, viewModel: ChatPageViewModel) {
+            viewBinding.viewModel = viewModel
             viewBinding.lineText.text = text
         }
 
@@ -91,7 +98,8 @@ class ChatRecyclerAdapter(
     class UserLineViewHolder(val viewBinding: ChatAdapterUserItemBinding)
         : RecyclerView.ViewHolder(viewBinding.root) {
 
-        fun bind(text: String) {
+        fun bind(text: String, viewModel: ChatPageViewModel) {
+            viewBinding.viewModel = viewModel
             viewBinding.lineText.text = text
         }
 

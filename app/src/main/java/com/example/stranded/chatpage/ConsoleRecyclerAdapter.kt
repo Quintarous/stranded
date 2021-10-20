@@ -18,7 +18,7 @@ class ConsoleRecyclerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as ConsoleLineViewHolder
-        holder.bind(dataset[position])
+        holder.bind(dataset[position], viewModel)
 
 // same code as in the ChatRecyclerAdapter look there for explanation
         if (position != dataset.size - 1) {
@@ -39,7 +39,8 @@ class ConsoleRecyclerAdapter(
     class ConsoleLineViewHolder(val viewBinding: ConsoleAdapterItemBinding)
         : RecyclerView.ViewHolder(viewBinding.root) {
 
-            fun bind(text: String) {
+            fun bind(text: String, viewModel: ChatPageViewModel) {
+                viewBinding.viewModel = viewModel
                 viewBinding.consoleLine.text = text
             }
 

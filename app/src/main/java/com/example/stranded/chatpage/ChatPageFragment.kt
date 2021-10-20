@@ -15,6 +15,7 @@ import android.widget.ImageView
 import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -32,7 +33,7 @@ import kotlin.random.Random
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
 
-    private val viewModel: ChatPageViewModel by viewModels()
+    private val viewModel: ChatPageViewModel by activityViewModels()
     private var mediaPlayer: MediaPlayer? = null
 
     private lateinit var gMeter: ImageView

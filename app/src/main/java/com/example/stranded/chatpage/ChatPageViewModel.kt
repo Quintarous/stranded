@@ -64,15 +64,34 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     lateinit var lastLine: ScriptLine
 
+    private val _letterDuration = MutableLiveData<Int>()
+    val letterDuration: LiveData<Int>
+        get() = _letterDuration
+
+// function for setting the letterDuration both here and in the database
+    fun setLetterDuration(value: Int) {
+
+        _letterDuration.value = value
+
+        viewModelScope.launch {
+            val newUserSave = repository.userSave.value?.apply {
+                this.letterDuration = value
+            } ?: return@launch
+
+            repository.updateUserSaveData(newUserSave)
+        }
+    }
+
     private val scriptTriggers: MutableList<Trigger> = mutableListOf()
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
     init {
-        // grabbing the sequence and prompt results from the repository
+        // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
-            //TODO remove this it's for the in memory database to populate
+            // TODO remove this it's for the in memory database to populate
             delay(1000)
-            sequence = repository.getSequence(userSave.value?.sequence ?: 1)
+            sequence = repository.getSequence(userSave.value!!.sequence)
+            _letterDuration.value = repository.userSave.value!!.letterDuration
             promptResults = repository.getPromptResults().map { it.result }
 
             // restoring the user to their last save point or just displaying line 1 if they haven't
@@ -173,7 +192,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                     if (sequence < 8) { // if the current sequence is not the last one
                         repository.updateUserSaveData(
-                            UserSave(1, false, sequence + 1, 0)
+                            UserSave(1, false, letterDuration.value!!, sequence + 1, 0)
                         )
 
                         repository.clearPromptResult() // clearing the users saved choices

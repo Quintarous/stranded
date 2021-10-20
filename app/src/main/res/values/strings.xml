@@ -4,4 +4,6 @@
     <string name="about">About</string>
     <string name="power_on">Power On</string>
     <string name="no_power_recharge_in_progress"><![CDATA[<<< NO POWER >>>\n<<< RECHARGE IN PROGRESS >>>]]></string>
+    <string name="letterDurationLabel">Letter Duration (how fast the letters appear)</string>
+    <string name="milliseconds">milliseconds</string>
 </resources>

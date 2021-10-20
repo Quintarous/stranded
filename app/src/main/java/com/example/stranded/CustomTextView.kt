@@ -61,8 +61,10 @@ class CustomTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(
 
         super.setText(spannableString, BufferType.SPANNABLE)
 
-        isAnimating = true
-        start = AnimationUtils.currentAnimationTimeMillis()
+        isAnimating = true // recording that the text animation is running
+
+// recording the animation start time and adding a short delay for aesthetics
+        start = AnimationUtils.currentAnimationTimeMillis() + 400
         ViewCompat.postInvalidateOnAnimation(this)
     }
 
@@ -127,5 +129,9 @@ class CustomTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(
 
     fun setListener(listener: TextViewListener) {
         textViewListener = listener
+    }
+
+    fun setLetterDuration(duration: Int) {
+        letterDuration = duration
     }
 }

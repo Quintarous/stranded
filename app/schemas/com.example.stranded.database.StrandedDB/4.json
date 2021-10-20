@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "679930f8b236f44b9df44920cd56f5c9",
+    "identityHash": "ea2acd79e47ba082d61aa28e1cf435ae",
     "entities": [
       {
         "tableName": "ScriptLine",
@@ -106,7 +106,7 @@
       },
       {
         "tableName": "UserSave",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `isPowered` INTEGER NOT NULL, `sequence` INTEGER NOT NULL, `line` INTEGER NOT NULL, `lineType` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `isPowered` INTEGER NOT NULL, `letterDuration` INTEGER NOT NULL, `sequence` INTEGER NOT NULL, `line` INTEGER NOT NULL, `lineType` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -117,6 +117,12 @@
           {
             "fieldPath": "isPowered",
             "columnName": "isPowered",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "letterDuration",
+            "columnName": "letterDuration",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -240,7 +246,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '679930f8b236f44b9df44920cd56f5c9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea2acd79e47ba082d61aa28e1cf435ae')"
     ]
   }
 }

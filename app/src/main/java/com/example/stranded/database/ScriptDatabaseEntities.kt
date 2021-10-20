@@ -59,6 +59,7 @@ data class UserSave constructor(
     @PrimaryKey
     val id: Int,
     var isPowered: Boolean,
+    var letterDuration: Int = 70,
     var sequence: Int,
     var line: Int,
     var lineType: String = "script",
