@@ -271,6 +271,6 @@ fun getTriggerList3(): List<Trigger> {
         Trigger(0, 3, 106, "script", "animation", R.drawable.g_walk_animation, true),
         Trigger(0, 3, 108, "script", "animation", null),
 
-        //Trigger(0, 3, 0, "", "", 0),
+        // Trigger(0, 3, 0, "", "", 0),
     )
 }

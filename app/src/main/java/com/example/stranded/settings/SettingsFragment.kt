@@ -38,6 +38,7 @@ class SettingsFragment: Fragment() {
 
         binding.viewModel = viewModel
 
+// telling the viewModel to deal with the new letterDuration value when the user changes it
         binding.letterDurationEditText.addTextChangedListener { text ->
 
             if (text.toString() != "") {

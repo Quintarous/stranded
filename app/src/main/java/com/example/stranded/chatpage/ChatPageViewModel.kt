@@ -11,6 +11,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO get prompt selected to not automatically play the next script line
+// TODO restore save doesn't play sound effects
+// TODO fix rain1 looping to make it seamless
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -88,7 +90,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
-            // TODO remove this it's for the in memory database to populate
+            // TODO remove this delay it's for the in memory database to populate
             delay(1000)
             sequence = repository.getSequence(userSave.value!!.sequence)
             _letterDuration.value = repository.userSave.value!!.letterDuration
