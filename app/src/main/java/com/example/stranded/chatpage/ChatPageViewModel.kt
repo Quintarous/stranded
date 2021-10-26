@@ -10,9 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO get prompt selected to not automatically play the next script line
-// TODO restore save doesn't play sound effects
-// TODO fix rain1 looping to make it seamless
+// TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
+// TODO check all triggers and if there are any prompt ones test them and update restore save's trigger firing code (when db is 100% done)
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -96,10 +95,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             _letterDuration.value = repository.userSave.value!!.letterDuration
             promptResults = repository.getPromptResults().map { it.result }
 
-            // restoring the user to their last save point or just displaying line 1 if they haven't
-            // yet started the sequence
-            restoreSave()
-
             // sorting the sequence triggers into script and prompt trigger lists
             for (trigger in sequence.triggers) {
                 when (trigger.triggerType) {
@@ -107,13 +102,18 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     else -> promptTriggers.add(trigger)
                 }
             }
+
+            // restoring the user to their last save point or just displaying line 1 if they haven't
+            // yet started the sequence
+            restoreSave()
         }
     }
 
 // function to progress up to the user save point if further than the first script line
     fun restoreSave() {
-        val userSave = userSave.value!!
+        val userSave = userSave.value!! // grabbing the userSave from the db
 
+// if we don't need to progress past the first line just display it and return
         if (userSave.line <= 1) {
             displayScriptLine(sequence.scriptLines[0])
             return
@@ -121,15 +121,30 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // adding all the script lines
         for (scriptLine in sequence.scriptLines) {
+            //Log.i("bruh", "${scriptTriggers}")
+// look for triggers that need to be fired. only looping and stop command triggers are fired
+// everything else is ignored
+            for (trigger in scriptTriggers) {
 
+                if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
 
-            when (scriptLine.type) {
+                    if (trigger.loop) fireTrigger(trigger) // fire if trigger is a looping one
+
+                    else {
+                        if (trigger.resourceId == null) {
+                            fireTrigger(trigger) // or fire if trigger is a stop command
+                        }
+                    }
+                }
+            }
+
+            when (scriptLine.type) { // adding ScriptLines to their respective recycler views
                 "console" -> _consoleDataset.value!!.add(scriptLine.line)
 
                 else -> _chatDataset.value!!.add(scriptLine)
             }
 
-// if the next script line we would display is greater than the save point break the loop
+// if this script line is the save point break the loop
             if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
                 lastLine = scriptLine
                 break
@@ -229,35 +244,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         for (trigger in promptTriggers) {
             //TODO find an equivalent way to do this like with the script line version or remove the ability to fire triggers on prompts
             if (trigger.triggerId == promptLine.id) {
-                when (trigger.resourceType) {
-                    "sound" -> {
-                        if (trigger.resourceId == null) {
-                            _stopSound.value = trigger
-                        }
-                        else {
-                            if (trigger.oneAndDone) {
-                                _startSoundOneAndDone.value = trigger
-                            }
-                            else {
-                                _startSound.value = trigger
-                            }
-                        }
-                    }
-
-                    "animation" -> {
-                        if (trigger.resourceId == null) {
-                            _stopAnim.value = trigger
-                        }
-                        else {
-                            if (trigger.oneAndDone) {
-                                _startAnimOneAndDone.value = trigger
-                            }
-                            else {
-                                _startAnim.value = trigger
-                            }
-                        }
-                    }
-                }
+                fireTrigger(trigger)
             }
         }
 
@@ -286,35 +273,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 // checking to see if we need to fire any triggers on this script line and firing them if we do
         for (trigger in scriptTriggers) {
             if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
-                when (trigger.resourceType) {
-                    "sound" -> {
-                        if (trigger.resourceId == null) {
-                            _stopSound.value = trigger
-                        }
-                        else {
-                            if (trigger.oneAndDone) {
-                                _startSoundOneAndDone.value = trigger
-                            }
-                            else {
-                                _startSound.value = trigger
-                            }
-                        }
-                    }
-
-                    "animation" -> {
-                        if (trigger.resourceId == null) {
-                            _stopAnim.value = trigger
-                        }
-                        else {
-                            if (trigger.oneAndDone) {
-                                _startAnimOneAndDone.value = trigger
-                            }
-                            else {
-                                _startAnim.value = trigger
-                            }
-                        }
-                    }
-                }
+                fireTrigger(trigger)
             }
         }
 
@@ -333,6 +292,38 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     this.line = scriptLine.id
                     this.lineType = "script"
                 })
+            }
+        }
+    }
+
+    private fun fireTrigger(trigger: Trigger) {
+        when (trigger.resourceType) {
+            "sound" -> {
+                if (trigger.resourceId == null) {
+                    _stopSound.value = trigger
+                }
+                else {
+                    if (trigger.oneAndDone) {
+                        _startSoundOneAndDone.value = trigger
+                    }
+                    else {
+                        _startSound.value = trigger
+                    }
+                }
+            }
+
+            "animation" -> {
+                if (trigger.resourceId == null) {
+                    _stopAnim.value = trigger
+                }
+                else {
+                    if (trigger.oneAndDone) {
+                        _startAnimOneAndDone.value = trigger
+                    }
+                    else {
+                        _startAnim.value = trigger
+                    }
+                }
             }
         }
     }

@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
 
-
+///*
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
-
+//*/
         }
     }
 
