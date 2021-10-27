@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             // ending test spot is sequence 1 line 80
             // first prompt test spot is sequence 1 line 23
-            val testSaveData = UserSave(1, true, 70, 4, 404, "script")
+            val testSaveData = UserSave(1, true, 70, 5, 469, "script")
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
+            /*
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
-//*/
+*/
         }
     }
 

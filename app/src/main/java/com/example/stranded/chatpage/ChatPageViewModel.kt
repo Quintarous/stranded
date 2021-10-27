@@ -114,6 +114,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         val userSave = userSave.value!! // grabbing the userSave from the db
 
 // if we don't need to progress past the first line just display it and return
+// TODO userSave.line uses absolute id's of lines this only works on the first sequence
         if (userSave.line <= 1) {
             displayScriptLine(sequence.scriptLines[0])
             return
@@ -121,7 +122,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // adding all the script lines
         for (scriptLine in sequence.scriptLines) {
-            //Log.i("bruh", "${scriptTriggers}")
+
 // look for triggers that need to be fired. only looping and stop command triggers are fired
 // everything else is ignored
             for (trigger in scriptTriggers) {
