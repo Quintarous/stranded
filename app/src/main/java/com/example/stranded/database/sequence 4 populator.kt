@@ -247,20 +247,20 @@ fun getPromptLineList4(): List<PromptLine> {
         PromptLine(0, 4, 24, "I don't know if that's gonna do anything!", 93),
 
         //set 25
-        PromptLine(0, 4, 25, "send(ccw_rotation_command)", 100),
-        PromptLine(0, 4, 25, "send(cw_rotation_command)", 104),
-        PromptLine(0, 4, 25, "directConnect(50volts)", 96),
+        PromptLine(0, 4, 25, "send(CCW_ROTATION_CMD)", 100),
+        PromptLine(0, 4, 25, "send(CW_ROTATION_CMD)", 104),
+        PromptLine(0, 4, 25, "directConnect(50VOLTS)", 96),
 
         //set 26
-        PromptLine(0, 4, 26, "send(cw_rotation_command)", 102),
-        PromptLine(0, 4, 26, "directConnect(50volts)", 96),
+        PromptLine(0, 4, 26, "send(CW_ROTATION_CMD)", 102),
+        PromptLine(0, 4, 26, "directConnect(50VOLTS)", 96),
 
         //set 27
-        PromptLine(0, 4, 27, "directConnect(50volts)", 96),
+        PromptLine(0, 4, 27, "directConnect(50VOLTS)", 96),
 
         //set 28
-        PromptLine(0, 4, 28, "send(ccw_rotation_command)", 106),
-        PromptLine(0, 4, 28, "directConnect(50volts)", 96),
+        PromptLine(0, 4, 28, "send(CCW_ROTATION_CMD)", 106),
+        PromptLine(0, 4, 28, "directConnect(50VOLTS)", 96),
 
         // PromptLine(0, 4, 0, "", 0),
     )

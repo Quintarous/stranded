@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+//TODO sequence 6 still needs to be tested (mostly it's the triggers being dumb)
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
 // TODO check all triggers and if there are any prompt ones test them and update restore save's trigger firing code (when db is 100% done)
 @HiltViewModel
