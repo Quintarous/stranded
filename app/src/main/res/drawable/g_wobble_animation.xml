@@ -39,17 +39,4 @@
     <item android:drawable="@drawable/g_wobble11" android:duration="100" />
     <item android:drawable="@drawable/g_wobble12" android:duration="100" />
     <item android:drawable="@drawable/g_wobble13" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble1" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble2" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble3" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble4" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble5" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble6" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble7" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble8" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble9" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble10" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble11" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble12" android:duration="100" />
-    <item android:drawable="@drawable/g_wobble13" android:duration="100" />
 </animation-list>

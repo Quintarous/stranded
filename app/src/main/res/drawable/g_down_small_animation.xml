@@ -4,4 +4,32 @@
     <item android:drawable="@drawable/g_down_small2" android:duration="100" />
     <item android:drawable="@drawable/g_down_small3" android:duration="100" />
     <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small1" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small2" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small3" android:duration="100" />
+    <item android:drawable="@drawable/g_down_small4" android:duration="100" />
 </animation-list>
