@@ -5,9 +5,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/stranded_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/stranded_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Stranded">
         <activity android:name=".MainActivity" android:screenOrientation="portrait">

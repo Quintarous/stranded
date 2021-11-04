@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
-// TODO check all triggers and if there are any prompt ones test them and update restore save's trigger firing code (when db is 100% done)
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -72,8 +71,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 // function for setting the letterDuration both here and in the database
     fun setLetterDuration(value: Int) {
 
-        _letterDuration.value = value
+        _letterDuration.value = value // setting the new value
 
+        // updating the user save so their preference is saved
         viewModelScope.launch {
             val newUserSave = repository.userSave.value?.apply {
                 this.letterDuration = value
