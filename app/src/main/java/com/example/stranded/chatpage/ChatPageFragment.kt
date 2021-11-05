@@ -27,6 +27,7 @@ import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageNewBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -48,6 +49,7 @@ class ChatPageFragment: Fragment() {
 
         //startup navigation logic
         viewModel.userSave.observe(viewLifecycleOwner, Observer { userSave ->
+
             if (userSave != null) {
                 if (userSave.isPowered) {
                     if (userSave.line == 0)

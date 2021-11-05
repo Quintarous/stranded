@@ -2,14 +2,11 @@ package com.example.stranded.workers
 
 import android.app.NotificationManager
 import android.content.Context
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.stranded.Repository
-import com.example.stranded.database.UserSave
 import com.example.stranded.sendNotification
-import javax.inject.Inject
 
 class PowerOnNotificationWorker (private val context: Context, workerParams: WorkerParameters):
     Worker(context, workerParams) {
@@ -29,7 +26,7 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
 
 // updating the database
 // TODO test that this user save database change has the intended effect with a real (not in memory) database
-        val oldUserSave = repository.getUserSave()
+        val oldUserSave = repository.getUserSaveBlocking()
         val newUserSave = oldUserSave.apply { isPowered = true }
         repository.noSuspendUpdateUserSaveData(newUserSave)
 

@@ -12,9 +12,12 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
     private val db: StrandedDB = getDatabase(context)
     private val dao: StrandedDao = db.getDao()
 
+    // live data provider of the user save data
     val userSave: LiveData<UserSave> = dao.getLiveDataUserSave()
-    //this is a synchronous blocking method for the PowerOnNotificationWorker
-    fun getUserSave(): UserSave = dao.getUserSave()
+    // asynchronous non blocking method
+    suspend fun getUserSave(): UserSave = dao.getUserSave()
+    // synchronous blocking method for the PowerOnNotificationWorker
+    fun getUserSaveBlocking(): UserSave = dao.getUserSaveBlocking()
 
     suspend fun getSequence(sequence: Int): Sequence {
         val scriptLines = dao.getScriptLines(sequence)
@@ -1902,7 +1905,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
     fun getTriggerList1(): List<Trigger> {
         return mutableListOf(
-            Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation, loop=false),
+            Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation),
+            Trigger(0, 1, 26, "script", "animation", null),
             Trigger(0, 1, 56, "script", "animation", R.drawable.g_walk_animation, true),
 
 

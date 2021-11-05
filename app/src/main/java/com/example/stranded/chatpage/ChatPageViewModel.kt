@@ -1,13 +1,11 @@
 package com.example.stranded.chatpage
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.stranded.CustomTextView
 import com.example.stranded.Repository
 import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
@@ -68,6 +66,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val letterDuration: LiveData<Int>
         get() = _letterDuration
 
+
 // function for setting the letterDuration both here and in the database
     fun setLetterDuration(value: Int) {
 
@@ -75,7 +74,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
         // updating the user save so their preference is saved
         viewModelScope.launch {
-            val newUserSave = repository.userSave.value?.apply {
+            val newUserSave = repository.getUserSave().apply {
                 this.letterDuration = value
             } ?: return@launch
 
@@ -89,10 +88,10 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
-            // TODO remove this delay it's for the in memory database to populate
-            delay(1000)
-            sequence = repository.getSequence(userSave.value!!.sequence)
-            _letterDuration.value = repository.userSave.value!!.letterDuration
+            val userSave = repository.getUserSave()
+
+            sequence = repository.getSequence(userSave.sequence)
+            _letterDuration.value = userSave.letterDuration
             promptResults = repository.getPromptResults().map { it.result }
 
             // sorting the sequence triggers into script and prompt trigger lists
@@ -110,8 +109,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
 // function to progress up to the user save point if further than the first script line
-    fun restoreSave() {
-        val userSave = userSave.value!! // grabbing the userSave from the db
+    suspend fun restoreSave() {
+        val userSave = repository.getUserSave() // grabbing the userSave from the repository
 
 // if we don't need to progress past the first line just display it and return
 // TODO userSave.line uses absolute id's of lines this only works on the first sequence
@@ -206,7 +205,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         when (lastLine.nextType) {
             "end" -> {
                 viewModelScope.launch {
-                    val sequence = userSave.value!!.sequence
+                    val sequence = repository.getUserSave().sequence
 
                     if (sequence < 8) { // if the current sequence is not the last one
                         repository.updateUserSaveData(
@@ -239,7 +238,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _promptDataset.notifyObserver()
 
         // generating a ScriptLine object to display the users dialogue choice
-        displayScriptLine(ScriptLine(0, userSave.value!!.sequence, "user", promptLine.line, promptLine.next, promptLine.nextType))
+        // TODO test if putting in 0 for the sequence breaks anything
+        displayScriptLine(ScriptLine(0, 0, "user", promptLine.line, promptLine.next, promptLine.nextType))
 
         // checking for any triggers that need to be fired
         for (trigger in promptTriggers) {
@@ -283,13 +283,15 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 // if the line being displayed is a user response leave the UserSave.line as the prompt set #
 // and only change the lineType to "response" (to indicate the user ended on a prompt response
 // as opposed to the prompt set itself)
+            val userSave = repository.getUserSave()
+
             if (scriptLine.type == "user") {
-                repository.updateUserSaveData(userSave.value!!.apply {
+                repository.updateUserSaveData(userSave.apply {
                     this.lineType = "response"
                 })
 // else update the user save with the most recent script lines data as normal
             } else {
-                repository.updateUserSaveData(userSave.value!!.apply {
+                repository.updateUserSaveData(userSave.apply {
                     this.line = scriptLine.id
                     this.lineType = "script"
                 })
@@ -335,7 +337,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // updating the user save
         viewModelScope.launch {
-            repository.updateUserSaveData(userSave.value!!.apply {
+            val userSave = repository.getUserSave()
+
+            repository.updateUserSaveData(userSave.apply {
                 this.line = set.number
                 this.lineType = "prompt"
             })
