@@ -192,7 +192,7 @@ class ChatPageFragment: Fragment() {
             }
         })
 
-        //same as chat recycler dataset above^^^
+        // same as chat recycler dataset above^^^
         viewModel.consoleDataset.observe(viewLifecycleOwner, { stringList ->
             val dataset = consoleRecyclerAdapter.dataset
 

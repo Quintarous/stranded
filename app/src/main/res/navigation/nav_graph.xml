@@ -6,8 +6,7 @@
 
     <fragment
         android:id="@+id/chatPageFragment"
-        android:name="com.example.stranded.chatpage.ChatPageFragment"
-        android:label="ChatPageFragment" >
+        android:name="com.example.stranded.chatpage.ChatPageFragment">
         <action
             android:id="@+id/action_chatPageFragment_to_nav_graph_power_on"
             app:destination="@id/nav_graph_power_on" />
@@ -18,8 +17,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.stranded.settings.SettingsFragment"
-        android:label="SettingsFragment" >
+        android:name="com.example.stranded.settings.SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_to_chatPageFragment"
             app:destination="@id/chatPageFragment" />
@@ -29,8 +27,7 @@
         app:startDestination="@id/powerOnFragment">
         <fragment
             android:id="@+id/powerOnFragment"
-            android:name="com.example.stranded.startup.PowerOnFragment"
-            android:label="PowerOnFragment">
+            android:name="com.example.stranded.startup.PowerOnFragment">
             <action
                 android:id="@+id/action_powerOnFragment_to_nav_graph"
                 app:destination="@id/nav_graph"
@@ -44,8 +41,7 @@
         app:startDestination="@id/noPowerFragment">
         <fragment
             android:id="@+id/noPowerFragment"
-            android:name="com.example.stranded.startup.NoPowerFragment"
-            android:label="NoPowerFragment" />
+            android:name="com.example.stranded.startup.NoPowerFragment" />
         <action
             android:id="@+id/action_noPowerFragment_to_powerOnFragment"
             app:destination="@id/nav_graph_power_on" />

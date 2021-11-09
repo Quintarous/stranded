@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toolbar
+import androidx.appcompat.app.ActionBar.DISPLAY_SHOW_HOME
+import androidx.appcompat.app.ActionBar.DISPLAY_USE_LOGO
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -30,8 +33,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val repository = Repository(this)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -46,8 +47,13 @@ class MainActivity : AppCompatActivity() {
             drawerLayout
         )
 
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+
+// removing the app title from the appbar and adding a background to it
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setBackgroundDrawable(AppCompatResources.getDrawable(this, R.drawable.stranded_appbar_background))
 
         //creating and registering the notification channel
         createChannel(this, "main", "Main Channel")

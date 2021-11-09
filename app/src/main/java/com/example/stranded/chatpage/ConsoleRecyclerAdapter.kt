@@ -1,8 +1,11 @@
 package com.example.stranded.chatpage
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import com.example.stranded.R
 import com.example.stranded.databinding.ConsoleAdapterItemBinding
 
 class ConsoleRecyclerAdapter(
