@@ -378,26 +378,26 @@ fun getPromptLineList(): List<PromptLine> {
 
 fun getTriggerList(): List<Trigger> {
     return listOf(
-        Trigger(0, 6, 27, "script", "animation", R.drawable.g_walk_animation, true),
+        Trigger(0, 6, 27, "script", "animation", "g_walk", true),
         Trigger(0, 6, 31, "script", "animation", null),
-        Trigger(0, 6, 37, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 6, 38, "script", "animation", R.drawable.g_down_small_animation, oneAndDone = true),
+        Trigger(0, 6, 37, "script", "animation", "g_walk", true),
+        Trigger(0, 6, 38, "script", "animation", "g_down_small", oneAndDone = true),
         Trigger(0, 6, 39, "script", "animation", null),
-        Trigger(0, 6, 48, "script", "animation", R.drawable.g_down_small_animation, true),
-        Trigger(0, 6, 51, "script", "sound", R.raw.abandoned_warehouse, true),
-        Trigger(0, 6, 59, "script", "animation", R.drawable.g_wobble_animation),
+        Trigger(0, 6, 48, "script", "animation", "g_down_small", true),
+        Trigger(0, 6, 51, "script", "sound", "abandoned_warehouse", true),
+        Trigger(0, 6, 59, "script", "animation", "g_wobble"),
         Trigger(0, 6, 60, "script", "animation", null),
-        Trigger(0, 6, 65, "script", "animation", R.drawable.g_meter_up_animation),
+        Trigger(0, 6, 65, "script", "animation", "g_up"),
         Trigger(0, 6, 66, "script", "animation", null),
-        Trigger(0, 6, 79, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 6, 93, "script", "animation", R.drawable.g_meter_up_animation, true),
+        Trigger(0, 6, 79, "script", "animation", "g_walk", true),
+        Trigger(0, 6, 93, "script", "animation", "g_up", true),
         Trigger(0, 6, 95, "script", "animation", null),
-        Trigger(0, 6, 102, "script", "animation", R.drawable.g_walk_animation, true),
+        Trigger(0, 6, 102, "script", "animation", "g_walk", true),
         Trigger(0, 6, 107, "script", "animation", null),
-        Trigger(0, 6, 116, "script", "animation", R.drawable.g_down_small_animation, true),
+        Trigger(0, 6, 116, "script", "animation", "g_down_small", true),
         Trigger(0, 6, 128, "script", "animation", null),
-        Trigger(0, 6, 129, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 6, 135, "script", "animation", R.drawable.g_run_animation, true)
+        Trigger(0, 6, 129, "script", "animation", "g_walk", true),
+        Trigger(0, 6, 135, "script", "animation", "g_run", true)
 
         // Trigger(0, 6, 0, "script", "animation", 0),
     )

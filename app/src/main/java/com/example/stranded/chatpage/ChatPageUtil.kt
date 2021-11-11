@@ -1,5 +1,6 @@
 package com.example.stranded.chatpage
 
+import com.example.stranded.R
 import com.example.stranded.database.PromptLine
 import com.example.stranded.database.ScriptLine
 import com.example.stranded.database.Trigger
@@ -46,7 +47,7 @@ fun placeholderPromptLine(id: Int, set: Int): PromptLine {
     )
 }
 
-//returns a placeholder Set object for testing purposes
+// returns a placeholder Set object for testing purposes
 fun placeholderSet(id: Int): Set {
     val linesList = mutableListOf(
         placeholderPromptLine(1, id),
@@ -54,4 +55,24 @@ fun placeholderSet(id: Int): Set {
     )
 
     return Set(id, linesList)
+}
+
+fun getResourceId(name: String): Int {
+
+    return when (name) {
+        "g_up" -> R.drawable.g_meter_up_animation
+        "g_walk" -> R.drawable.g_walk_animation
+        "g_down" -> R.drawable.g_meter_down_animation
+        "g_down_small" -> R.drawable.g_down_small_animation
+        "g_run" -> R.drawable.g_run_animation
+        "g_wobble" -> R.drawable.g_wobble_animation
+
+        "fire_birds" -> R.raw.fire_birds
+        "waves" -> R.raw.waves
+        "river" -> R.raw.river
+        "rain_window" -> R.raw.rain_window
+        "rain" -> R.raw.rain
+        "abandoned_warehouse" -> R.raw.abandoned_warehouse_trim
+        else -> R.raw.mattia_cupelli_youll_believe
+    }
 }

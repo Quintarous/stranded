@@ -258,17 +258,17 @@ fun getPromptLineList3(): List<PromptLine> {
 
 fun getTriggerList3(): List<Trigger> {
     return listOf(
-        Trigger(0, 3, 9, "script", "sound", R.raw.waves, true),
-        Trigger(0, 3, 9, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 3, 51, "script", "sound", R.raw.river, true),
-        Trigger(0, 3, 60, "script", "animation", R.drawable.g_meter_down_animation, true),
+        Trigger(0, 3, 9, "script", "sound", "waves", true),
+        Trigger(0, 3, 9, "script", "animation", "g_walk", true),
+        Trigger(0, 3, 51, "script", "sound", "river", true),
+        Trigger(0, 3, 60, "script", "animation", "g_down", true),
         Trigger(0, 3, 63, "script", "animation", null),
-        Trigger(0, 3, 68, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 3, 68, "script", "sound", R.raw.rain_window, true),
+        Trigger(0, 3, 68, "script", "animation", "g_walk", true),
+        Trigger(0, 3, 68, "script", "sound", "rain_window", true),
         Trigger(0, 3, 79, "script", "animation", null),
-        Trigger(0, 3, 94, "script", "animation", R.drawable.g_down_small_animation, true),
-        Trigger(0, 3, 99, "script", "animation", R.drawable.g_down_small_animation, true),
-        Trigger(0, 3, 106, "script", "animation", R.drawable.g_walk_animation, true),
+        Trigger(0, 3, 94, "script", "animation", "g_down_small", true),
+        Trigger(0, 3, 99, "script", "animation", "g_down_small", true),
+        Trigger(0, 3, 106, "script", "animation", "g_walk", true),
         Trigger(0, 3, 108, "script", "animation", null),
 
         // Trigger(0, 3, 0, "", "", 0),

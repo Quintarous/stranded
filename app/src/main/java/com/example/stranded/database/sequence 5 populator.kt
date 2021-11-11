@@ -235,8 +235,8 @@ fun getPromptLineList5(): List<PromptLine> {
 
 fun getTriggerList5(): List<Trigger> {
     return listOf(
-        Trigger(0, 5, 34, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 5, 71, "script", "animation", R.drawable.g_run_animation, true)
+        Trigger(0, 5, 34, "script", "animation", "g_walk", true),
+        Trigger(0, 5, 71, "script", "animation", "g_run", true)
 
         // Trigger(0, 5, 0, "", "", 0),
     )

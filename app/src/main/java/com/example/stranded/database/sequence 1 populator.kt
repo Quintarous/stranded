@@ -85,7 +85,7 @@ fun getScriptLineList1(): List<ScriptLine> {
         ScriptLine(0, 1, "script", "I like your enthusiasm.", 55),
 
         //55-63
-        ScriptLine(0, 1, "console", "--- MOTION DETECTED ---", 56),
+        ScriptLine(0, 1, "console", "---MOTION DETECTED---", 56),
         ScriptLine(0, 1, "script", "I'm stuffing you in my backpack by the way. Since your missing most of your sensors I figured you'd like to know.", 57),
         ScriptLine(0, 1, "script", "...", 58),
         ScriptLine(0, 1, "script", "...", 59),
@@ -184,8 +184,8 @@ fun getPromptLineList1(): List<PromptLine> {
 
 fun getTriggerList1(): List<Trigger> {
     return listOf(
-        Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation),
+        Trigger(0, 1, 24, "script", "animation", "g_up"),
         Trigger(0, 1, 26, "script", "animation", null),
-        Trigger(0, 1, 56, "script", "animation", R.drawable.g_walk_animation, true)
+        Trigger(0, 1, 56, "script", "animation", "g_walk", true)
     )
 }

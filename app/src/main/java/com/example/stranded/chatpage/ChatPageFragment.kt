@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -216,27 +217,33 @@ class ChatPageFragment: Fragment() {
             promptRecyclerAdapter.notifyDataSetChanged()
         })
 
-        //observers for starting and stopping sound effects
+
+// observers for starting and stopping sound effects
         viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
 
         viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
-            startSound(trigger.resourceId!!, trigger.loop)
+            val resourceId = getResourceId(trigger.resourceId!!)
+            startSound(resourceId, trigger.loop)
         })
 
         viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            startSoundOneAndDone(trigger.resourceId!!)
+            val resourceId = getResourceId(trigger.resourceId!!)
+            startSoundOneAndDone(resourceId)
         })
 
-        //observers for starting and stopping animations
+// observers for starting and stopping animations
         viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
 
         viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            startAnim(trigger.resourceId!!, trigger.loop)
+            val resourceId = getResourceId(trigger.resourceId!!)
+            startAnim(resourceId, trigger.loop)
         })
 
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            startAnimOneAndDone(trigger.resourceId!!)
+            val resourceId = getResourceId(trigger.resourceId!!)
+            startAnimOneAndDone(resourceId)
         })
+
 
 // TODO notifications need to be thoroughly tested with real database
 // schedules notification work for the view model when a sequence is completed
@@ -276,7 +283,10 @@ class ChatPageFragment: Fragment() {
         if (viewModel.startSound.value != null) {
             val trigger = viewModel.startSound.value!!
 
-            if(trigger.resourceId != null) startMediaPlayback(trigger.resourceId, trigger.loop)
+            if(trigger.resourceId != null) {
+                val resourceId = getResourceId(trigger.resourceId)
+                startMediaPlayback(resourceId, trigger.loop)
+            }
         }
         super.onStart()
     }
@@ -305,7 +315,8 @@ class ChatPageFragment: Fragment() {
         startMediaPlayback(sound, false)
 
         mediaPlayer?.setOnCompletionListener {
-            startMediaPlayback(lastSoundTrigger.resourceId!!, lastSoundTrigger.loop)
+            val resourceId = getResourceId(lastSoundTrigger.resourceId!!)
+            startMediaPlayback(resourceId, lastSoundTrigger.loop)
         }
     }
 
@@ -328,7 +339,8 @@ class ChatPageFragment: Fragment() {
         gMeterAnimation.onAnimationFinished {
 
             if (lastAnimTrigger != null){
-                startAnimation(lastAnimTrigger.resourceId!!, lastAnimTrigger.loop!!)
+                val resourceId = getResourceId(lastAnimTrigger.resourceId!!)
+                startAnimation(resourceId, lastAnimTrigger.loop)
             } else { stopAnim() }
         }
     }
@@ -342,7 +354,7 @@ class ChatPageFragment: Fragment() {
         super.onStop()
     }
 
-    //functions for starting new sound effects and animations
+// functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
         Log.i("bruh", "startMediaPlayback() called")
         mediaPlayer = MediaPlayer.create(context, resource)
@@ -351,8 +363,13 @@ class ChatPageFragment: Fragment() {
     }
 
     private fun startAnimation(animation: Int, isLooping: Boolean) {
-        gMeter.setBackgroundResource(animation)
-        gMeterAnimation = gMeter.background as AnimationDrawable
+        Log.i("bruh", "$animation") // 2131230870
+        Log.i("bruh", "g_walk: ${R.drawable.g_meter_up_animation}") // 2131230838
+        gMeter.apply {
+            setBackgroundResource(animation)
+            gMeterAnimation = background as AnimationDrawable
+        }
+
         gMeterAnimation.isOneShot = !isLooping
 
         gMeterAnimation.start()

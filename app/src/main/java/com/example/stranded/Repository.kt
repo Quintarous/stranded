@@ -169,7 +169,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 1, "script", "I like your enthusiasm.", 55),
 
             //55-63
-            ScriptLine(0, 1, "console", "--- MOTION DETECTED ---", 56),
+            ScriptLine(0, 1, "console", "---MOTION DETECTED---", 56),
             ScriptLine(0, 1, "script", "I'm stuffing you in my backpack by the way. Since your missing most of your sensors I figured you'd like to know.", 57),
             ScriptLine(0, 1, "script", "...", 58),
             ScriptLine(0, 1, "script", "...", 59),
@@ -183,8 +183,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 1, "script", "Oh! Sorry I'm just talking to myself.", 65),
             ScriptLine(0, 1, "script", "Wait why am I apologizing to an AI?", 66),
             ScriptLine(0, 1, "script", "...", 67),
-            ScriptLine(0, 1, "console", "--- INTERNAL POWER LOW ---", 68),
-            ScriptLine(0, 1, "console", "--- BATTERY MODULE NOT DETECTED ---", 14, "prompt"),
+            ScriptLine(0, 1, "console", "---INTERNAL POWER LOW---", 68),
+            ScriptLine(0, 1, "console", "---BATTERY MODULE NOT DETECTED---", 14, "prompt"),
 
             //69
             ScriptLine(0, 1, "script", "Doesn't surprise me.", 15, "prompt"),
@@ -198,26 +198,26 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
             //75-81
             ScriptLine(0, 1, "script", "Hey I'm not your mom. What do you want a kiss goodnight or something?", 76),
-            ScriptLine(0, 1, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 77),
-            ScriptLine(0, 1, "console", "--- INITIATING SHUTDOWN ---", 78),
+            ScriptLine(0, 1, "console", "---INTERNAL POWER CRITICALLY LOW---", 77),
+            ScriptLine(0, 1, "console", "---INITIATING SHUTDOWN---", 78),
             ScriptLine(0, 1, "script", "Hello you still there?", 79),
-            ScriptLine(0, 1, "console", "--- SHUTDOWN IN PROGRESS ---", 80),
+            ScriptLine(0, 1, "console", "---SHUTDOWN IN PROGRESS---", 80),
             ScriptLine(0, 1, "script", "Ah they're dead... or asleep you never know.", 81),
-            ScriptLine(0, 1, "console", "--- SHUTTING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 1, "console", "---SHUTTING POWER GATE---", 0, "end"),
 
 
             // SEQUENCE 2
 
 
             //1-11
-            ScriptLine(0, 2, "console", "--- BOOT PROCESS INITIATING ---", 2),
-            ScriptLine(0, 2, "console", "--- BOOT SEQUENCE FAILURE ---", 3),
+            ScriptLine(0, 2, "console", "---BOOT PROCESS INITIATING---", 2),
+            ScriptLine(0, 2, "console", "---BOOT SEQUENCE FAILURE---", 3),
             ScriptLine(0, 2, "console", "---PARTS RETURNED NULL---", 4),
             ScriptLine(0, 2, "console", "ANLR1437_long_term_memory_module", 5),
             ScriptLine(0, 2, "console", "TAISHI943211_optical_sensor_module", 6),
             ScriptLine(0, 2, "console", "VERITECH88_high_capacity_battery_module", 7),
-            ScriptLine(0, 2, "console", "--- REBOOTING IN SAFE MODE ---", 8),
-            ScriptLine(0, 2, "console", "--- BOOT SEQUENCE SUCCESSFUL ---", 9),
+            ScriptLine(0, 2, "console", "---REBOOTING IN SAFE MODE---", 8),
+            ScriptLine(0, 2, "console", "---BOOT SEQUENCE SUCCESSFUL---", 9),
             ScriptLine(0, 2, "script", "Come on... turn on you son of a-", 10),
             ScriptLine(0, 2, "script", "YES!", 11),
             ScriptLine(0, 2, "script", "Ladies and gentlemen... we have power!", 1, "prompt"),
@@ -317,8 +317,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             //66-69
             ScriptLine(0, 2, "script", "Wait how old are you?", 67),
             ScriptLine(0, 2, "script", "Do you remember the corporation names from the part models you were missing?", 68),
-            ScriptLine(0, 2, "console", "--- DATA QUERY RESULT ---", 69),
-            ScriptLine(0, 2, "console", "--- ANLR | Taishi | Veritech ---", 18, "prompt"),
+            ScriptLine(0, 2, "console", "---DATA QUERY RESULT---", 69),
+            ScriptLine(0, 2, "console", "---ANLR | Taishi | Veritech---", 18, "prompt"),
 
             //70
             ScriptLine(0, 2, "script", "Haha! Sounds like your finally learning how to use some of your compute queries! That was a very AI style answer.", 19, "prompt"),
@@ -365,8 +365,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 2, "script", "What's your name?", 26, "prompt"),
 
             //98-99
-            ScriptLine(0, 2, "console", "--- DATA QUERY: MY NAME ---", 99),
-            ScriptLine(0, 2, "console", "--- MAZU ---", 27, "prompt"),
+            ScriptLine(0, 2, "console", "---DATA QUERY: MY NAME---", 99),
+            ScriptLine(0, 2, "console", "---MAZU---", 27, "prompt"),
 
             //100
             ScriptLine(0, 2, "script", "You sound surprised.", 28, "prompt"),
@@ -375,29 +375,29 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 2, "script", "That's a strange name...", 102),
             ScriptLine(0, 2, "script", "Mazu.", 103),
             ScriptLine(0, 2, "script", "I wonder if it means anything.", 104),
-            ScriptLine(0, 2, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 29, "prompt"),
+            ScriptLine(0, 2, "console", "---INTERNAL POWER CRITICALLY LOW---", 29, "prompt"),
 
             //105-110
             ScriptLine(0, 2, "script", "And I'm almost at the bottom of this stairwell.", 106),
-            ScriptLine(0, 2, "console", "--- INITIATING SHUTDOWN ---", 107),
+            ScriptLine(0, 2, "console", "---INITIATING SHUTDOWN---", 107),
             ScriptLine(0, 2, "script", "\uD83C\uDFB5Hmm-hm-hmmm\uD83C\uDFB5", 108),
-            ScriptLine(0, 2, "console", "--- SHUTDOWN IN PROGRESS ---", 109),
+            ScriptLine(0, 2, "console", "---SHUTDOWN IN PROGRESS---", 109),
             ScriptLine(0, 2, "script", "\uD83C\uDFB5Hmmm\uD83C\uDFB5", 110),
-            ScriptLine(0, 2, "console", "--- CLOSING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 2, "console", "---CLOSING POWER GATE---", 0, "end"),
 
 
             // SEQUENCE 3
 
 
             //1-12
-            ScriptLine(0, 3, "console", "--- BOOT SEQUENCE INITIATING ---", 2),
-            ScriptLine(0, 3, "console", "--- BOOT SEQUENCE FAILURE --- ", 3),
-            ScriptLine(0, 3, "console", "--- PARTS RETURNED NULL --- ", 4),
+            ScriptLine(0, 3, "console", "---BOOT SEQUENCE INITIATING---", 2),
+            ScriptLine(0, 3, "console", "---BOOT SEQUENCE FAILURE--- ", 3),
+            ScriptLine(0, 3, "console", "---PARTS RETURNED NULL--- ", 4),
             ScriptLine(0, 3, "console", "ANLR1437_long_term_memory_module", 5),
             ScriptLine(0, 3, "console", "TAISHI943211_optical_sensor_module", 6),
             ScriptLine(0, 3, "console", "VERITECH88_high_capacity_battery_module", 7),
-            ScriptLine(0, 3, "console", "--- REBOOTING IN SAFE MODE ---", 8),
-            ScriptLine(0, 3, "console", "--- BOOT SUCCESSFUL ---", 9),
+            ScriptLine(0, 3, "console", "---REBOOTING IN SAFE MODE---", 8),
+            ScriptLine(0, 3, "console", "---BOOT SUCCESSFUL---", 9),
             ScriptLine(0, 3, "script", "Wow. I'm glad the sun came out.", 10),
             ScriptLine(0, 3, "script", "It's warming up these waters nicely.", 11),
             ScriptLine(0, 3, "script", "Don't jinx it yuvi!", 12),
@@ -542,10 +542,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 3, "script", "Whoof!", 107),
             ScriptLine(0, 3, "script", "Okay made it. Let's just take a quick peek out this window here.", 108),
             ScriptLine(0, 3, "script", "Mmmmm... yea we should be fine. I think we're high enough.", 109),
-            ScriptLine(0, 3, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 20, "prompt"),
+            ScriptLine(0, 3, "console", "---INTERNAL POWER CRITICALLY LOW---", 20, "prompt"),
 
             //110-111
-            ScriptLine(0, 3, "console", "--- INITIATING SHUTDOWN ---", 111),
+            ScriptLine(0, 3, "console", "---INITIATING SHUTDOWN---", 111),
             ScriptLine(0, 3, "script", "Sorry I was watching the rain through the window. What did you say?", 21, "prompt"),
 
             //112-113
@@ -553,10 +553,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 3, "script", "Mazu?", 22, "prompt"),
 
             //114-119
-            ScriptLine(0, 3, "console", "--- SHUTDOWN IN PROGRESS ---", 115),
+            ScriptLine(0, 3, "console", "---SHUTDOWN IN PROGRESS---", 115),
             ScriptLine(0, 3, "script", "Thanks for talking to me.", 116),
             ScriptLine(0, 3, "script", "Things seem less scary with you around to talk to.", 117),
-            ScriptLine(0, 3, "console", "--- CLOSING POWER GATE ---", 118),
+            ScriptLine(0, 3, "console", "---CLOSING POWER GATE---", 118),
             ScriptLine(0, 3, "script", "The light blinks out...", 119),
             ScriptLine(0, 3, "script", "And I'm alone again...", 0, "end"),
 
@@ -565,14 +565,14 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
 
             //1-13
-            ScriptLine(0, 4, "console", "--- BOOT SEQUENCE INITIATING ---", 2),
-            ScriptLine(0, 4, "console", "--- BOOT SEQUENCE FAILURE ---", 3),
-            ScriptLine(0, 4, "console", "--- PARTS RETURNED NULL ---", 4),
+            ScriptLine(0, 4, "console", "---BOOT SEQUENCE INITIATING---", 2),
+            ScriptLine(0, 4, "console", "---BOOT SEQUENCE FAILURE---", 3),
+            ScriptLine(0, 4, "console", "---PARTS RETURNED NULL---", 4),
             ScriptLine(0, 4, "console", "ANLR1437_long_term_memory_module", 5),
             ScriptLine(0, 4, "console", "TAISHI943211_optical_sensor_module", 6),
             ScriptLine(0, 4, "console", "VERITECH88_high_capacity_battery_module", 7),
-            ScriptLine(0, 4, "console", "--- REBOOTING IN SAFE MODE ---", 8),
-            ScriptLine(0, 4, "console", "--- BOOT SUCCESSFUL ---", 9),
+            ScriptLine(0, 4, "console", "---REBOOTING IN SAFE MODE---", 8),
+            ScriptLine(0, 4, "console", "---BOOT SUCCESSFUL---", 9),
             ScriptLine(0, 4, "script", "This tunnel just goes on forever!", 10),
             ScriptLine(0, 4, "script", "And here I thought it was going to be easy once I got to the mainland.", 11),
             ScriptLine(0, 4, "script", "Ha! Aren't you an idiot yuvi.", 12),
@@ -702,29 +702,29 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
             //93-95
             ScriptLine(0, 4, "script", "It's too late I need you to open the door now!", 94),
-            ScriptLine(0, 4, "console", "--- NEW INTERFACE DETECTED ---", 95),
-            ScriptLine(0, 4, "console", "--- ANTLR MOOSE LOCK CONNECTED ---", 25, "prompt"),
+            ScriptLine(0, 4, "console", "---NEW INTERFACE DETECTED---", 95),
+            ScriptLine(0, 4, "console", "---ANTLR MOOSE LOCK CONNECTED---", 25, "prompt"),
 
             //96-99
-            ScriptLine(0, 4, "console", "--- INTERFACE RUPTURED ---", 97),
-            ScriptLine(0, 4, "console", "--- INTERNAL BATTERY EMPTY ---", 98),
-            ScriptLine(0, 4, "console", "--- EMERGENCY SHUTDOWN ---", 99),
-            ScriptLine(0, 4, "console", "--- SHUTTING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 4, "console", "---INTERFACE RUPTURED---", 97),
+            ScriptLine(0, 4, "console", "---INTERNAL BATTERY EMPTY---", 98),
+            ScriptLine(0, 4, "console", "---EMERGENCY SHUTDOWN---", 99),
+            ScriptLine(0, 4, "console", "---SHUTTING POWER GATE---", 0, "end"),
 
             //100-101
-            ScriptLine(0, 4, "console", "--- NON COMPLY ERROR ---", 101),
+            ScriptLine(0, 4, "console", "---NON COMPLY ERROR---", 101),
             ScriptLine(0, 4, "script", "How's it going Mazu?", 26, "prompt"),
 
             //102-103
-            ScriptLine(0, 4, "console", "--- NON COMPLY ERROR ---", 103),
+            ScriptLine(0, 4, "console", "---NON COMPLY ERROR---", 103),
             ScriptLine(0, 4, "script", "Mazu?!", 27, "prompt"),
 
             //104-105
-            ScriptLine(0, 4, "console", "--- NON COMPLY ERROR ---", 105),
+            ScriptLine(0, 4, "console", "---NON COMPLY ERROR---", 105),
             ScriptLine(0, 4, "script", "Mazu?!", 28, "prompt"),
 
             //106-107
-            ScriptLine(0, 4, "console", "--- NON COMPLY ERROR ---", 107),
+            ScriptLine(0, 4, "console", "---NON COMPLY ERROR---", 107),
             ScriptLine(0, 4, "script", "How's it going Mazu?", 27, "prompt"),
 
 
@@ -732,14 +732,14 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
 
             //1-13
-            ScriptLine(0, 5, "console", "--- BOOT PROCESS INITIATING ---", 2),
-            ScriptLine(0, 5, "console", "--- BOOT SEQUENCE FAILURE ---", 3),
-            ScriptLine(0, 5, "console", "--- PARTS RETURNED NULL ---", 4),
+            ScriptLine(0, 5, "console", "---BOOT PROCESS INITIATING---", 2),
+            ScriptLine(0, 5, "console", "---BOOT SEQUENCE FAILURE---", 3),
+            ScriptLine(0, 5, "console", "---PARTS RETURNED NULL---", 4),
             ScriptLine(0, 5, "console", "ANLR1437_long_term_memory_module", 5),
             ScriptLine(0, 5, "console", "TAISHI943211_optical_sensor_module", 6),
             ScriptLine(0, 5, "console", "VERITECH88_high_capacity_battery_module", 7),
-            ScriptLine(0, 5, "console", "--- REBOOTING IN SAFE MODE ---", 8),
-            ScriptLine(0, 5, "console", "--- BOOT SUCCESSFUL ---", 9),
+            ScriptLine(0, 5, "console", "---REBOOTING IN SAFE MODE---", 8),
+            ScriptLine(0, 5, "console", "---BOOT SUCCESSFUL---", 9),
             ScriptLine(0, 5, "script", "I can't believe I killed them.", 10),
             ScriptLine(0, 5, "script", "Your so selfish yuvi!", 11),
             ScriptLine(0, 5, "script", "Never thinking ahe-", 12),
@@ -828,7 +828,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
             //58-59
             ScriptLine(0, 5, "script", "...", 59),
-            ScriptLine(0, 5, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 25, "prompt"),
+            ScriptLine(0, 5, "console", "---INTERNAL POWER CRITICALLY LOW---", 25, "prompt"),
 
             //60
             ScriptLine(0, 5, "script", "That's surprising.", 22, "prompt"),
@@ -857,24 +857,24 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             //70-76
             ScriptLine(0, 5, "script", "Wait a minute...", 71),
             ScriptLine(0, 5, "script", "You might have fried your internal power cell!", 72),
-            ScriptLine(0, 5, "console", "--- INITIATING SHUTDOWN ---", 73),
+            ScriptLine(0, 5, "console", "---INITIATING SHUTDOWN---", 73),
             ScriptLine(0, 5, "script", "Hold on Mazu! I'm gonna fix you I promise!", 74),
-            ScriptLine(0, 5, "console", "--- SHUTDOWN IN PROGRESS ---", 75),
+            ScriptLine(0, 5, "console", "---SHUTDOWN IN PROGRESS---", 75),
             ScriptLine(0, 5, "script", "Oh no... Come on yuvi get yourself together and focus!", 76),
-            ScriptLine(0, 5, "console", "--- CLOSING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 5, "console", "---CLOSING POWER GATE---", 0, "end"),
 
 
             //SEQUENCE 6
 
 
             //1-8
-            ScriptLine(0, 6, "console", "--- BOOT SEQUENCE INITIATING ---", 2),
-            ScriptLine(0, 6, "console", "--- BOOT SEQUENCE FAILURE ---", 3),
-            ScriptLine(0, 6, "console", "--- PARTS RETURNED NULL ---", 4),
+            ScriptLine(0, 6, "console", "---BOOT SEQUENCE INITIATING---", 2),
+            ScriptLine(0, 6, "console", "---BOOT SEQUENCE FAILURE---", 3),
+            ScriptLine(0, 6, "console", "---PARTS RETURNED NULL---", 4),
             ScriptLine(0, 6, "console", "ANLR1437_long_term_memory_module", 5),
             ScriptLine(0, 6, "console", "TAISHI943211_optical_sensor_module", 6),
-            ScriptLine(0, 6, "console", "--- REBOOTING IN SAFE MODE ---", 7),
-            ScriptLine(0, 6, "console", "--- BOOT SUCCESSFUL ---", 8),
+            ScriptLine(0, 6, "console", "---REBOOTING IN SAFE MODE---", 7),
+            ScriptLine(0, 6, "console", "---BOOT SUCCESSFUL---", 8),
             ScriptLine(0, 6, "script", "Oh my...", 1, "prompt"),
 
             //9-10
@@ -929,12 +929,12 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             //42-45
             ScriptLine(0, 6, "script", "Okay I think I get what your putting down. Let me look for something to connect you to.", 43),
             ScriptLine(0, 6, "script", "Ah found one.", 44),
-            ScriptLine(0, 6, "console", "--- SABA HEAVY MACHINERY ---", 45),
-            ScriptLine(0, 6, "console", "--- INTERFACE ESTABLISHED ---", 11, "prompt"),
+            ScriptLine(0, 6, "console", "---SABA HEAVY MACHINERY---", 45),
+            ScriptLine(0, 6, "console", "---INTERFACE ESTABLISHED---", 11, "prompt"),
 
             //46-47
-            ScriptLine(0, 6, "console", "--- INITIATING POWER TEST ---", 47),
-            ScriptLine(0, 6, "console", "--- POWER TEST RETURN: TRUE ---", 12, "prompt"),
+            ScriptLine(0, 6, "console", "---INITIATING POWER TEST---", 47),
+            ScriptLine(0, 6, "console", "---POWER TEST RETURN: TRUE---", 12, "prompt"),
 
             //48-49
             ScriptLine(0, 6, "script", "Holy crap it's moving!", 49),
@@ -1045,8 +1045,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
             //107-109
             ScriptLine(0, 6, "script", "Hold on... There's an access panel here. I'm gonna plug you into it.", 108),
-            ScriptLine(0, 6, "console", "--- INTERFACE ESTABLISHED ---", 109),
-            ScriptLine(0, 6, "console", "--- DEVICE NOT POWERED ---", 36, "prompt"),
+            ScriptLine(0, 6, "console", "---INTERFACE ESTABLISHED---", 109),
+            ScriptLine(0, 6, "console", "---DEVICE NOT POWERED---", 36, "prompt"),
 
             //110
             ScriptLine(0, 6, "script", "Oh come on. Can't we catch a break?", 37, "prompt"),
@@ -1061,7 +1061,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 6, "script", "This will drain your power cell permanently!", 39, "prompt"),
 
             //116-118
-            ScriptLine(0, 6, "console", "--- ELEVATOR ASCENDING ---", 117),
+            ScriptLine(0, 6, "console", "---ELEVATOR ASCENDING---", 117),
             ScriptLine(0, 6, "script", "Mazu! Stop it now!", 118),
             ScriptLine(0, 6, "script", "I'm disconnecting you!", 40, "prompt"),
 
@@ -1074,10 +1074,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 6, "script", "Please there must be another way just take us back down.", 123),
             ScriptLine(0, 6, "script", "I can find another way up.", 124),
             ScriptLine(0, 6, "script", "...", 125),
-            ScriptLine(0, 6, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 126),
+            ScriptLine(0, 6, "console", "---INTERNAL POWER CRITICALLY LOW---", 126),
             ScriptLine(0, 6, "script", "The doors opening!", 127),
             ScriptLine(0, 6, "script", "We're at the top I'm pulling you right now!", 128),
-            ScriptLine(0, 6, "console", "--- INTERFACE RUPTURED ---", 129),
+            ScriptLine(0, 6, "console", "---INTERFACE RUPTURED---", 129),
             ScriptLine(0, 6, "script", "Mazu are you still with me?", 43, "prompt"),
 
             //130-131
@@ -1089,8 +1089,8 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 6, "script", "There's the launch tower. And it's powered!", 134),
             ScriptLine(0, 6, "script", "This service tunnel should get me there but it's a long ways to go.", 135),
             ScriptLine(0, 6, "script", "Come on yuvi run!", 136),
-            ScriptLine(0, 6, "console", "--- SHUTDOWN IN PROGRESS ---", 137),
-            ScriptLine(0, 6, "console", "--- CLOSING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 6, "console", "---SHUTDOWN IN PROGRESS---", 137),
+            ScriptLine(0, 6, "console", "---CLOSING POWER GATE---", 0, "end"),
 
             //138
             ScriptLine(0, 6, "script", "Oh no. I'll find something don't worry!", 133),
@@ -1100,10 +1100,10 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
 
             //1-6
-            ScriptLine(0, 7, "console", "--- BOOT SEQUENCE INITIATING ---", 2),
-            ScriptLine(0, 7, "console", "--- INTERFACE DETECTED ---", 3),
-            ScriptLine(0, 7, "console", "--- BOOTING IN DOCKED MODE ---", 4),
-            ScriptLine(0, 7, "console", "--- HELIO LAUNCH TOWER CONNECTED ---", 5),
+            ScriptLine(0, 7, "console", "---BOOT SEQUENCE INITIATING---", 2),
+            ScriptLine(0, 7, "console", "---INTERFACE DETECTED---", 3),
+            ScriptLine(0, 7, "console", "---BOOTING IN DOCKED MODE---", 4),
+            ScriptLine(0, 7, "console", "---HELIO LAUNCH TOWER CONNECTED---", 5),
             ScriptLine(0, 7, "script", "Okay.", 6),
             ScriptLine(0, 7, "script", "Come on Mazu don't die here.", 1, "prompt"),
 
@@ -1115,13 +1115,13 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 7, "script", "Can you talk with it?", 3, "prompt"),
 
             //10-16
-            ScriptLine(0, 7, "console", "--- SELF TEST IN PROGRESS ---", 11),
-            ScriptLine(0, 7, "console", "--- ENGINE BAY: OK ---", 12),
-            ScriptLine(0, 7, "console", "--- FUEL PUMPS: OK ---", 13),
-            ScriptLine(0, 7, "console", "--- LIQUID OXYGEN: OK ---", 14),
-            ScriptLine(0, 7, "console", "--- FLIGHT COMPUTER: OK ---", 15),
-            ScriptLine(0, 7, "console", "--- LAUNCH COMPUTER: FAIL ---", 16),
-            ScriptLine(0, 7, "console", "--- AUTOMATED LAUNCH TEST: FAILED ---", 4, "prompt"),
+            ScriptLine(0, 7, "console", "---SELF TEST IN PROGRESS---", 11),
+            ScriptLine(0, 7, "console", "---ENGINE BAY: OK---", 12),
+            ScriptLine(0, 7, "console", "---FUEL PUMPS: OK---", 13),
+            ScriptLine(0, 7, "console", "---LIQUID OXYGEN: OK---", 14),
+            ScriptLine(0, 7, "console", "---FLIGHT COMPUTER: OK---", 15),
+            ScriptLine(0, 7, "console", "---LAUNCH COMPUTER: FAIL---", 16),
+            ScriptLine(0, 7, "console", "---AUTOMATED LAUNCH TEST: FAILED---", 4, "prompt"),
 
             //17-18
             ScriptLine(0, 7, "script", "Incredible! I can't believe we actually made it.", 18),
@@ -1138,11 +1138,11 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 7, "script", "...", 23),
             ScriptLine(0, 7, "script", "We can fix it! We don't need to leave right now.", 24),
             ScriptLine(0, 7, "script", "I could scavenge around, maybe build another computer.", 25),
-            ScriptLine(0, 7, "console", "--- ALERT POWER SURGE DETECTED ---", 26),
-            ScriptLine(0, 7, "console", "--- 735 ACTIVE FAILURES ---", 10, "prompt"),
+            ScriptLine(0, 7, "console", "---ALERT POWER SURGE DETECTED---", 26),
+            ScriptLine(0, 7, "console", "---735 ACTIVE FAILURES---", 10, "prompt"),
 
             //27
-            ScriptLine(0, 7, "console", "--- 758 ACTIVE FAILURES ---", 11, "prompt"),
+            ScriptLine(0, 7, "console", "---758 ACTIVE FAILURES---", 11, "prompt"),
 
             //28
             ScriptLine(0, 7, "script", "But-", 14, "prompt"),
@@ -1157,52 +1157,52 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
             ScriptLine(0, 7, "script", "...", 34),
             ScriptLine(0, 7, "script", "...", 35),
             ScriptLine(0, 7, "script", "...", 36),
-            ScriptLine(0, 7, "console", "--- LAUNCH REQUEST RECEIVED ---", 16, "prompt"),
+            ScriptLine(0, 7, "console", "---LAUNCH REQUEST RECEIVED---", 16, "prompt"),
 
             //37-38
-            ScriptLine(0, 7, "console", "--- PRE-LAUNCH ROUTINE INITIATED ---", 38),
-            ScriptLine(0, 7, "console", "--- ALL CHECKS PASSED ---", 18, "prompt"),
+            ScriptLine(0, 7, "console", "---PRE-LAUNCH ROUTINE INITIATED---", 38),
+            ScriptLine(0, 7, "console", "---ALL CHECKS PASSED---", 18, "prompt"),
 
             //39-59
-            ScriptLine(0, 7, "console", "--- COUNTDOWN INITIATED ---", 40),
-            ScriptLine(0, 7, "console", "--- 10 SECONDS TO LAUNCH ---", 41),
-            ScriptLine(0, 7, "console", "--- 5 SECONDS TO LAUNCH ---", 42),
-            ScriptLine(0, 7, "console", "--- 4 SECONDS TO LAUNCH ---", 43),
-            ScriptLine(0, 7, "console", "--- 3 SECONDS TO LAUNCH ---", 44),
-            ScriptLine(0, 7, "console", "--- 2 SECONDS TO LAUNCH ---", 45),
-            ScriptLine(0, 7, "console", "--- 1 SECOND TO LAUNCH ---", 46),
-            ScriptLine(0, 7, "console", "--- LAUNCH INITIATED ---", 47),
-            ScriptLine(0, 7, "console", "--- BOOSTER STATUS: OK ---", 48),
-            ScriptLine(0, 7, "console", "--- BOOSTER SEPARATION: OK ---", 49),
-            ScriptLine(0, 7, "console", "--- FIRST STAGE ENGINE LIGHT: OK ---", 50),
-            ScriptLine(0, 7, "console", "--- FIRST STAGE FUEL FLOW: OK ---", 51),
-            ScriptLine(0, 7, "console", "--- OXYGEN FLOW: OK ---", 52),
-            ScriptLine(0, 7, "console", "--- FIRST STAGE SEPARATION: OK ---", 53),
-            ScriptLine(0, 7, "console", "--- SECOND STAGE ENGINE LIGHT: OK ---", 54),
-            ScriptLine(0, 7, "console", "--- SECOND STAGE FUEL FLOW: OK ---", 55),
-            ScriptLine(0, 7, "console", "--- ALL BURNS COMPLETE ---", 56),
-            ScriptLine(0, 7, "console", "--- ORBIT TRAJECTORY: OK ---", 57),
-            ScriptLine(0, 7, "console", "--- SIGNAL LOST ---", 58),
-            ScriptLine(0, 7, "console", "--- ALERT POWER SURGE DETECTED ---", 59),
-            ScriptLine(0, 7, "console", "--- 2599 ACTIVE FAILURES ---", 19, "prompt"),
+            ScriptLine(0, 7, "console", "---COUNTDOWN INITIATED---", 40),
+            ScriptLine(0, 7, "console", "---10 SECONDS TO LAUNCH---", 41),
+            ScriptLine(0, 7, "console", "---5 SECONDS TO LAUNCH---", 42),
+            ScriptLine(0, 7, "console", "---4 SECONDS TO LAUNCH---", 43),
+            ScriptLine(0, 7, "console", "---3 SECONDS TO LAUNCH---", 44),
+            ScriptLine(0, 7, "console", "---2 SECONDS TO LAUNCH---", 45),
+            ScriptLine(0, 7, "console", "---1 SECOND TO LAUNCH---", 46),
+            ScriptLine(0, 7, "console", "---LAUNCH INITIATED---", 47),
+            ScriptLine(0, 7, "console", "---BOOSTER STATUS: OK---", 48),
+            ScriptLine(0, 7, "console", "---BOOSTER SEPARATION: OK---", 49),
+            ScriptLine(0, 7, "console", "---FIRST STAGE ENGINE LIGHT: OK---", 50),
+            ScriptLine(0, 7, "console", "---FIRST STAGE FUEL FLOW: OK---", 51),
+            ScriptLine(0, 7, "console", "---OXYGEN FLOW: OK---", 52),
+            ScriptLine(0, 7, "console", "---FIRST STAGE SEPARATION: OK---", 53),
+            ScriptLine(0, 7, "console", "---SECOND STAGE ENGINE LIGHT: OK---", 54),
+            ScriptLine(0, 7, "console", "---SECOND STAGE FUEL FLOW: OK---", 55),
+            ScriptLine(0, 7, "console", "---ALL BURNS COMPLETE---", 56),
+            ScriptLine(0, 7, "console", "---ORBIT TRAJECTORY: OK---", 57),
+            ScriptLine(0, 7, "console", "---SIGNAL LOST---", 58),
+            ScriptLine(0, 7, "console", "---ALERT POWER SURGE DETECTED---", 59),
+            ScriptLine(0, 7, "console", "---2599 ACTIVE FAILURES---", 19, "prompt"),
 
             //60-61
-            ScriptLine(0, 7, "console", "--- INTERFACE RUPTURED ---", 61),
-            ScriptLine(0, 7, "console", "--- INTERNAL POWER CRITICALLY LOW ---", 21, "prompt"),
+            ScriptLine(0, 7, "console", "---INTERFACE RUPTURED---", 61),
+            ScriptLine(0, 7, "console", "---INTERNAL POWER CRITICALLY LOW---", 21, "prompt"),
 
             //62
-            ScriptLine(0, 7, "console", "--- SHUTDOWN IN PROGRESS ---", 22, "prompt"),
+            ScriptLine(0, 7, "console", "---SHUTDOWN IN PROGRESS---", 22, "prompt"),
 
             //63
-            ScriptLine(0, 7, "console", "--- CLOSING POWER GATE ---", 0, "end"),
+            ScriptLine(0, 7, "console", "---CLOSING POWER GATE---", 0, "end"),
 
 
             // SEQUENCE 8
 
 
             //1-4
-            ScriptLine(0, 8, "console", "--- BOOT SEQUENCE INITIATING ---", 2),
-            ScriptLine(0, 8, "console", "--- BOOT SEQUENCE SUCCESS ---", 3),
+            ScriptLine(0, 8, "console", "---BOOT SEQUENCE INITIATING---", 2),
+            ScriptLine(0, 8, "console", "---BOOT SEQUENCE SUCCESS---", 3),
             ScriptLine(0, 8, "script", "...", 4),
             ScriptLine(0, 8, "script", "Are you still in there Mazu?", 1, "prompt"),
 
@@ -1905,80 +1905,80 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
 
     fun getTriggerList1(): List<Trigger> {
         return mutableListOf(
-            Trigger(0, 1, 24, "script", "animation", R.drawable.g_meter_up_animation),
+            Trigger(0, 1, 24, "script", "animation", "g_up"),
             Trigger(0, 1, 26, "script", "animation", null),
-            Trigger(0, 1, 56, "script", "animation", R.drawable.g_walk_animation, true),
+            Trigger(0, 1, 56, "script", "animation", "g_walk", true),
 
 
             // SEQUENCE 2
 
 
-            Trigger(0, 2, 9, "script", "sound", R.raw.fire_birds, true),
+            Trigger(0, 2, 9, "script", "sound", "fire_birds", true),
             Trigger(0, 2, 44, "script", "sound", null),
-            Trigger(0, 2, 0, "script", "animation", R.drawable.g_walk_animation, true),
+            Trigger(0, 2, 38, "script", "animation", "g_walk", true),
 
 
             // SEQUENCE 3
 
 
-            Trigger(0, 3, 9, "script", "sound", R.raw.waves, true),
-            Trigger(0, 3, 9, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 3, 51, "script", "sound", R.raw.river, true),
-            Trigger(0, 3, 60, "script", "animation", R.drawable.g_meter_down_animation, true),
+            Trigger(0, 3, 9, "script", "sound", "waves", true),
+            Trigger(0, 3, 9, "script", "animation", "g_walk", true),
+            Trigger(0, 3, 51, "script", "sound", "river", true),
+            Trigger(0, 3, 60, "script", "animation", "g_down", true),
             Trigger(0, 3, 63, "script", "animation", null),
-            Trigger(0, 3, 68, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 3, 68, "script", "sound", R.raw.rain_window, true),
+            Trigger(0, 3, 68, "script", "animation", "g_walk", true),
+            Trigger(0, 3, 68, "script", "sound", "rain_window", true),
             Trigger(0, 3, 79, "script", "animation", null),
-            Trigger(0, 3, 94, "script", "animation", R.drawable.g_down_small_animation, true),
-            Trigger(0, 3, 99, "script", "animation", R.drawable.g_down_small_animation, true),
-            Trigger(0, 3, 106, "script", "animation", R.drawable.g_walk_animation, true),
+            Trigger(0, 3, 94, "script", "animation", "g_down_small", true),
+            Trigger(0, 3, 99, "script", "animation", "g_down_small", true),
+            Trigger(0, 3, 106, "script", "animation", "g_walk", true),
             Trigger(0, 3, 108, "script", "animation", null),
 
 
             // SEQUENCE 4
 
 
-            Trigger(0, 4, 9, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 4, 76, "script", "sound", R.raw.rain, true),
+            Trigger(0, 4, 9, "script", "animation", "g_walk", true),
+            Trigger(0, 4, 76, "script", "sound", "rain", true),
             Trigger(0, 4, 88, "script", "animation", null),
 
 
             // SEQUENCE 5
 
 
-            Trigger(0, 5, 34, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 5, 71, "script", "animation", R.drawable.g_run_animation, true),
+            Trigger(0, 5, 34, "script", "animation", "g_walk", true),
+            Trigger(0, 5, 71, "script", "animation", "g_run", true),
 
 
             //SEQUENCE 6
 
 
-            Trigger(0, 6, 27, "script", "animation", R.drawable.g_walk_animation, true),
+            Trigger(0, 6, 27, "script", "animation", "g_walk", true),
             Trigger(0, 6, 31, "script", "animation", null),
-            Trigger(0, 6, 37, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 6, 38, "script", "animation", R.drawable.g_down_small_animation, oneAndDone = true),
+            Trigger(0, 6, 37, "script", "animation", "g_walk", true),
+            Trigger(0, 6, 38, "script", "animation", "g_down_small", oneAndDone = true),
             Trigger(0, 6, 39, "script", "animation", null),
-            Trigger(0, 6, 48, "script", "animation", R.drawable.g_down_small_animation, true),
-            Trigger(0, 6, 51, "script", "sound", R.raw.abandoned_warehouse_trim, true),
-            Trigger(0, 6, 59, "script", "animation", R.drawable.g_wobble_animation, true),
+            Trigger(0, 6, 48, "script", "animation", "g_down_small", true),
+            Trigger(0, 6, 51, "script", "sound", "abandoned_warehouse", true),
+            Trigger(0, 6, 59, "script", "animation", "g_wobble", true),
             Trigger(0, 6, 61, "script", "animation", null),
-            Trigger(0, 6, 65, "script", "animation", R.drawable.g_meter_up_animation),
+            Trigger(0, 6, 65, "script", "animation", "g_up"),
             Trigger(0, 6, 66, "script", "animation", null),
-            Trigger(0, 6, 79, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 6, 93, "script", "animation", R.drawable.g_meter_up_animation, true),
+            Trigger(0, 6, 79, "script", "animation", "g_walk", true),
+            Trigger(0, 6, 93, "script", "animation", "g_up", true),
             Trigger(0, 6, 95, "script", "animation", null),
-            Trigger(0, 6, 102, "script", "animation", R.drawable.g_walk_animation, true),
+            Trigger(0, 6, 102, "script", "animation", "g_walk", true),
             Trigger(0, 6, 107, "script", "animation", null),
-            Trigger(0, 6, 116, "script", "animation", R.drawable.g_down_small_animation, true),
+            Trigger(0, 6, 116, "script", "animation", "g_down_small", true),
             Trigger(0, 6, 128, "script", "animation", null),
-            Trigger(0, 6, 129, "script", "animation", R.drawable.g_walk_animation, true),
-            Trigger(0, 6, 135, "script", "animation", R.drawable.g_run_animation, true),
+            Trigger(0, 6, 129, "script", "animation", "g_walk", true),
+            Trigger(0, 6, 135, "script", "animation", "g_run", true),
 
 
             // SEQUENCE 7
 
 
-            Trigger(0, 7, 17, "script", "sound", R.raw.mattia_cupelli_youll_believe)
+            Trigger(0, 7, 17, "script", "sound", "mattia cupelli")
         )
     }
 

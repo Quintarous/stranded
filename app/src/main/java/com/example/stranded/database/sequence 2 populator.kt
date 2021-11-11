@@ -283,9 +283,9 @@ fun getPromptLineList2(): List<PromptLine> {
 
 fun getTriggerList2(): List<Trigger> {
     return listOf(
-        Trigger(0, 2, 9, "script", "sound", R.raw.fire_birds, true),
+        Trigger(0, 2, 9, "script", "sound", "fire_birds", true),
         Trigger(0, 2, 44, "script", "sound", null),
-        Trigger(0, 0, 0, "script", "animation", R.drawable.g_walk_animation, true),
+        Trigger(0, 2, 38, "script", "animation", "g_walk", true),
 
         //Trigger(0, 0, 0, "", "", 0),
     )

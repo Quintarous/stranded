@@ -46,7 +46,7 @@ data class Trigger constructor(
     val triggerId: Int,
     val triggerType: String,
     val resourceType: String,
-    val resourceId: Int?,
+    val resourceId: String?,
     val loop: Boolean = false,
     val oneAndDone: Boolean = false
 )

@@ -268,8 +268,8 @@ fun getPromptLineList4(): List<PromptLine> {
 
 fun getTriggerList4(): List<Trigger> {
     return listOf(
-        Trigger(0, 4, 9, "script", "animation", R.drawable.g_walk_animation, true),
-        Trigger(0, 4, 76, "script", "sound", R.raw.rain1, true),
+        Trigger(0, 4, 9, "script", "animation", "g_walk", true),
+        Trigger(0, 4, 76, "script", "sound", "rain", true),
         Trigger(0, 4, 88, "script", "animation", null),
 
         // Trigger(0, 4, 0, "", "", 0),

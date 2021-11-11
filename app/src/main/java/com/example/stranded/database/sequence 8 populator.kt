@@ -85,11 +85,3 @@ fun getPromptLineList8(): List<PromptLine> {
         // PromptLine(0, 8, 0, "", 0),
     )
 }
-
-fun getTriggerList8(): List<Trigger> {
-    return listOf(
-
-
-        // Trigger(0, 8, 0, "script", "animation", 0),
-    )
-}

@@ -1,5 +1,6 @@
 package com.example.stranded.chatpage
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.stranded.CustomTextView
 import com.example.stranded.Repository
@@ -8,6 +9,7 @@ import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+// TODO think about keeping somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
@@ -114,7 +116,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // if we don't need to progress past the first line just display it and return
 // TODO userSave.line uses absolute id's of lines this only works on the first sequence
-        if (userSave.line <= 1) {
+        if (userSave.line == 0) {
             displayScriptLine(sequence.scriptLines[0])
             return
         }
@@ -317,6 +319,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
             "animation" -> {
                 if (trigger.resourceId == null) {
+                    Log.i("bruh", "stopanim trigger")
                     _stopAnim.value = trigger
                 }
                 else {
@@ -324,6 +327,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         _startAnimOneAndDone.value = trigger
                     }
                     else {
+                        Log.i("bruh", "trigger id = ${trigger.id}")
                         _startAnim.value = trigger
                     }
                 }

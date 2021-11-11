@@ -13,7 +13,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -32,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val repository = Repository(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         //initializing the in memory database with test data
         lifecycleScope.launch {
             // 519
-            val testSaveData = UserSave(1, true, 70, 1, 0, "script")
+//            val testSaveData = UserSave(1, true, 70, 1, 0, "script")
 //            repository.updateUserSaveData(testSaveData)
 //            repository.insertTestScriptLines()
 //            repository.insertTestPromptLines()

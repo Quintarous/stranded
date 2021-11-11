@@ -181,7 +181,7 @@ fun getPromptLineList7(): List<PromptLine> {
 
 fun getTriggerList7(): List<Trigger> {
     return listOf(
-        Trigger(0, 7, 17, "script", "sound", R.raw.mattia_cupelli_youll_believe)
+        Trigger(0, 7, 17, "script", "sound", "mattia_cupelli")
 
         // Trigger(0, 7, 0, "script", "animation", 0),
     )
