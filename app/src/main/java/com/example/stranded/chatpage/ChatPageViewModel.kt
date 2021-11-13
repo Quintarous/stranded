@@ -9,7 +9,7 @@ import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO think about keeping somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
+// TODO think about somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
@@ -78,7 +78,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         viewModelScope.launch {
             val newUserSave = repository.getUserSave().apply {
                 this.letterDuration = value
-            } ?: return@launch
+            }
 
             repository.updateUserSaveData(newUserSave)
         }
@@ -207,12 +207,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         when (lastLine.nextType) {
             "end" -> {
                 viewModelScope.launch {
-                    val sequence = repository.getUserSave().sequence
+                    val currentUserSave = repository.getUserSave()
 
-                    if (sequence < 8) { // if the current sequence is not the last one
-                        repository.updateUserSaveData(
-                            UserSave(1, false, letterDuration.value!!, sequence + 1, 0)
-                        )
+                    if (currentUserSave.sequence < 8) { // if the current sequence is not the last one
+
+                        val newUserSave = currentUserSave.apply { // updating the user save
+                            isPowered = false
+                            sequence += 1
+                            line = 0
+                        }
+                        repository.updateUserSaveData(newUserSave) // pushing the change to the db
 
                         repository.clearPromptResult() // clearing the users saved choices
                         
@@ -220,7 +224,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         scheduleNotification.value = true
                     }
 
-                    // else TODO do something when the user completes the story
+                    // else TODO do something special when the user completes the story
                 }
             }
 

@@ -24,7 +24,7 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
 
         val repository = Repository(context)
 
-// updating the database
+// setting isPowered to true
 // TODO test that this user save database change has the intended effect with a real (not in memory) database
         val oldUserSave = repository.getUserSaveBlocking()
         val newUserSave = oldUserSave.apply { isPowered = true }

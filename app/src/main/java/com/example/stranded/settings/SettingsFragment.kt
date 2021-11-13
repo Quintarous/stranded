@@ -19,7 +19,6 @@ import java.lang.NumberFormatException
 @AndroidEntryPoint
 class SettingsFragment: Fragment() {
 
-    // TODO add a setting for customizing the custom text view speed
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,6 +37,7 @@ class SettingsFragment: Fragment() {
 
         binding.viewModel = viewModel
 
+
 // telling the viewModel to deal with the new letterDuration value when the user changes it
         binding.letterDurationEditText.addTextChangedListener { text ->
 
@@ -54,6 +54,8 @@ class SettingsFragment: Fragment() {
             }
 
         }
+
+        // TODO add functionality for the demo mode switch
 
         return binding.root
     }

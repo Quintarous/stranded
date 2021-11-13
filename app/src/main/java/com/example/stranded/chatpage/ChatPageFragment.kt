@@ -246,9 +246,9 @@ class ChatPageFragment: Fragment() {
 
 
 // TODO notifications need to be thoroughly tested with real database
-// schedules notification work for the view model when a sequence is completed
+// schedules notification work when a sequence is completed
         viewModel.scheduleNotification.observe(viewLifecycleOwner, {
-            if (it) {
+            if (it && viewModel.userSave.value!!.demoMode) {
 // getting the alarmManager instance
                 val alarmManager =
                     context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -273,12 +273,12 @@ class ChatPageFragment: Fragment() {
         return binding.root
     }
 
-    // if the fragment is paused (ie: user goes home or closes their phone) but not destroyed
-    // (like when the user navigates to the settings screen) then the view model observers won't
-    // fire and thus no sound is played even when it should.
+// if the fragment is paused (ie: user goes home or closes their phone) but not destroyed
+// (like when the user navigates to the settings screen) then the view model observers won't
+// fire and thus no sound is played even when it should.
 
-    // so to fix this we're checking if there is a valid start sound trigger in the view model
-    // and playing it if so
+// so to fix this we're checking if there is a valid start sound trigger in the view model
+// and playing it if so
     override fun onStart() {
         if (viewModel.startSound.value != null) {
             val trigger = viewModel.startSound.value!!

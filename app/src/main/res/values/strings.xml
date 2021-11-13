@@ -3,7 +3,9 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="power_on">Power On</string>
-    <string name="no_power_recharge_in_progress"><![CDATA[--- NO POWER ---\n--- RECHARGE IN PROGRESS ---]]></string>
+    <string name="no_power_recharge_in_progress"><![CDATA[---NO POWER---\n---RECHARGE IN PROGRESS---]]></string>
     <string name="letterDurationLabel">Letter Duration (how fast the letters appear)</string>
     <string name="milliseconds">milliseconds</string>
+    <string name="skip_the_wait">Skip The Wait!</string>
+    <string name="demo_mode">Demo Mode</string>
 </resources>

@@ -63,6 +63,7 @@ data class UserSave constructor(
     var sequence: Int,
     var line: Int,
     var lineType: String = "script",
+    var demoMode: Boolean = false
 )
 
 @Entity
