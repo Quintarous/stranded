@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_chatPageFragment_to_nav_graph_no_power"
             app:destination="@id/nav_graph_no_power" />
+        <argument
+            android:name="fromPowerOn"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -32,6 +36,9 @@
                 android:id="@+id/action_powerOnFragment_to_nav_graph"
                 app:destination="@id/nav_graph"
                 app:popUpTo="@id/nav_graph" />
+            <action
+                android:id="@+id/action_powerOnFragment_to_chatPageFragment"
+                app:destination="@id/chatPageFragment" />
         </fragment>
     </navigation>
     <action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment" />

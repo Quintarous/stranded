@@ -31,6 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:background="@color/purple_200"
             android:text="@string/skip_the_wait"
             android:textColor="@color/black"

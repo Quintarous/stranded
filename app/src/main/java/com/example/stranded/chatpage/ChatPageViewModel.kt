@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO think about somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
+// TODO investigate power on button not working after using skip time to get to sequence 3
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -68,6 +69,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val letterDuration: LiveData<Int>
         get() = _letterDuration
 
+    private val scriptTriggers: MutableList<Trigger> = mutableListOf()
+    private val  promptTriggers: MutableList<Trigger> = mutableListOf()
+
 
 // function for setting the letterDuration both here and in the database
     fun setLetterDuration(value: Int) {
@@ -84,8 +88,20 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    private val scriptTriggers: MutableList<Trigger> = mutableListOf()
-    private val  promptTriggers: MutableList<Trigger> = mutableListOf()
+// function for updating the demoMode value in the UserSave
+    fun setDemoMode(value: Boolean) {
+        viewModelScope.launch {
+            val oldUserSave = repository.getUserSave()
+
+            val newUserSave = oldUserSave.apply {
+                demoMode = value
+            }
+
+            repository.updateUserSaveData(newUserSave)
+        }
+    }
+
+    fun startSequence() = displayScriptLine(sequence.scriptLines[0]) // starts the sequence with the first ScriptLine
 
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
@@ -104,8 +120,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
             }
 
-            // restoring the user to their last save point or just displaying line 1 if they haven't
-            // yet started the sequence
+            // restoring the user to their last save point if needed
             restoreSave()
         }
     }
@@ -117,7 +132,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 // if we don't need to progress past the first line just display it and return
 // TODO userSave.line uses absolute id's of lines this only works on the first sequence
         if (userSave.line == 0) {
-            displayScriptLine(sequence.scriptLines[0])
             return
         }
 
@@ -219,7 +233,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         repository.updateUserSaveData(newUserSave) // pushing the change to the db
 
                         repository.clearPromptResult() // clearing the users saved choices
-                        
+
 // telling the fragment to schedule notification + powerOn work
                         scheduleNotification.value = true
                     }
@@ -261,6 +275,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+// takes a ScriptLine object and displays it
     private fun displayScriptLine(scriptLine: ScriptLine) {
         //displaying console lines
         when (scriptLine.type) {

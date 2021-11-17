@@ -25,7 +25,8 @@ class PowerOnFragment: Fragment() {
 
         binding.powerOnButton.setOnClickListener {
             //viewModel.startSequence()
-            findNavController().navigate(R.id.action_powerOnFragment_to_nav_graph)
+            val action = PowerOnFragmentDirections.actionPowerOnFragmentToChatPageFragment(true)
+            findNavController().navigate(action)
         }
 
         return binding.root

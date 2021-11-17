@@ -20,6 +20,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stranded.CustomTextView
@@ -34,6 +35,8 @@ import kotlin.random.Random
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
+// TODO research this "lazy" thing that retrieves classes like this
+    val args: ChatPageFragmentArgs by navArgs()
 
     private val viewModel: ChatPageViewModel by activityViewModels()
     private var mediaPlayer: MediaPlayer? = null
@@ -49,17 +52,22 @@ class ChatPageFragment: Fragment() {
     ): View {
 
         //startup navigation logic
-        viewModel.userSave.observe(viewLifecycleOwner, Observer { userSave ->
+        viewModel.userSave.observe(viewLifecycleOwner, { userSave ->
 
-            if (userSave != null) {
-                if (userSave.isPowered) {
-                    if (userSave.line == 0)
+            if (args.fromPowerOn) {
+                if (userSave.line == 0) viewModel.startSequence()
+            } else {
+
+                if (userSave != null) {
+                    if (userSave.isPowered) {
+                        if (userSave.line == 0)
+                            findNavController()
+                                .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+                    } else {
                         findNavController()
-                            .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+                            .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+                    }
                 }
-                else
-                    findNavController()
-                        .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
             }
         })
 

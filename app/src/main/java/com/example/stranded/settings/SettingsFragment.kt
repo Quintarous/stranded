@@ -1,6 +1,7 @@
 package com.example.stranded.settings
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,9 @@ class SettingsFragment: Fragment() {
         }
 
         // TODO add functionality for the demo mode switch
+        binding.demoModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setDemoMode(isChecked)
+        }
 
         return binding.root
     }
