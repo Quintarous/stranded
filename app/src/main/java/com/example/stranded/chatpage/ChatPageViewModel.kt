@@ -9,6 +9,8 @@ import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+// TODO SOUND TRIGGERS AREN'T WORKING
+// TODO NOTIFICATION IS NOT RESCHEDULED IF DEMO MODE STOPS IT THEN IS TURNED OFF
 // TODO think about somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
 // TODO investigate power on button not working after using skip time to get to sequence 3
@@ -40,27 +42,27 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val stopSound: LiveData<Trigger>
         get() = _stopSound
 
-    private val _startSound = MutableLiveData<Trigger>()
-    val startSound: LiveData<Trigger>
+    private val _startSound = MutableLiveData<Trigger?>()
+    val startSound: LiveData<Trigger?>
         get() = _startSound
 
-    private val _startSoundOneAndDone = MutableLiveData<Trigger>()
-    val startSoundOneAndDone: LiveData<Trigger>
+    private val _startSoundOneAndDone = MutableLiveData<Trigger?>()
+    val startSoundOneAndDone: LiveData<Trigger?>
         get() = _startSoundOneAndDone
 
     private val _stopAnim = MutableLiveData<Trigger>()
     val stopAnim: LiveData<Trigger>
         get() = _stopAnim
 
-    private val _startAnim = MutableLiveData<Trigger>()
-    val startAnim: LiveData<Trigger>
+    private val _startAnim = MutableLiveData<Trigger?>()
+    val startAnim: LiveData<Trigger?>
         get() = _startAnim
 
-    private val _startAnimOneAndDone = MutableLiveData<Trigger>()
-    val startAnimOneAndDone: LiveData<Trigger>
+    private val _startAnimOneAndDone = MutableLiveData<Trigger?>()
+    val startAnimOneAndDone: LiveData<Trigger?>
         get() = _startAnimOneAndDone
 
-// need this to have the fragment schedule work for us
+// need this to have the fragment schedule the work for us
     val scheduleNotification = MutableLiveData(false)
 
     lateinit var lastLine: ScriptLine
@@ -120,8 +122,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
             }
 
-            // restoring the user to their last save point if needed
-            restoreSave()
+            restoreSave() // restoring the user to their last save point if needed
         }
     }
 
@@ -225,12 +226,15 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                     if (currentUserSave.sequence < 8) { // if the current sequence is not the last one
 
+
                         val newUserSave = currentUserSave.apply { // updating the user save
                             isPowered = false
                             sequence += 1
                             line = 0
                         }
                         repository.updateUserSaveData(newUserSave) // pushing the change to the db
+
+                        prepForNextSequence() // clearing the viewModel for the next sequence
 
                         repository.clearPromptResult() // clearing the users saved choices
 
@@ -366,6 +370,39 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 this.line = set.number
                 this.lineType = "prompt"
             })
+        }
+    }
+
+    private fun prepForNextSequence() {
+// clearing all the data from the last sequence
+        _chatDataset.value = mutableListOf()
+        _consoleDataset.value = mutableListOf()
+        chatLastItemAnimated.value = 0
+        consoleLastItemAnimated.value = 0
+        scriptTriggers.clear()
+        promptTriggers.clear()
+        promptResults = listOf()
+        _startSound.value = null
+        _startAnim.value = null
+        _startSoundOneAndDone.value = null
+        _startAnimOneAndDone.value = null
+//        _startSound.value = Trigger(0, 0, 0, "", "", null)
+//        _startAnim.value = Trigger(0, 0, 0, "", "", null)
+//        _startAnimOneAndDone.value = Trigger(0, 0, 0, "", "", null)
+//        _startSoundOneAndDone.value = Trigger(0, 0, 0, "", "", null)
+
+// setting up required data to run the next sequence
+        viewModelScope.launch {
+            val userSave = repository.getUserSave()
+
+            sequence = repository.getSequence(userSave.sequence)
+
+            for (trigger in sequence.triggers) {
+                when (trigger.triggerType) {
+                    "script" -> scriptTriggers.add(trigger)
+                    else -> promptTriggers.add(trigger)
+                }
+            }
         }
     }
 }

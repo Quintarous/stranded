@@ -54,19 +54,23 @@ class ChatPageFragment: Fragment() {
         //startup navigation logic
         viewModel.userSave.observe(viewLifecycleOwner, { userSave ->
 
-            if (args.fromPowerOn) {
-                if (userSave.line == 0) viewModel.startSequence()
-            } else {
+            if (userSave != null) {
+                if (userSave.isPowered) {
 
-                if (userSave != null) {
-                    if (userSave.isPowered) {
-                        if (userSave.line == 0)
+                    if (userSave.line == 0) {
+
+                        if (args.fromPowerOn) {
+                            viewModel.startSequence()
+                        } else {
                             findNavController()
                                 .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
-                    } else {
-                        findNavController()
-                            .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+                        }
                     }
+                } else {
+                    stopAnim()
+                    stopSound()
+                    findNavController()
+                        .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
                 }
             }
         })
@@ -230,26 +234,34 @@ class ChatPageFragment: Fragment() {
         viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
 
         viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
-            val resourceId = getResourceId(trigger.resourceId!!)
-            startSound(resourceId, trigger.loop)
+            if (trigger != null) {
+                val resourceId = getResourceId(trigger.resourceId!!)
+                startSound(resourceId, trigger.loop)
+            }
         })
 
         viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            val resourceId = getResourceId(trigger.resourceId!!)
-            startSoundOneAndDone(resourceId)
+            if (trigger != null) {
+                val resourceId = getResourceId(trigger.resourceId!!)
+                startSoundOneAndDone(resourceId)
+            }
         })
 
 // observers for starting and stopping animations
         viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
 
         viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            val resourceId = getResourceId(trigger.resourceId!!)
-            startAnim(resourceId, trigger.loop)
+            if (trigger != null) {
+                val resourceId = getResourceId(trigger.resourceId!!)
+                startAnim(resourceId, trigger.loop)
+            }
         })
 
         viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            val resourceId = getResourceId(trigger.resourceId!!)
-            startAnimOneAndDone(resourceId)
+            if (trigger != null) {
+                val resourceId = getResourceId(trigger.resourceId!!)
+                startAnimOneAndDone(resourceId)
+            }
         })
 
 
