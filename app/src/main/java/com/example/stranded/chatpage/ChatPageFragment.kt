@@ -268,7 +268,7 @@ class ChatPageFragment: Fragment() {
 // TODO notifications need to be thoroughly tested with real database
 // schedules notification work when a sequence is completed
         viewModel.scheduleNotification.observe(viewLifecycleOwner, {
-            if (it && viewModel.userSave.value!!.demoMode) {
+            if (it && viewModel.userSave.value!!.demoMode == false) {
 // getting the alarmManager instance
                 val alarmManager =
                     context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -285,6 +285,9 @@ class ChatPageFragment: Fragment() {
 
 // scheduling the alarm
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
+// reloading the trigger so it doesn't accidentally fire when it's not supposed to
+                viewModel.scheduleNotification.value = false
             }
         })
 

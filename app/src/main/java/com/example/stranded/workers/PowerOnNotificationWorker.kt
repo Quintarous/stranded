@@ -1,7 +1,9 @@
 package com.example.stranded.workers
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.content.ContextCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -24,12 +26,15 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
 
         val repository = Repository(context)
 
-// setting isPowered to true
-// TODO test that this user save database change has the intended effect with a real (not in memory) database
-        val oldUserSave = repository.getUserSaveBlocking()
+        val oldUserSave = repository.getUserSaveBlocking() // setting isPowered to true
         val newUserSave = oldUserSave.apply { isPowered = true }
         repository.noSuspendUpdateUserSaveData(newUserSave)
 
+        val intent = Intent(context, PowerOnNotificationWorker::class.java)
+        val oldPendingIntent = PendingIntent.getBroadcast(context, 1, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE)
+
+        oldPendingIntent.cancel() // cancelling the old pending intent
 
         return Result.success()
     }

@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO SOUND TRIGGERS AREN'T WORKING
-// TODO NOTIFICATION IS NOT RESCHEDULED IF DEMO MODE STOPS IT THEN IS TURNED OFF
 // TODO think about somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
 // TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
 // TODO investigate power on button not working after using skip time to get to sequence 3
