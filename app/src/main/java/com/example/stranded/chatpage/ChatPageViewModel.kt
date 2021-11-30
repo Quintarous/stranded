@@ -7,12 +7,11 @@ import com.example.stranded.Repository
 import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO SOUND TRIGGERS AREN'T WORKING
-// TODO think about somehow tying the media player to the viewmodels lifecycle so it can keep playing on the settings screen
-// TODO set all triggers to fire off of ScriptLine ids instead of ScriptLine index locations (when db is 100% done)
-// TODO investigate power on button not working after using skip time to get to sequence 3
+// TODO when using skip time then completing the sequence causes NoPowerFragment to not update it's userSave and thinks isPowered=true even though isPowered=false in the database
+// TODO mix the volume of all the sound effects
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -61,6 +60,14 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val startAnimOneAndDone: LiveData<Trigger?>
         get() = _startAnimOneAndDone
 
+    private val _navToPowerOn = MutableLiveData(false)
+    val navToPowerOn: LiveData<Boolean>
+        get() = _navToPowerOn
+
+    private val _navToNoPower = MutableLiveData(false)
+    val navToNoPower: LiveData<Boolean>
+        get() = _navToNoPower
+
 // need this to have the fragment schedule the work for us
     val scheduleNotification = MutableLiveData(false)
 
@@ -73,6 +80,34 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val scriptTriggers: MutableList<Trigger> = mutableListOf()
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
 
+    // TODO delete this when done testing
+    override fun onCleared() {
+        Log.i("bruh", "onCleared()")
+    }
+
+
+    fun startupNavigationCheck(fromPowerOn: Boolean) {
+        viewModelScope.launch {
+            val userSave = repository.getUserSave()
+            Log.i("bruh", "userSave = $userSave")
+
+            if (userSave.isPowered) {
+
+                if (userSave.line == 0) {
+
+                    if (fromPowerOn) {
+                        startSequence()
+                    } else {
+                        _navToPowerOn.value = true
+                        _navToPowerOn.value = false
+                    }
+                }
+            } else {
+                _navToNoPower.value = true
+                _navToNoPower.value = false
+            }
+        }
+    }
 
 // function for setting the letterDuration both here and in the database
     fun setLetterDuration(value: Int) {
@@ -107,6 +142,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
+            delay(1000)
             val userSave = repository.getUserSave()
 
             sequence = repository.getSequence(userSave.sequence)
@@ -120,7 +156,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     else -> promptTriggers.add(trigger)
                 }
             }
-
             restoreSave() // restoring the user to their last save point if needed
         }
     }
@@ -225,7 +260,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                     if (currentUserSave.sequence < 8) { // if the current sequence is not the last one
 
-
                         val newUserSave = currentUserSave.apply { // updating the user save
                             isPowered = false
                             sequence += 1
@@ -238,7 +272,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         repository.clearPromptResult() // clearing the users saved choices
 
 // telling the fragment to schedule notification + powerOn work
-                        scheduleNotification.value = true
+                        if (!newUserSave.demoMode) {
+                            scheduleNotification.value = true
+                            scheduleNotification.value = false
+                        }
+
+                        _navToNoPower.value = true // navigating off the chatPageFragment
+                        _navToNoPower.value = false
                     }
 
                     // else TODO do something special when the user completes the story
@@ -341,7 +381,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
             "animation" -> {
                 if (trigger.resourceId == null) {
-                    Log.i("bruh", "stopanim trigger")
                     _stopAnim.value = trigger
                 }
                 else {
@@ -349,7 +388,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         _startAnimOneAndDone.value = trigger
                     }
                     else {
-                        Log.i("bruh", "trigger id = ${trigger.id}")
                         _startAnim.value = trigger
                     }
                 }
@@ -385,10 +423,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         _startAnim.value = null
         _startSoundOneAndDone.value = null
         _startAnimOneAndDone.value = null
-//        _startSound.value = Trigger(0, 0, 0, "", "", null)
-//        _startAnim.value = Trigger(0, 0, 0, "", "", null)
-//        _startAnimOneAndDone.value = Trigger(0, 0, 0, "", "", null)
-//        _startSoundOneAndDone.value = Trigger(0, 0, 0, "", "", null)
 
 // setting up required data to run the next sequence
         viewModelScope.launch {

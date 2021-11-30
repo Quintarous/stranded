@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.stranded.R
@@ -21,7 +22,7 @@ class PowerOnFragment: Fragment() {
     ): View {
         val binding = FragmentPowerOnBinding.inflate(inflater, container, false)
 
-        val viewModel: StartupViewModel by viewModels()
+        val viewModel: StartupViewModel by activityViewModels()
 
         binding.powerOnButton.setOnClickListener {
             //viewModel.startSequence()

@@ -32,7 +32,7 @@ class PowerOnNotificationWorker (private val context: Context, workerParams: Wor
 
         val intent = Intent(context, PowerOnNotificationWorker::class.java)
         val oldPendingIntent = PendingIntent.getBroadcast(context, 1, intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE)
+            PendingIntent.FLAG_IMMUTABLE)
 
         oldPendingIntent.cancel() // cancelling the old pending intent
 

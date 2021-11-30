@@ -52,7 +52,10 @@ class ChatPageFragment: Fragment() {
     ): View {
 
         //startup navigation logic
+        /*
         viewModel.userSave.observe(viewLifecycleOwner, { userSave ->
+            Log.i("bruh", "userSave = ${userSave}")
+            Log.i("bruh", "fromPowerOn = ${args.fromPowerOn}")
 
             if (userSave != null) {
                 if (userSave.isPowered) {
@@ -74,6 +77,8 @@ class ChatPageFragment: Fragment() {
                 }
             }
         })
+        */
+        viewModel.startupNavigationCheck(args.fromPowerOn)
 
         //data binding boilerplate code
         val binding = DataBindingUtil.inflate<FragmentChatPageNewBinding>(
@@ -184,6 +189,27 @@ class ChatPageFragment: Fragment() {
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
         // viewModel observers go here
+
+        // navToNoPower is a navigation trigger controlled by the ViewModel TODO delete if bullshit
+        viewModel.navToNoPower.observe(viewLifecycleOwner, {
+            Log.i("bruh", "navToNoPower = $it")
+            if (it) {
+                stopAnim()
+                stopSound()
+                findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+            }
+        })
+
+        // navToPowerOn is a navigation trigger controlled by the ViewModel TODO delete if bullshit
+        viewModel.navToPowerOn.observe(viewLifecycleOwner, {
+            Log.i("bruh", "natToPowerOn = $it")
+            if (it) {
+                stopAnim()
+                stopSound()
+                findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+            }
+        })
+
         // chat recyclers' dataset is updated through here
         viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
             val dataset = chatRecyclerAdapter.dataset
@@ -268,7 +294,7 @@ class ChatPageFragment: Fragment() {
 // TODO notifications need to be thoroughly tested with real database
 // schedules notification work when a sequence is completed
         viewModel.scheduleNotification.observe(viewLifecycleOwner, {
-            if (it && viewModel.userSave.value!!.demoMode == false) {
+            if (it) {
 // getting the alarmManager instance
                 val alarmManager =
                     context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -370,7 +396,6 @@ class ChatPageFragment: Fragment() {
 
     override fun onStop() {
         if (mediaPlayer != null) {
-            Log.i("bruh", "mediaPlayer released")
             mediaPlayer?.release()
             mediaPlayer = null
         }
@@ -379,15 +404,12 @@ class ChatPageFragment: Fragment() {
 
 // functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
-        Log.i("bruh", "startMediaPlayback() called")
         mediaPlayer = MediaPlayer.create(context, resource)
         mediaPlayer?.isLooping = loop
         mediaPlayer?.start()
     }
 
     private fun startAnimation(animation: Int, isLooping: Boolean) {
-        Log.i("bruh", "$animation") // 2131230870
-        Log.i("bruh", "g_walk: ${R.drawable.g_meter_up_animation}") // 2131230838
         gMeter.apply {
             setBackgroundResource(animation)
             gMeterAnimation = background as AnimationDrawable

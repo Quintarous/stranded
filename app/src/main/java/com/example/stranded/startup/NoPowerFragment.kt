@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.stranded.PowerOnBroadcastReceiver
@@ -30,15 +31,15 @@ class NoPowerFragment: Fragment() {
     ): View {
         val binding = FragmentNoPowerBinding.inflate(inflater, container, false)
 
-        val viewModel: StartupViewModel by viewModels()
-
-// TODO test if this navigation actually works when isPowered get changed to true
+        val viewModel: StartupViewModel by activityViewModels()
+// TODO test all the notification stuff with log statements
 // if the user save is updated while the user is sitting on this screen
 // check if isPowered = true and navigate to powerOn if so
         viewModel.userSave.observe(viewLifecycleOwner, { userSave ->
             val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             if (userSave.isPowered) {
+                Log.i("bruh", "noPowerFragment navigated")
                 findNavController().navigate(R.id.action_noPowerFragment_to_powerOnFragment)
             }
 
