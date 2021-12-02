@@ -18,7 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +29,19 @@ import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageNewBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toCollection
+import kotlinx.coroutines.launch
 import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 import kotlin.random.Random
+import com.example.stranded.chatpage.ChatPageViewModel.Event
+import kotlinx.coroutines.flow.launchIn
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
-// TODO research this "lazy" thing that retrieves classes like this
+
     val args: ChatPageFragmentArgs by navArgs()
 
     private val viewModel: ChatPageViewModel by activityViewModels()
@@ -78,7 +84,6 @@ class ChatPageFragment: Fragment() {
             }
         })
         */
-        viewModel.startupNavigationCheck(args.fromPowerOn)
 
         //data binding boilerplate code
         val binding = DataBindingUtil.inflate<FragmentChatPageNewBinding>(
@@ -92,10 +97,22 @@ class ChatPageFragment: Fragment() {
 
         binding.viewModel = viewModel
 
-        //making the gMeter available throughout the class
+        // making the gMeter available throughout the class
         gMeter = binding.gMeter
 
-        //setting up the chat recycler adapter
+        viewModel.startupNavigationCheck(args.fromPowerOn) // running the startup navigation logic in the ViewModel
+
+        viewModel.eventFlow
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { event ->
+                Log.i("bruh", "$event collected")
+                // TODO all the livedata navToPowerOn/NavToNoPower/ScheduleNotification observers have been commented out
+                // we need to execute those actions based on events emitted by the viewmodel through this flow
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+
+        // setting up the chat recycler adapter
         binding.chatRecycler.layoutManager = LinearLayoutManager(this.context).also {
             it.stackFromEnd = true
         }
@@ -103,9 +120,9 @@ class ChatPageFragment: Fragment() {
         val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf(), viewModel)
         binding.chatRecycler.adapter = chatRecyclerAdapter
 
-// adding a custom OnItemTouchListener to the chat recycler view
-// this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
-// it only acts when the motion event action is ACTION_DOWN or ACTION_UP
+        // adding a custom OnItemTouchListener to the chat recycler view
+        // this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
+        // it only acts when the motion event action is ACTION_DOWN or ACTION_UP
         var lastDownTouchx: Float? = null
         var lastDownTouchy: Float? = null
         binding.chatRecycler.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -192,7 +209,6 @@ class ChatPageFragment: Fragment() {
 
         // navToNoPower is a navigation trigger controlled by the ViewModel TODO delete if bullshit
         viewModel.navToNoPower.observe(viewLifecycleOwner, {
-            Log.i("bruh", "navToNoPower = $it")
             if (it) {
                 stopAnim()
                 stopSound()
@@ -202,7 +218,6 @@ class ChatPageFragment: Fragment() {
 
         // navToPowerOn is a navigation trigger controlled by the ViewModel TODO delete if bullshit
         viewModel.navToPowerOn.observe(viewLifecycleOwner, {
-            Log.i("bruh", "natToPowerOn = $it")
             if (it) {
                 stopAnim()
                 stopSound()

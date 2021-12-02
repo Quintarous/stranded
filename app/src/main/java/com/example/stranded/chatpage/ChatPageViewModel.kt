@@ -7,10 +7,14 @@ import com.example.stranded.Repository
 import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO when using skip time then completing the sequence causes NoPowerFragment to not update it's userSave and thinks isPowered=true even though isPowered=false in the database
+// TODO args.fromPowerOn retains it's true value and doesn't reset back to false when a sequence ends
 // TODO mix the volume of all the sound effects
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
@@ -86,6 +90,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
 
+    sealed class Event {
+        object NavToNoPower: Event()
+        object NavToPowerOn: Event()
+        object ScheduleNotification: Event()
+    }
+
+    private val _eventFlow = MutableSharedFlow<Event>(1)
+    val eventFlow: SharedFlow<Event> = _eventFlow
+
+
     fun startupNavigationCheck(fromPowerOn: Boolean) {
         viewModelScope.launch {
             val userSave = repository.getUserSave()
@@ -98,13 +112,17 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     if (fromPowerOn) {
                         startSequence()
                     } else {
-                        _navToPowerOn.value = true
-                        _navToPowerOn.value = false
+                        Log.i("bruh", "NavToPowerOn emitted")
+                        _eventFlow.emit(Event.NavToPowerOn)
+                        //_navToPowerOn.value = true
+                        //_navToPowerOn.value = false
                     }
                 }
             } else {
-                _navToNoPower.value = true
-                _navToNoPower.value = false
+                Log.i("bruh", "NavToNoPower emitted")
+                _eventFlow.emit(Event.NavToNoPower)
+                //_navToNoPower.value = true
+                //_navToNoPower.value = false
             }
         }
     }
@@ -273,12 +291,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // telling the fragment to schedule notification + powerOn work
                         if (!newUserSave.demoMode) {
-                            scheduleNotification.value = true
-                            scheduleNotification.value = false
+                            Log.i("bruh", "ScheduleNotification emitted")
+                            _eventFlow.emit(Event.ScheduleNotification)
+                            //scheduleNotification.value = true
+                            //scheduleNotification.value = false
                         }
 
-                        _navToNoPower.value = true // navigating off the chatPageFragment
-                        _navToNoPower.value = false
+                        Log.i("bruh", "NavToNoPower emitted")
+                        _eventFlow.emit(Event.NavToNoPower)
+                        //_navToNoPower.value = true // navigating off the chatPageFragment
+                        //_navToNoPower.value = false
                     }
 
                     // else TODO do something special when the user completes the story
