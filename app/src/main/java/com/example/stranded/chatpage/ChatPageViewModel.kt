@@ -8,9 +8,9 @@ import com.example.stranded.database.*
 import com.example.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO when using skip time then completing the sequence causes NoPowerFragment to not update it's userSave and thinks isPowered=true even though isPowered=false in the database
@@ -64,17 +64,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val startAnimOneAndDone: LiveData<Trigger?>
         get() = _startAnimOneAndDone
 
-    private val _navToPowerOn = MutableLiveData(false)
-    val navToPowerOn: LiveData<Boolean>
-        get() = _navToPowerOn
-
-    private val _navToNoPower = MutableLiveData(false)
-    val navToNoPower: LiveData<Boolean>
-        get() = _navToNoPower
-
-// need this to have the fragment schedule the work for us
-    val scheduleNotification = MutableLiveData(false)
-
     lateinit var lastLine: ScriptLine
 
     private val _letterDuration = MutableLiveData<Int>()
@@ -96,14 +85,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         object ScheduleNotification: Event()
     }
 
-    private val _eventFlow = MutableSharedFlow<Event>(1)
-    val eventFlow: SharedFlow<Event> = _eventFlow
+    private val eventChannel = Channel<Event>(2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val eventFlow = eventChannel.receiveAsFlow()
 
 
     fun startupNavigationCheck(fromPowerOn: Boolean) {
         viewModelScope.launch {
             val userSave = repository.getUserSave()
-            Log.i("bruh", "userSave = $userSave")
 
             if (userSave.isPowered) {
 
@@ -112,17 +100,11 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     if (fromPowerOn) {
                         startSequence()
                     } else {
-                        Log.i("bruh", "NavToPowerOn emitted")
-                        _eventFlow.emit(Event.NavToPowerOn)
-                        //_navToPowerOn.value = true
-                        //_navToPowerOn.value = false
+                        eventChannel.trySend(Event.NavToPowerOn)
                     }
                 }
             } else {
-                Log.i("bruh", "NavToNoPower emitted")
-                _eventFlow.emit(Event.NavToNoPower)
-                //_navToNoPower.value = true
-                //_navToNoPower.value = false
+                eventChannel.trySend(Event.NavToNoPower)
             }
         }
     }
@@ -291,16 +273,10 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 // telling the fragment to schedule notification + powerOn work
                         if (!newUserSave.demoMode) {
-                            Log.i("bruh", "ScheduleNotification emitted")
-                            _eventFlow.emit(Event.ScheduleNotification)
-                            //scheduleNotification.value = true
-                            //scheduleNotification.value = false
+                            eventChannel.trySend(Event.ScheduleNotification)
                         }
 
-                        Log.i("bruh", "NavToNoPower emitted")
-                        _eventFlow.emit(Event.NavToNoPower)
-                        //_navToNoPower.value = true // navigating off the chatPageFragment
-                        //_navToNoPower.value = false
+                        eventChannel.trySend(Event.NavToNoPower)
                     }
 
                     // else TODO do something special when the user completes the story

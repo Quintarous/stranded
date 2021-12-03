@@ -29,15 +29,12 @@ import com.example.stranded.R
 import com.example.stranded.databinding.FragmentChatPageNewBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
 import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 import kotlin.random.Random
 import com.example.stranded.chatpage.ChatPageViewModel.Event
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.*
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
@@ -57,34 +54,6 @@ class ChatPageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        //startup navigation logic
-        /*
-        viewModel.userSave.observe(viewLifecycleOwner, { userSave ->
-            Log.i("bruh", "userSave = ${userSave}")
-            Log.i("bruh", "fromPowerOn = ${args.fromPowerOn}")
-
-            if (userSave != null) {
-                if (userSave.isPowered) {
-
-                    if (userSave.line == 0) {
-
-                        if (args.fromPowerOn) {
-                            viewModel.startSequence()
-                        } else {
-                            findNavController()
-                                .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
-                        }
-                    }
-                } else {
-                    stopAnim()
-                    stopSound()
-                    findNavController()
-                        .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
-                }
-            }
-        })
-        */
-
         //data binding boilerplate code
         val binding = DataBindingUtil.inflate<FragmentChatPageNewBinding>(
             inflater,
@@ -102,14 +71,46 @@ class ChatPageFragment: Fragment() {
 
         viewModel.startupNavigationCheck(args.fromPowerOn) // running the startup navigation logic in the ViewModel
 
-        viewModel.eventFlow
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { event ->
-                Log.i("bruh", "$event collected")
-                // TODO all the livedata navToPowerOn/NavToNoPower/ScheduleNotification observers have been commented out
-                // we need to execute those actions based on events emitted by the viewmodel through this flow
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        lifecycleScope.launch { // observing one shot events from the ViewModel
+            viewModel.eventFlow
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { event ->
+                    Log.i("bruh", "$event collected")
+
+                    when (event) {
+                        is Event.NavToPowerOn -> {
+                            findNavController()
+                                .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
+                        }
+
+                        is Event.NavToNoPower -> {
+                            stopAnim()
+                            stopSound()
+                            findNavController()
+                                .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+                        }
+
+                        else -> { // must be Event.ScheduleNotification
+                            // getting the alarmManager instance
+                            val alarmManager =
+                                context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                            // generating the time for the alarm to go off
+                            val calendar = Calendar.getInstance().apply {
+                                add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 13))
+                            }
+
+                            // getting the pending intent
+                            val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
+                            val pendingIntent = PendingIntent
+                                .getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+
+                            // scheduling the alarm
+                            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                        }
+                    }
+                }
+        }
 
 
         // setting up the chat recycler adapter
@@ -207,24 +208,6 @@ class ChatPageFragment: Fragment() {
 
         // viewModel observers go here
 
-        // navToNoPower is a navigation trigger controlled by the ViewModel TODO delete if bullshit
-        viewModel.navToNoPower.observe(viewLifecycleOwner, {
-            if (it) {
-                stopAnim()
-                stopSound()
-                findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
-            }
-        })
-
-        // navToPowerOn is a navigation trigger controlled by the ViewModel TODO delete if bullshit
-        viewModel.navToPowerOn.observe(viewLifecycleOwner, {
-            if (it) {
-                stopAnim()
-                stopSound()
-                findNavController().navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
-            }
-        })
-
         // chat recyclers' dataset is updated through here
         viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
             val dataset = chatRecyclerAdapter.dataset
@@ -302,33 +285,6 @@ class ChatPageFragment: Fragment() {
             if (trigger != null) {
                 val resourceId = getResourceId(trigger.resourceId!!)
                 startAnimOneAndDone(resourceId)
-            }
-        })
-
-
-// TODO notifications need to be thoroughly tested with real database
-// schedules notification work when a sequence is completed
-        viewModel.scheduleNotification.observe(viewLifecycleOwner, {
-            if (it) {
-// getting the alarmManager instance
-                val alarmManager =
-                    context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-// generating the time for the alarm to go off
-                val calendar = Calendar.getInstance().apply {
-                    add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 13))
-                }
-
-// getting the pending intent
-                val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
-                val pendingIntent = PendingIntent
-                    .getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
-
-// scheduling the alarm
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
-// reloading the trigger so it doesn't accidentally fire when it's not supposed to
-                viewModel.scheduleNotification.value = false
             }
         })
 
