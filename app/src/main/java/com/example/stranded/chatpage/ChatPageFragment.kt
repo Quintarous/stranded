@@ -12,12 +12,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -30,10 +27,10 @@ import com.example.stranded.databinding.FragmentChatPageNewBinding
 import com.example.stranded.onAnimationFinished
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 import kotlin.random.Random
 import com.example.stranded.chatpage.ChatPageViewModel.Event
+import com.example.stranded.database.Trigger
 import kotlinx.coroutines.flow.*
 
 @AndroidEntryPoint
@@ -88,6 +85,30 @@ class ChatPageFragment: Fragment() {
                             stopSound()
                             findNavController()
                                 .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
+                        }
+
+                        is Event.StopSound -> { stopSound() }
+
+                        is Event.StartSound -> {
+                            val resourceId = getResourceId(event.trigger.resourceId!!)
+                            startSound(resourceId, event.trigger.loop)
+                        }
+
+                        is Event.StartSoundOneAndDone -> {
+                            val resourceId = getResourceId(event.newTrigger.resourceId!!)
+                            startSoundOneAndDone(event.oldTrigger, resourceId)
+                        }
+
+                        is Event.StopAnim -> { stopAnim() }
+
+                        is Event.StartAnim -> {
+                            val resourceId = getResourceId(event.trigger.resourceId!!)
+                            startAnimation(resourceId, event.trigger.loop)
+                        }
+
+                        is Event.StartAnimOneAndDone -> {
+                            val resourceId = getResourceId(event.newTrigger.resourceId!!)
+                            startAnimOneAndDone(event.oldTrigger, resourceId)
                         }
 
                         else -> { // must be Event.ScheduleNotification
@@ -255,6 +276,7 @@ class ChatPageFragment: Fragment() {
 
 
 // observers for starting and stopping sound effects
+        /*
         viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
 
         viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
@@ -287,7 +309,7 @@ class ChatPageFragment: Fragment() {
                 startAnimOneAndDone(resourceId)
             }
         })
-
+        */
         setHasOptionsMenu(true)
 
         return binding.root
@@ -299,6 +321,7 @@ class ChatPageFragment: Fragment() {
 
 // so to fix this we're checking if there is a valid start sound trigger in the view model
 // and playing it if so
+    /*
     override fun onStart() {
         if (viewModel.startSound.value != null) {
             val trigger = viewModel.startSound.value!!
@@ -310,6 +333,7 @@ class ChatPageFragment: Fragment() {
         }
         super.onStart()
     }
+    */
 
     //methods for starting and stopping sound effects
     private fun stopSound() {
@@ -328,9 +352,7 @@ class ChatPageFragment: Fragment() {
 
     //meant for interrupting looping sounds with one sound that plays one time
     //then goes back to the original loop it was on before
-    private fun startSoundOneAndDone(sound: Int) {
-        val lastSoundTrigger = viewModel.startSound.value!!
-
+    private fun startSoundOneAndDone(lastSoundTrigger: Trigger, sound: Int) {
         stopSound()
         startMediaPlayback(sound, false)
 
@@ -345,23 +367,17 @@ class ChatPageFragment: Fragment() {
         gMeter.setBackgroundResource(R.drawable.g_idle)
     }
 
-    private fun startAnim(animation: Int, isLooping: Boolean) {
-        startAnimation(animation, isLooping)
-    }
-
     //meant for interrupting looping animations with one animation that plays one time then goes
     //back to the original loop it was on before
-    private fun startAnimOneAndDone(animation: Int) {
-        val lastAnimTrigger = viewModel.startAnim.value
-
+    private fun startAnimOneAndDone(lastAnimTrigger: Trigger, animation: Int) {
         startAnimation(animation, false)
 
-        gMeterAnimation.onAnimationFinished {
-
-            if (lastAnimTrigger != null){
+        viewLifecycleOwner.lifecycleScope.launch {
+            gMeterAnimation.onAnimationFinished {
+                Log.i("bruh" ,"onAnimationFinished")
                 val resourceId = getResourceId(lastAnimTrigger.resourceId!!)
                 startAnimation(resourceId, lastAnimTrigger.loop)
-            } else { stopAnim() }
+            }
         }
     }
 

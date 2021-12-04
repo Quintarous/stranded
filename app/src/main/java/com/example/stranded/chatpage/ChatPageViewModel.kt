@@ -40,6 +40,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         get() = _promptDataset
 
 // observed live data for starting and stopping animations and sound effects
+    /*
     private val _stopSound = MutableLiveData<Trigger>()
     val stopSound: LiveData<Trigger>
         get() = _stopSound
@@ -63,7 +64,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private val _startAnimOneAndDone = MutableLiveData<Trigger?>()
     val startAnimOneAndDone: LiveData<Trigger?>
         get() = _startAnimOneAndDone
-
+    */
     lateinit var lastLine: ScriptLine
 
     private val _letterDuration = MutableLiveData<Int>()
@@ -72,6 +73,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     private val scriptTriggers: MutableList<Trigger> = mutableListOf()
     private val  promptTriggers: MutableList<Trigger> = mutableListOf()
+
+    private var lastAnimTrigger: Trigger? = null
+    private var lastSoundTrigger: Trigger? = null
 
     // TODO delete this when done testing
     override fun onCleared() {
@@ -83,6 +87,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         object NavToNoPower: Event()
         object NavToPowerOn: Event()
         object ScheduleNotification: Event()
+        object StopSound: Event()
+        data class StartSound(val trigger: Trigger): Event()
+        data class StartSoundOneAndDone(val oldTrigger: Trigger, val newTrigger: Trigger): Event()
+        object StopAnim: Event()
+        data class StartAnim(val trigger: Trigger): Event()
+        data class StartAnimOneAndDone(val oldTrigger: Trigger, val newTrigger: Trigger): Event()
     }
 
     private val eventChannel = Channel<Event>(2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -93,17 +103,24 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         viewModelScope.launch {
             val userSave = repository.getUserSave()
 
-            if (userSave.isPowered) {
+            if (userSave.isPowered) { // isPowered is true
+                if (userSave.line == 0) { // if the sequence has not yet been started
+                    if (fromPowerOn) { // if the "Power On" button was pressed
+                        startSequence() // only now can we start the sequence
+                    } else { // "Power On" button was NOT pressed
+                        eventChannel.trySend(Event.NavToPowerOn) // user needs to hit "Power On" first
+                    }
+                } else { // sequence currently in progress
+                    // resuming looping triggers if we need to
+                    if (lastAnimTrigger != null && lastAnimTrigger!!.loop) {
+                        fireTrigger(lastAnimTrigger!!)
+                    }
 
-                if (userSave.line == 0) {
-
-                    if (fromPowerOn) {
-                        startSequence()
-                    } else {
-                        eventChannel.trySend(Event.NavToPowerOn)
+                    if (lastSoundTrigger != null && lastSoundTrigger!!.loop) {
+                        fireTrigger(lastSoundTrigger!!)
                     }
                 }
-            } else {
+            } else { // isPowered is false
                 eventChannel.trySend(Event.NavToNoPower)
             }
         }
@@ -179,7 +196,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                 if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
 
-                    if (trigger.loop) fireTrigger(trigger) // fire if trigger is a looping one
+                    if (trigger.loop) fireTrigger(trigger) // fire the trigger if it's looping
 
                     else {
                         if (trigger.resourceId == null) {
@@ -333,25 +350,25 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-// checking to see if we need to fire any triggers on this script line and firing them if we do
+        // checking to see if we need to fire any triggers on this script line and firing them if we do
         for (trigger in scriptTriggers) {
             if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
                 fireTrigger(trigger)
             }
         }
 
-// updating the user save
+        // updating the user save
         viewModelScope.launch {
-// if the line being displayed is a user response leave the UserSave.line as the prompt set #
-// and only change the lineType to "response" (to indicate the user ended on a prompt response
-// as opposed to the prompt set itself)
+            // if the line being displayed is a user response leave the UserSave.line as the prompt
+            // set # and only change the lineType to "response" (to indicate the user ended on a
+            // prompt response as opposed to the prompt set itself)
             val userSave = repository.getUserSave()
 
             if (scriptLine.type == "user") {
                 repository.updateUserSaveData(userSave.apply {
                     this.lineType = "response"
                 })
-// else update the user save with the most recent script lines data as normal
+            // else update the user save with the most recent script lines data as normal
             } else {
                 repository.updateUserSaveData(userSave.apply {
                     this.line = scriptLine.id
@@ -361,34 +378,51 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    private fun fireTrigger(trigger: Trigger) {
+    private fun fireTrigger(trigger: Trigger) { // tells the fragment to fire the trigger
         when (trigger.resourceType) {
             "sound" -> {
                 if (trigger.resourceId == null) {
-                    _stopSound.value = trigger
-                }
-                else {
+                    eventChannel.trySend(Event.StopSound)
+                    //_stopSound.value = trigger
+                } else {
                     if (trigger.oneAndDone) {
-                        _startSoundOneAndDone.value = trigger
+                        if (lastSoundTrigger != null) {
+                            eventChannel.trySend(Event.StartSoundOneAndDone(lastSoundTrigger!!, trigger))
+                            //_startSoundOneAndDone.value = trigger
+                        } else {
+                            Log.i("bruh" ,"tried to send Event.StartSoundOneAndDone but lastSoundTrigger was null")
+                        }
                     }
                     else {
-                        _startSound.value = trigger
+                        eventChannel.trySend(Event.StartSound(trigger))
+                        //_startSound.value = trigger
                     }
                 }
+
+                lastSoundTrigger = trigger
             }
 
             "animation" -> {
                 if (trigger.resourceId == null) {
-                    _stopAnim.value = trigger
+                    eventChannel.trySend(Event.StopAnim)
+                    //_stopAnim.value = trigger
                 }
                 else {
                     if (trigger.oneAndDone) {
-                        _startAnimOneAndDone.value = trigger
+                        if (lastAnimTrigger != null) {
+                            eventChannel.trySend(Event.StartAnimOneAndDone(lastAnimTrigger!!, trigger))
+                            //_startAnimOneAndDone.value = trigger
+                        } else {
+                            Log.i("bruh" ,"tried to send Event.StartAnimOneAndDone but lastAnimTrigger was null")
+                        }
                     }
                     else {
-                        _startAnim.value = trigger
+                        eventChannel.trySend(Event.StartAnim(trigger))
+                        //_startAnim.value = trigger
                     }
                 }
+
+                lastAnimTrigger = trigger
             }
         }
     }
@@ -417,10 +451,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         scriptTriggers.clear()
         promptTriggers.clear()
         promptResults = listOf()
-        _startSound.value = null
-        _startAnim.value = null
-        _startSoundOneAndDone.value = null
-        _startAnimOneAndDone.value = null
+        lastSoundTrigger = null
+        lastAnimTrigger = null
 
 // setting up required data to run the next sequence
         viewModelScope.launch {

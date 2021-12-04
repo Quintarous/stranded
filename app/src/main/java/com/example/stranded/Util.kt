@@ -26,14 +26,12 @@ fun <T> MutableLiveData<T>.notifyObserver() {
     this.value = this.value
 }
 
-fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
+suspend fun AnimationDrawable.onAnimationFinished(block: () -> Unit) {
     var duration: Long = 0
     for (i in 0 until numberOfFrames) {
         duration += getDuration(i)
     }
 
-//    GlobalScope.launch {
-//        delay(duration + 200)
-//        block()
-//    }
+    delay(duration + 200)
+    block()
 }
