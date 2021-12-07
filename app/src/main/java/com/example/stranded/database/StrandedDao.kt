@@ -2,6 +2,8 @@ package com.example.stranded.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface StrandedDao {
@@ -22,7 +24,7 @@ interface StrandedDao {
 
     //get methods
     @Query("SELECT * FROM UserSave")
-    fun getLiveDataUserSave(): LiveData<UserSave>
+    fun getUserSaveFlow(): Flow<UserSave>
     @Query("SELECT * FROM UserSave")
     suspend fun getUserSave(): UserSave
     @Query("SELECT * FROM UserSave")

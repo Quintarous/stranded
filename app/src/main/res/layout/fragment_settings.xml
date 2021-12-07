@@ -50,7 +50,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:text="@string/demo_mode"
-            android:checked="@{viewModel.userSave.demoMode}"
+            android:checked="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/letterDurationEditText" />
     </androidx.constraintlayout.widget.ConstraintLayout>

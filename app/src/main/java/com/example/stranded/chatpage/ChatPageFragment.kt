@@ -72,8 +72,6 @@ class ChatPageFragment: Fragment() {
             viewModel.eventFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { event ->
-                    Log.i("bruh", "$event collected")
-
                     when (event) {
                         is Event.NavToPowerOn -> {
                             findNavController()

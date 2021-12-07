@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import com.example.stranded.chatpage.Sequence
 import com.example.stranded.database.*
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class Repository @Inject constructor(@ApplicationContext private val context: Context) {
@@ -12,8 +14,7 @@ class Repository @Inject constructor(@ApplicationContext private val context: Co
     private val db: StrandedDB = getDatabase(context)
     private val dao: StrandedDao = db.getDao()
 
-    // live data provider of the user save data
-    val userSave: LiveData<UserSave> = dao.getLiveDataUserSave()
+    val userSaveFlow = dao.getUserSaveFlow()
     // asynchronous non blocking method
     suspend fun getUserSave(): UserSave = dao.getUserSave()
     // synchronous blocking method for the PowerOnNotificationWorker

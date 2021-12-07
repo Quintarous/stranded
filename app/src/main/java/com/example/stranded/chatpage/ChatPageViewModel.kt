@@ -10,16 +10,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO when using skip time then completing the sequence causes NoPowerFragment to not update it's userSave and thinks isPowered=true even though isPowered=false in the database
 // TODO args.fromPowerOn retains it's true value and doesn't reset back to false when a sequence ends
+// TODO settings page fragment doesn't show letter duration
 // TODO mix the volume of all the sound effects
+// TODO clean up all the livedata references that were replaced by eventChannel
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
-    val userSave = repository.userSave
     lateinit var sequence: Sequence
     lateinit var promptResults: List<Int>
 
@@ -77,11 +82,34 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private var lastAnimTrigger: Trigger? = null
     private var lastSoundTrigger: Trigger? = null
 
-    // TODO delete this when done testing
-    override fun onCleared() {
-        Log.i("bruh", "onCleared()")
-    }
+    private val _userSaveFlow = MutableStateFlow<UserSave?>(null)
+    val userSaveFlow: StateFlow<UserSave?> = _userSaveFlow
 
+    init {
+        // grabbing the sequence, letterDuration and prompt results from the repository
+        viewModelScope.launch {
+            delay(1000)
+
+            repository.userSaveFlow.stateIn(this).collect { userSave ->
+                _userSaveFlow.emit(userSave)
+            }
+
+            val userSave = repository.getUserSave()
+
+            sequence = repository.getSequence(userSave.sequence)
+            _letterDuration.value = userSave.letterDuration
+            promptResults = repository.getPromptResults().map { it.result }
+
+            // sorting the sequence triggers into script and prompt trigger lists
+            for (trigger in sequence.triggers) {
+                when (trigger.triggerType) {
+                    "script" -> scriptTriggers.add(trigger)
+                    else -> promptTriggers.add(trigger)
+                }
+            }
+            restoreSave() // restoring the user to their last save point if needed
+        }
+    }
 
     sealed class Event {
         object NavToNoPower: Event()
@@ -155,27 +183,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
     fun startSequence() = displayScriptLine(sequence.scriptLines[0]) // starts the sequence with the first ScriptLine
-
-    init {
-        // grabbing the sequence, letterDuration and prompt results from the repository
-        viewModelScope.launch {
-            delay(1000)
-            val userSave = repository.getUserSave()
-
-            sequence = repository.getSequence(userSave.sequence)
-            _letterDuration.value = userSave.letterDuration
-            promptResults = repository.getPromptResults().map { it.result }
-
-            // sorting the sequence triggers into script and prompt trigger lists
-            for (trigger in sequence.triggers) {
-                when (trigger.triggerType) {
-                    "script" -> scriptTriggers.add(trigger)
-                    else -> promptTriggers.add(trigger)
-                }
-            }
-            restoreSave() // restoring the user to their last save point if needed
-        }
-    }
 
 // function to progress up to the user save point if further than the first script line
     suspend fun restoreSave() {
