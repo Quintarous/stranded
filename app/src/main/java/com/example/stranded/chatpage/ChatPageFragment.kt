@@ -66,8 +66,6 @@ class ChatPageFragment: Fragment() {
         // making the gMeter available throughout the class
         gMeter = binding.gMeter
 
-        viewModel.startupNavigationCheck(args.fromPowerOn) // running the startup navigation logic in the ViewModel
-
         lifecycleScope.launch { // observing one shot events from the ViewModel
             viewModel.eventFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
@@ -130,6 +128,9 @@ class ChatPageFragment: Fragment() {
                     }
                 }
         }
+
+        // running the startup navigation logic in the ViewModel
+        viewModel.startupNavigationCheck(args.fromPowerOn)
 
 
         // setting up the chat recycler adapter

@@ -44,8 +44,6 @@ class NoPowerFragment: Fragment() {
             viewModel.userSaveFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { userSave ->
-                    Log.i("bruh", "NoPowerFragment: userSave = $userSave")
-
                     if (userSave != null) {
                         if (userSave.isPowered) {
                             findNavController().navigate(R.id.action_noPowerFragment_to_powerOnFragment)

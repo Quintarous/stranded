@@ -15,8 +15,8 @@
             app:destination="@id/nav_graph_no_power" />
         <argument
             android:name="fromPowerOn"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 
     <fragment

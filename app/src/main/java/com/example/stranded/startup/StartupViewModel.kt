@@ -22,14 +22,10 @@ class StartupViewModel @Inject constructor(private val repository: Repository): 
     init {
         viewModelScope.launch {
             repository.userSaveFlow.stateIn(this).collect{ userSave ->
-                Log.i("bruh", "StartupViewModel: UserSave = $userSave")
                 _userSaveFlow.emit(userSave)
             }
         }
     }
 
-    override fun onCleared() {
-        Log.i("bruh", "StartupViewModel: Cleared")
-        super.onCleared()
-    }
+    suspend fun getUserSave(): UserSave = repository.getUserSave()
 }

@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO when using skip time then completing the sequence causes NoPowerFragment to not update it's userSave and thinks isPowered=true even though isPowered=false in the database
-// TODO args.fromPowerOn retains it's true value and doesn't reset back to false when a sequence ends
 // TODO settings page fragment doesn't show letter duration
 // TODO mix the volume of all the sound effects
 // TODO clean up all the livedata references that were replaced by eventChannel
@@ -27,6 +25,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     lateinit var sequence: Sequence
     lateinit var promptResults: List<Int>
+    lateinit var lastLine: ScriptLine
 
     private val _chatDataset = MutableLiveData(mutableListOf<ScriptLine>())
     val chatDataset: LiveData<MutableList<ScriptLine>>
@@ -44,33 +43,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val promptDataset: LiveData<MutableList<PromptLine>>
         get() = _promptDataset
 
-// observed live data for starting and stopping animations and sound effects
-    /*
-    private val _stopSound = MutableLiveData<Trigger>()
-    val stopSound: LiveData<Trigger>
-        get() = _stopSound
-
-    private val _startSound = MutableLiveData<Trigger?>()
-    val startSound: LiveData<Trigger?>
-        get() = _startSound
-
-    private val _startSoundOneAndDone = MutableLiveData<Trigger?>()
-    val startSoundOneAndDone: LiveData<Trigger?>
-        get() = _startSoundOneAndDone
-
-    private val _stopAnim = MutableLiveData<Trigger>()
-    val stopAnim: LiveData<Trigger>
-        get() = _stopAnim
-
-    private val _startAnim = MutableLiveData<Trigger?>()
-    val startAnim: LiveData<Trigger?>
-        get() = _startAnim
-
-    private val _startAnimOneAndDone = MutableLiveData<Trigger?>()
-    val startAnimOneAndDone: LiveData<Trigger?>
-        get() = _startAnimOneAndDone
-    */
-    lateinit var lastLine: ScriptLine
 
     private val _letterDuration = MutableLiveData<Int>()
     val letterDuration: LiveData<Int>
@@ -89,10 +61,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
             delay(1000)
-
-            repository.userSaveFlow.stateIn(this).collect { userSave ->
-                _userSaveFlow.emit(userSave)
-            }
+            collectUserSave()
 
             val userSave = repository.getUserSave()
 
@@ -108,6 +77,15 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
             }
             restoreSave() // restoring the user to their last save point if needed
+        }
+    }
+
+    // collecting the userSaveFlow from the repository and emitting values to _userSaveFlow
+    private fun collectUserSave() {
+        viewModelScope.launch {
+            repository.userSaveFlow.stateIn(viewModelScope).collect{ userSave ->
+                _userSaveFlow.emit(userSave)
+            }
         }
     }
 
@@ -127,13 +105,13 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val eventFlow = eventChannel.receiveAsFlow()
 
 
-    fun startupNavigationCheck(fromPowerOn: Boolean) {
+    fun startupNavigationCheck(fromPowerOn: Int) {
         viewModelScope.launch {
             val userSave = repository.getUserSave()
-
+            Log.i("bruh", "startupNavigationCheck run")
             if (userSave.isPowered) { // isPowered is true
                 if (userSave.line == 0) { // if the sequence has not yet been started
-                    if (fromPowerOn) { // if the "Power On" button was pressed
+                    if (fromPowerOn == userSave.sequence) { // if the "Power On" button was pressed
                         startSequence() // only now can we start the sequence
                     } else { // "Power On" button was NOT pressed
                         eventChannel.trySend(Event.NavToPowerOn) // user needs to hit "Power On" first
