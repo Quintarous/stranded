@@ -82,49 +82,6 @@ class NoPowerFragment: Fragment() {
                 }
         }
 
-// TODO test all the notification stuff with log statements
-        // if the user save is updated while the user is sitting on this screen
-        // check if isPowered = true and navigate to powerOn if so
-        /*
-        viewModel.userSaveFlow.observe(viewLifecycleOwner, { userSave ->
-
-            Log.i("bruh" ,"NoPowerFragment: userSave = $userSave")
-
-            if (userSave.isPowered) {
-                findNavController().navigate(R.id.action_noPowerFragment_to_powerOnFragment)
-            }
-
-            val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-            val intent = Intent(context, PowerOnBroadcastReceiver::class.java) // get notification
-            val existingPendingIntent = PendingIntent.getBroadcast(context, 1, intent,
-                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)
-
-            if (userSave.demoMode) { // if demo mode is turned on
-                binding.timeSkipButton.visibility = View.VISIBLE // make skip time button visible
-
-                if (existingPendingIntent != null) { // cancel notification
-                    alarmManager.cancel(existingPendingIntent)
-                    existingPendingIntent.cancel()
-                }
-
-            } else { // if demo mode is turned off
-                binding.timeSkipButton.visibility = View.GONE // make skip time button invisible
-
-                if (existingPendingIntent == null) { // if notification is not scheduled
-                    val newPendingIntent = PendingIntent.getBroadcast(context, 1, intent,
-                        PendingIntent.FLAG_IMMUTABLE)
-
-                    val calendar = Calendar.getInstance().apply {
-                        add(Calendar.HOUR_OF_DAY, Random.nextInt(4, 10))
-                    }
-
-                    // schedule a new notification
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, newPendingIntent)
-                }
-            }
-        })
-        */
         binding.timeSkipButton.setOnClickListener { // firing the notification immediately and showing a toast
 
             val intent = Intent(context, PowerOnBroadcastReceiver::class.java)

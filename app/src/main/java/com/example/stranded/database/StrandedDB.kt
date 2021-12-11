@@ -23,7 +23,7 @@ fun getDatabase(context: Context): StrandedDB {
         if (!::INSTANCE.isInitialized) {
             INSTANCE = Room.inMemoryDatabaseBuilder(
                 context,
-                StrandedDB::class.java
+                StrandedDB::class.java,
             )
                 //.createFromAsset("stranded_database.db")
                 .fallbackToDestructiveMigration()

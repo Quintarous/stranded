@@ -17,9 +17,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO settings page fragment doesn't show letter duration
 // TODO mix the volume of all the sound effects
 // TODO clean up all the livedata references that were replaced by eventChannel
+// TODO add the github link to the about page when code is final
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -166,8 +166,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     suspend fun restoreSave() {
         val userSave = repository.getUserSave() // grabbing the userSave from the repository
 
-// if we don't need to progress past the first line just display it and return
-// TODO userSave.line uses absolute id's of lines this only works on the first sequence
         if (userSave.line == 0) {
             return
         }

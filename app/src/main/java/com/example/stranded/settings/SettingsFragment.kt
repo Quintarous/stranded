@@ -71,7 +71,6 @@ class SettingsFragment: Fragment() {
 
         }
 
-        // TODO add functionality for the demo mode switch
         binding.demoModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setDemoMode(isChecked)
         }

@@ -41,7 +41,10 @@
                 app:destination="@id/chatPageFragment" />
         </fragment>
     </navigation>
+
     <action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment" />
+
+    <action android:id="@+id/action_global_aboutFragment" app:destination="@id/aboutFragment" />
 
 
     <navigation android:id="@+id/nav_graph_no_power"
@@ -53,4 +56,8 @@
             android:id="@+id/action_noPowerFragment_to_powerOnFragment"
             app:destination="@id/nav_graph_power_on" />
     </navigation>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.stranded.about.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>
