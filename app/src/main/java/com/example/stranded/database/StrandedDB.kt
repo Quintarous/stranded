@@ -21,11 +21,12 @@ private lateinit var INSTANCE: StrandedDB
 fun getDatabase(context: Context): StrandedDB {
     synchronized(StrandedDB::class.java) {
         if (!::INSTANCE.isInitialized) {
-            INSTANCE = Room.inMemoryDatabaseBuilder(
+            INSTANCE = Room.databaseBuilder(
                 context,
                 StrandedDB::class.java,
+                "stranded_db"
             )
-                //.createFromAsset("stranded_database.db")
+                .createFromAsset("stranded_database.db")
                 .fallbackToDestructiveMigration()
                 .enableMultiInstanceInvalidation()
                 .build()
