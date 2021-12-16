@@ -60,7 +60,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
-            //delay(1000)
             collectUserSave()
 
             val userSave = repository.getUserSave()
@@ -76,7 +75,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     else -> promptTriggers.add(trigger)
                 }
             }
-            restoreSave(0, 0, userSave) // restoring the user to their last save point if needed
+            restoreSave(0, "script", 0, userSave) // restoring the user to their last save point if needed
         }
     }
 
@@ -89,9 +88,11 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+    // holder class for one shot events that are sent to the ChatPageFragment
     sealed class Event {
         object NavToNoPower: Event()
         object NavToPowerOn: Event()
+        object NavToEnding: Event()
         object ScheduleNotification: Event()
         object StopSound: Event()
         data class StartSound(val trigger: Trigger): Event()
@@ -167,98 +168,111 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     fun startSequence() = displayScriptLine(sequence.scriptLines[0]) // starts the sequence with the first ScriptLine
 
-    // function to progress up to the user save point if further than the first script line
-    private fun restoreSave(scriptLineIndex: Int, promptResultIndex: Int, userSave: UserSave) {
-        Log.i("bruh", "scriptIndex: $scriptLineIndex")
-        Log.i("bruh", "promptIndex: $promptResultIndex")
-        if (userSave.line == 0) {
-            return
-        }
+    // TODO explain this function with comments
+    private fun restoreSave(lineIndex: Int, lineType: String, promptResultIndex: Int, userSave: UserSave) {
+        if (userSave.line == 0) return
 
-        val scriptLine = sequence.scriptLines[scriptLineIndex]
+        when(lineType) {
+            "script" -> {
+                val scriptLine = sequence.scriptLines[lineIndex]
 
-        for (trigger in scriptTriggers) {
-            // if the trigger is supposed to fire on this scriptLine
-            if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
+                for (trigger in scriptTriggers) {
+                    // if the trigger is supposed to fire on this scriptLine
+                    if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
 
-                // only fire if it's a looping or stop trigger (ignores every other type of trigger)
-                if (trigger.loop) fireTrigger(trigger)
-                else {
-                    if (trigger.resourceId == null) fireTrigger(trigger)
+                        // only fire if it's a looping or stop trigger (ignores every other type of trigger)
+                        if (trigger.loop) fireTrigger(trigger)
+                        else {
+                            if (trigger.resourceId == null) fireTrigger(trigger)
+                        }
+                    }
                 }
-            }
-        }
 
-        when (scriptLine.type) { // displaying the ScriptLine that was passed in
-            "console" -> _consoleDataset.value!!.add(scriptLine.line)
+                lastLine = scriptLine
 
-            else -> _chatDataset.value!!.add(scriptLine)
-        }
+                when (scriptLine.type) { // displaying the ScriptLine that was passed in
+                    "console" -> _consoleDataset.value!!.add(scriptLine.line)
 
-        // if this script line is the stopping point then return
-        if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
-            Log.i("bruh" ,"scriptLine stopping point reached")
-            lastLine = scriptLine
-            _chatDataset.notifyObserver()
-            _consoleDataset.notifyObserver()
-            _promptDataset.notifyObserver()
-            return
-        }
+                    else -> _chatDataset.value!!.add(scriptLine)
+                }
 
-        // assuming we didn't just return we need to check if the next thing to display is a prompt
-        if (scriptLine.nextType == "prompt") {
-            val set: Set = sequence.sets[scriptLine.next - 1]
+                // if this script line is the stopping point then return
+                if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
+                    lastLine = scriptLine
+                    _chatDataset.notifyObserver()
+                    _consoleDataset.notifyObserver()
+                    _promptDataset.notifyObserver()
+                    return
+                }
 
-            // if this prompt set is our stopping point then display it and return
-            if (userSave.lineType == "prompt" && userSave.line == set.number) {
-                displayPromptSet(set)
-                _chatDataset.notifyObserver()
-                _consoleDataset.notifyObserver()
-                _promptDataset.notifyObserver()
+                restoreSave(
+                    scriptLine.next - 1,
+                    scriptLine.nextType,
+                    promptResultIndex,
+                    userSave
+                )
                 return
             }
 
-            // if we didn't just stop on the prompt then we need to determine which prompt the user
-            // picked and essentially simulate picking the same one. Step one is to get the
-            // PromptLine they picked.
-            val promptLine = set.lines[promptResults[promptResultIndex]]
+            else -> {
+                val set = sequence.sets[lineIndex]
 
-            // the _chatDataset only takes ScriptLines so we'll have to make one in order to display
-            // our promptLine
-            val generatedScriptLine = ScriptLine(
-                0,
-                userSave.sequence,
-                "user",
-                promptLine.line,
-                promptLine.next,
-                promptLine.nextType
-            )
+                for (trigger in promptTriggers) {
+                    // if the trigger is supposed to fire on this scriptLine
+                    if (trigger.triggerId == set.number) {
 
-            _chatDataset.value!!.add(generatedScriptLine) // handing it off the the adapter
+                        // only fire if it's a looping or stop trigger (ignores every other type of trigger)
+                        if (trigger.loop) fireTrigger(trigger)
+                        else {
+                            if (trigger.resourceId == null) fireTrigger(trigger)
+                        }
+                    }
+                }
 
-            // now we need to check if this response is the stopping point. If it is we can return.
-            if (userSave.lineType == "response" && userSave.line == set.number) {
+                // if this prompt set is our stopping point then display it and return
+                if (userSave.lineType == "prompt" && userSave.line == set.number) {
+                    displayPromptSet(set)
+                    _chatDataset.notifyObserver()
+                    _consoleDataset.notifyObserver()
+                    _promptDataset.notifyObserver()
+                    return
+                }
+
+                val promptLine = set.lines[promptResults[promptResultIndex]]
+
+                // the _chatDataset only takes ScriptLines so we'll have to make one in order to display
+                // our promptLine
+                val generatedScriptLine = ScriptLine(
+                    0,
+                    userSave.sequence,
+                    "user",
+                    promptLine.line,
+                    promptLine.next,
+                    promptLine.nextType
+                )
+
+                _chatDataset.value!!.add(generatedScriptLine) // handing it off the the adapter
+
                 lastLine = generatedScriptLine
-                _chatDataset.notifyObserver()
-                _consoleDataset.notifyObserver()
-                _promptDataset.notifyObserver()
+
+                // now we need to check if this response is the stopping point. If it is we can return.
+                if (userSave.lineType == "response" && userSave.line == set.number) {
+                    lastLine = generatedScriptLine
+                    _chatDataset.notifyObserver()
+                    _consoleDataset.notifyObserver()
+                    _promptDataset.notifyObserver()
+                    Log.i("bruh", "hi")
+                    return
+                }
+
+                restoreSave(
+                    promptLine.next - 1, promptLine.nextType,
+                    promptResultIndex + 1,
+                    userSave
+                )
                 return
             }
-
-            // if that response wasn't the stopping point than we need to keep going
-            // here we are calling restoreSave again with the next ScriptLine as defined by the
-            // promptLine we just displayed as well as an incremented promptResultIndex to indicate
-            // which value in the promptResult list should be referenced next
-            restoreSave(promptLine.next - 1, promptResultIndex + 1, userSave)
-            return
         }
-
-        // note this is outside of the "next line is a prompt" if statement. So if we've made it
-        // here then we know the stopping point wasn't reached and the next line is a ScriptLine.
-        // So we will call restoreSave again with whatever ScriptLine is next and not increment the
-        // promptResultIndex because we haven't used it yet.
-        restoreSave(scriptLine.next - 1, promptResultIndex, userSave)
-        return
     }
 
 // callback that displays the next line/prompt when the user taps the chat recycler view
@@ -298,9 +312,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         }
 
                         eventChannel.trySend(Event.NavToNoPower)
-                    }
+                    } else {
+                        val clearedUserSave = UserSave(1, true, 50, 1,
+                            0, "script", false)
 
-                    // else TODO do something special when the user completes the story
+                        repository.updateUserSaveData(clearedUserSave)
+                        prepForNextSequence()
+                        repository.clearPromptResult()
+
+                        eventChannel.trySend(Event.NavToEnding)
+                    }
                 }
             }
 

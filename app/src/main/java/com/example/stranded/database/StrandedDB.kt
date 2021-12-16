@@ -17,7 +17,7 @@ abstract class StrandedDB: RoomDatabase() {
 
 private lateinit var INSTANCE: StrandedDB
 
-//TODO switch this to an real database as opposed to an in memory one when finished testing
+//TODO switch this to a real database as opposed to an in memory one when finished testing
 fun getDatabase(context: Context): StrandedDB {
     synchronized(StrandedDB::class.java) {
         if (!::INSTANCE.isInitialized) {

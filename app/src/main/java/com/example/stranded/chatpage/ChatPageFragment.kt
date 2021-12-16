@@ -83,6 +83,13 @@ class ChatPageFragment: Fragment() {
                                 .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
                         }
 
+                        is Event.NavToEnding -> {
+                            stopAnim()
+                            stopSound()
+                            findNavController()
+                                .navigate(R.id.action_chatPageFragment_to_endingFragment)
+                        }
+
                         is Event.StopSound -> { stopSound() }
 
                         is Event.StartSound -> {

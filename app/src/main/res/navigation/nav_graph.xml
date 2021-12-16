@@ -17,6 +17,9 @@
             android:name="fromPowerOn"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_chatPageFragment_to_endingFragment"
+            app:destination="@id/endingFragment" />
     </fragment>
 
     <fragment
@@ -60,4 +63,8 @@
         android:id="@+id/aboutFragment"
         android:name="com.example.stranded.about.AboutFragment"
         android:label="AboutFragment" />
+    <fragment
+        android:id="@+id/endingFragment"
+        android:name="com.example.stranded.ending.EndingFragment"
+        android:label="EndingFragment" />
 </navigation>
