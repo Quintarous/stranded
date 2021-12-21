@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toolbar
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar.DISPLAY_SHOW_HOME
 import androidx.appcompat.app.ActionBar.DISPLAY_USE_LOGO
 import androidx.appcompat.content.res.AppCompatResources
@@ -17,6 +18,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.stranded.chatpage.ChatPageViewModel
 import com.example.stranded.database.UserSave
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,13 +64,13 @@ class MainActivity : AppCompatActivity() {
         //initializing the in memory database with test data
         lifecycleScope.launch {
             // sequence: 1 line: 80 promptResults: 15
-/*
-            val testSaveData = UserSave(1, true, 70, 8, 9,"response", false)
+            val testSaveData = UserSave(1, true, 0, 3, 0,"script", false)
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
 
+/*
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
@@ -103,4 +105,34 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
+    override fun onResume() {
+        val viewModel: ChatPageViewModel by viewModels()
+
+        if (viewModel.mediaPlayer != null) {
+            viewModel.mediaPlayer?.start()
+        }
+
+        super.onResume()
+    }
+
+    override fun onStop() {
+        val viewModel: ChatPageViewModel by viewModels()
+
+        if (viewModel.mediaPlayer != null) {
+            viewModel.mediaPlayer?.pause()
+        }
+
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        val viewModel: ChatPageViewModel by viewModels()
+
+        if (viewModel.mediaPlayer != null) {
+            viewModel.mediaPlayer?.release()
+            viewModel.mediaPlayer = null
+        }
+
+        super.onDestroy()
+    }
 }

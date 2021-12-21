@@ -39,7 +39,7 @@ class ChatPageFragment: Fragment() {
     val args: ChatPageFragmentArgs by navArgs()
 
     private val viewModel: ChatPageViewModel by activityViewModels()
-    private var mediaPlayer: MediaPlayer? = null
+    //private var mediaPlayer: MediaPlayer? = null
 
     private lateinit var gMeter: ImageView
     private lateinit var gMeterAnimation: AnimationDrawable
@@ -136,6 +136,7 @@ class ChatPageFragment: Fragment() {
                 }
         }
 
+        //TODO now that the main activity resumes sound restore save is messing with it when it resumes looping sounds
         // running the startup navigation logic in the ViewModel
         viewModel.startupNavigationCheck(args.fromPowerOn)
 
@@ -344,9 +345,9 @@ class ChatPageFragment: Fragment() {
     //methods for starting and stopping sound effects
     private fun stopSound() {
 
-        if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mediaPlayer?.stop()
+        if (viewModel.mediaPlayer != null) {
+            if (viewModel.mediaPlayer!!.isPlaying) {
+                viewModel.mediaPlayer?.stop()
             }
         }
     }
@@ -362,7 +363,7 @@ class ChatPageFragment: Fragment() {
         stopSound()
         startMediaPlayback(sound, false)
 
-        mediaPlayer?.setOnCompletionListener {
+        viewModel.mediaPlayer?.setOnCompletionListener {
             val resourceId = getResourceId(lastSoundTrigger.resourceId!!)
             startMediaPlayback(resourceId, lastSoundTrigger.loop)
         }
@@ -387,6 +388,7 @@ class ChatPageFragment: Fragment() {
         }
     }
 
+    /*
     override fun onStop() {
         if (mediaPlayer != null) {
             mediaPlayer?.release()
@@ -395,11 +397,20 @@ class ChatPageFragment: Fragment() {
         super.onStop()
     }
 
+     */
+
 // functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
-        mediaPlayer = MediaPlayer.create(context, resource)
-        mediaPlayer?.isLooping = loop
-        mediaPlayer?.start()
+        viewModel.mediaPlayer = MediaPlayer.create(context, resource)
+        viewModel.mediaPlayer?.isLooping = loop
+        viewModel.mediaPlayer?.start()
+
+        if (!loop) {
+            viewModel.mediaPlayer?.setOnCompletionListener {
+                stopSound()
+                viewModel.mediaPlayer = null
+            }
+        }
     }
 
     private fun startAnimation(animation: Int, isLooping: Boolean) {

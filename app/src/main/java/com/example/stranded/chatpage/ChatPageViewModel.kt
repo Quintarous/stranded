@@ -1,5 +1,6 @@
 package com.example.stranded.chatpage
 
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.stranded.CustomTextView
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+// TODO song in sequence 7 doesn't restart cuz it's not looping
+// TODO read and comment all code
 // TODO mix the volume of all the sound effects
 // TODO clean up all the livedata references that were replaced by eventChannel
 // TODO add the github link to the about page when code is final
@@ -56,6 +59,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     private val _userSaveFlow = MutableStateFlow<UserSave?>(null)
     val userSaveFlow: StateFlow<UserSave?> = _userSaveFlow
+
+    var mediaPlayer: MediaPlayer? = null
 
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
@@ -109,7 +114,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     fun startupNavigationCheck(fromPowerOn: Int) {
         viewModelScope.launch {
             val userSave = repository.getUserSave()
-            Log.i("bruh", "startupNavigationCheck run")
+
             if (userSave.isPowered) { // isPowered is true
 
                 if (userSave.line == 0) { // if the sequence has not yet been started
@@ -118,17 +123,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                         startSequence() // only now can we start the sequence
                     } else { // "Power On" button was NOT pressed
                         eventChannel.trySend(Event.NavToPowerOn) // user needs to hit "Power On" first
-                    }
-
-                } else { // sequence currently in progress
-
-                    // resuming looping triggers if we need to
-                    if (lastAnimTrigger != null && lastAnimTrigger!!.loop) {
-                        fireTrigger(lastAnimTrigger!!)
-                    }
-
-                    if (lastSoundTrigger != null && lastSoundTrigger!!.loop) {
-                        fireTrigger(lastSoundTrigger!!)
                     }
                 }
 
@@ -168,18 +162,28 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
     fun startSequence() = displayScriptLine(sequence.scriptLines[0]) // starts the sequence with the first ScriptLine
 
-    // TODO explain this function with comments
-    private fun restoreSave(lineIndex: Int, lineType: String, promptResultIndex: Int, userSave: UserSave) {
-        if (userSave.line == 0) return
+    /** restoreSave is a recursive method that progresses the app to whatever line the user was on
+     according the the UserSave line and lineType.
 
-        when(lineType) {
+    lineIndex: the index of a ScriptLine or prompt set.
+
+    lineType: either "script" or "prompt" this determines whether lineIndex is referring to a
+    ScriptLine or prompt set.
+
+    promptResultIndex: (starts at 0) used by restoreSave() to keep track of which prompt result
+    value it needs to look at when recreating the users choices.
+    */
+    private fun restoreSave(lineIndex: Int, lineType: String, promptResultIndex: Int, userSave: UserSave) {
+        if (userSave.line == 0) return // if we're on line 0 then there's nothing to do so return
+
+        when(lineType) { // different logic needs to be run if we're given a ScriptLine vs a set number
             "script" -> {
-                val scriptLine = sequence.scriptLines[lineIndex]
+                val scriptLine = sequence.scriptLines[lineIndex] // grabbing the ScriptLine object
 
                 for (trigger in scriptTriggers) {
                     // if the trigger is supposed to fire on this scriptLine
                     if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
-
+                        //TODO consider firing all triggers so oneAndDone and non looping triggers still play when the user comes back after a restart
                         // only fire if it's a looping or stop trigger (ignores every other type of trigger)
                         if (trigger.loop) fireTrigger(trigger)
                         else {
@@ -188,9 +192,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     }
                 }
 
-                lastLine = scriptLine
+                lastLine = scriptLine // caching last line displayed is required for the fragment to function
 
-                when (scriptLine.type) { // displaying the ScriptLine that was passed in
+                when (scriptLine.type) { // displaying the ScriptLine
                     "console" -> _consoleDataset.value!!.add(scriptLine.line)
 
                     else -> _chatDataset.value!!.add(scriptLine)
@@ -198,13 +202,14 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                 // if this script line is the stopping point then return
                 if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
-                    lastLine = scriptLine
                     _chatDataset.notifyObserver()
                     _consoleDataset.notifyObserver()
                     _promptDataset.notifyObserver()
                     return
                 }
 
+                // this is the recursive part. after displaying the line and knowing it's not the
+                // stopping point we gotta move on and do the same thing for the next line/prompt.
                 restoreSave(
                     scriptLine.next - 1,
                     scriptLine.nextType,
@@ -214,10 +219,10 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 return
             }
 
-            else -> {
-                val set = sequence.sets[lineIndex]
+            else -> { // this runs if restoreSave() is called with a set number
+                val set = sequence.sets[lineIndex] // grabbing the set object
 
-                for (trigger in promptTriggers) {
+                for (trigger in promptTriggers) { // same trigger logic as before!
                     // if the trigger is supposed to fire on this scriptLine
                     if (trigger.triggerId == set.number) {
 
@@ -238,10 +243,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     return
                 }
 
+                // if we don't stop on the prompt we'll need to display whatever choice the user
+                // picked! So we'll use the promptResults table to determine which option they chose.
                 val promptLine = set.lines[promptResults[promptResultIndex]]
 
-                // the _chatDataset only takes ScriptLines so we'll have to make one in order to display
-                // our promptLine
+                // the _chatDataset only takes ScriptLines so we'll have to make one in order to
+                // display our promptLine
                 val generatedScriptLine = ScriptLine(
                     0,
                     userSave.sequence,
@@ -251,20 +258,20 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     promptLine.nextType
                 )
 
-                _chatDataset.value!!.add(generatedScriptLine) // handing it off the the adapter
+                _chatDataset.value!!.add(generatedScriptLine) // displaying the promptLine
 
-                lastLine = generatedScriptLine
+                lastLine = generatedScriptLine // gotta cache the last line displayed as usual
 
                 // now we need to check if this response is the stopping point. If it is we can return.
                 if (userSave.lineType == "response" && userSave.line == set.number) {
-                    lastLine = generatedScriptLine
                     _chatDataset.notifyObserver()
                     _consoleDataset.notifyObserver()
                     _promptDataset.notifyObserver()
-                    Log.i("bruh", "hi")
                     return
                 }
 
+                // if we've made it this far without returning then we know both this prompt set
+                // and the response are not the stopping point. So we keep going!
                 restoreSave(
                     promptLine.next - 1, promptLine.nextType,
                     promptResultIndex + 1,
