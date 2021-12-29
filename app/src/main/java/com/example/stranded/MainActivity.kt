@@ -1,14 +1,8 @@
 package com.example.stranded
 
-import android.graphics.drawable.AnimationDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageView
-import android.widget.Toolbar
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBar.DISPLAY_SHOW_HOME
-import androidx.appcompat.app.ActionBar.DISPLAY_USE_LOGO
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
@@ -22,10 +16,7 @@ import com.example.stranded.chatpage.ChatPageViewModel
 import com.example.stranded.database.UserSave
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -34,9 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        /**
+         * android housekeeping stuff
+         */
         val repository = Repository(this)
 
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         val navHostFragment: NavHostFragment = supportFragmentManager
@@ -45,36 +40,41 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
 
+        // configures an app bar with a set of all the top level destinations
+        // and the drawer layout from the xml layout file
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.chatPageFragment, R.id.powerOnFragment, R.id.noPowerFragment),
             drawerLayout
         )
 
-
+        // applying the app bar
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
-// removing the app title from the appbar and adding a background to it
+        // removing the app title from the appbar and adding a background to it
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setBackgroundDrawable(AppCompatResources.getDrawable(this, R.drawable.stranded_appbar_background))
 
-        //creating and registering the notification channel
+        supportActionBar!!.setBackgroundDrawable(AppCompatResources
+            .getDrawable(this, R.drawable.stranded_appbar_background))
+
+        //creating and registering our one and only notification channel
         createChannel(this, "main", "Main Channel")
 
+        //TODO delete this when code is finalized
         //initializing the in memory database with test data
         lifecycleScope.launch {
             // sequence: 1 line: 80 promptResults: 15
-            val testSaveData = UserSave(1, true, 0, 3, 0,"script", false)
+            val testSaveData = UserSave(1, true, 0, 7, 648,"script", false)
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
 
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
 /*
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
@@ -105,6 +105,19 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
+    /**
+     * these lifecycle overrides are all used for managing the media player used to play
+     * sound effects. The media player object is stored in the ChatPageViewModel and used by
+     * the ChatPageFragment.
+     *
+     * When the app is stopped (put in the background) media is paused.
+     * When the app is brought back to the foreground (resumed) media is resumed.
+     * And finally when the app is destroyed (closed) the media player itself is released.
+     *
+     * This allows sound effects/music to play continuously while the app is open (regardless of
+     * which fragment the user is on). While still cleaning up the media player when the app is
+     * fully shut down.
+     */
     override fun onResume() {
         val viewModel: ChatPageViewModel by viewModels()
 

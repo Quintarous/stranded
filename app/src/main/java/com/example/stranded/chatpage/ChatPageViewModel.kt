@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO song in sequence 7 doesn't restart cuz it's not looping
 // TODO read and comment all code
 // TODO mix the volume of all the sound effects
 // TODO clean up all the livedata references that were replaced by eventChannel
@@ -65,6 +64,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
+            delay(1000)
             collectUserSave()
 
             val userSave = repository.getUserSave()
@@ -124,6 +124,9 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     } else { // "Power On" button was NOT pressed
                         eventChannel.trySend(Event.NavToPowerOn) // user needs to hit "Power On" first
                     }
+
+                } else { // we are mid sequence
+                    if (lastAnimTrigger != null) fireTrigger(lastAnimTrigger!!)
                 }
 
             } else { // isPowered is false
@@ -185,10 +188,14 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
                         //TODO consider firing all triggers so oneAndDone and non looping triggers still play when the user comes back after a restart
                         // only fire if it's a looping or stop trigger (ignores every other type of trigger)
+                        fireTrigger(trigger)
+
+                        /*
                         if (trigger.loop) fireTrigger(trigger)
                         else {
                             if (trigger.resourceId == null) fireTrigger(trigger)
                         }
+                        */
                     }
                 }
 
@@ -436,20 +443,17 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             "animation" -> {
                 if (trigger.resourceId == null) {
                     eventChannel.trySend(Event.StopAnim)
-                    //_stopAnim.value = trigger
                 }
                 else {
                     if (trigger.oneAndDone) {
                         if (lastAnimTrigger != null) {
                             eventChannel.trySend(Event.StartAnimOneAndDone(lastAnimTrigger!!, trigger))
-                            //_startAnimOneAndDone.value = trigger
                         } else {
-                            Log.i("bruh" ,"tried to send Event.StartAnimOneAndDone but lastAnimTrigger was null")
+                            throw Throwable("tried to send Event.StartAnimOneAndDone but lastAnimTrigger was null")
                         }
                     }
                     else {
                         eventChannel.trySend(Event.StartAnim(trigger))
-                        //_startAnim.value = trigger
                     }
                 }
 

@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.*
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
-
+    
     val args: ChatPageFragmentArgs by navArgs()
 
     private val viewModel: ChatPageViewModel by activityViewModels()
