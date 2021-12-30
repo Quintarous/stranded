@@ -30,17 +30,21 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.random.Random
 import com.example.stranded.chatpage.ChatPageViewModel.Event
+import com.example.stranded.database.PromptLine
+import com.example.stranded.database.ScriptLine
 import com.example.stranded.database.Trigger
 import kotlinx.coroutines.flow.*
 
 @AndroidEntryPoint
 class ChatPageFragment: Fragment() {
-    
+
+    // ChatPageFragment receives one integer argument called fromPowerOn which indicates whether
+    // the user navigated from the PowerOnFragment.
     val args: ChatPageFragmentArgs by navArgs()
 
-    private val viewModel: ChatPageViewModel by activityViewModels()
-    //private var mediaPlayer: MediaPlayer? = null
+    private val viewModel: ChatPageViewModel by activityViewModels() // getting the view model
 
+    // gMeter is the ImageView that sometimes animates in the top right of the ChatPageFragment
     private lateinit var gMeter: ImageView
     private lateinit var gMeterAnimation: AnimationDrawable
 
@@ -51,7 +55,9 @@ class ChatPageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        //data binding boilerplate code
+        /**
+         * android housekeeping
+         */
         val binding = DataBindingUtil.inflate<FragmentChatPageNewBinding>(
             inflater,
             R.layout.fragment_chat_page_new,
@@ -63,58 +69,71 @@ class ChatPageFragment: Fragment() {
 
         binding.viewModel = viewModel
 
-        // making the gMeter available throughout the class
+        // making the gMeter available throughout all the classes functions
         gMeter = binding.gMeter
 
         lifecycleScope.launch { // observing one shot events from the ViewModel
             viewModel.eventFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { event ->
+
                     when (event) {
-                        is Event.NavToPowerOn -> {
+                        is Event.NavToPowerOn -> { // navigate to PowerOnFragment
                             findNavController()
                                 .navigate(R.id.action_chatPageFragment_to_nav_graph_power_on)
                         }
 
-                        is Event.NavToNoPower -> {
+                        is Event.NavToNoPower -> { // navigate to NoPowerFragment
                             stopAnim()
                             stopSound()
                             findNavController()
                                 .navigate(R.id.action_chatPageFragment_to_nav_graph_no_power)
                         }
 
-                        is Event.NavToEnding -> {
+                        is Event.NavToEnding -> { // navigate to EndingFragment
                             stopAnim()
                             stopSound()
                             findNavController()
                                 .navigate(R.id.action_chatPageFragment_to_endingFragment)
                         }
 
-                        is Event.StopSound -> { stopSound() }
+                        is Event.StopSound -> { stopSound() } // stop any sound currently playing
 
                         is Event.StartSound -> {
+                            // pulling the sound from the trigger stored in the one shot event
+                            // and calling startSound with it.
+
                             val resourceId = getResourceId(event.trigger.resourceId!!)
                             startSound(resourceId, event.trigger.loop)
                         }
 
                         is Event.StartSoundOneAndDone -> {
+                            // pulling the sound from the trigger stored in the one shot event
+                            // and calling startSoundOneAndDone with it.
+
                             val resourceId = getResourceId(event.newTrigger.resourceId!!)
                             startSoundOneAndDone(event.oldTrigger, resourceId)
                         }
 
-                        is Event.StopAnim -> { stopAnim() }
+                        is Event.StopAnim -> { stopAnim() } // stop any animation currently playing
 
                         is Event.StartAnim -> {
+                            // pulling the animation from the trigger stored in the one shot event
+                            // and calling startAnimation with it.
+
                             val resourceId = getResourceId(event.trigger.resourceId!!)
                             startAnimation(resourceId, event.trigger.loop)
                         }
 
                         is Event.StartAnimOneAndDone -> {
+                            // pulling the animation from the trigger stored in the one shot event
+                            // and calling startAnimationOneAndDone with it.
+
                             val resourceId = getResourceId(event.newTrigger.resourceId!!)
                             startAnimOneAndDone(event.oldTrigger, resourceId)
                         }
 
-                        else -> { // must be Event.ScheduleNotification
+                        else -> { // at this point the event must be Event.ScheduleNotification
                             // getting the alarmManager instance
                             val alarmManager =
                                 context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -136,7 +155,6 @@ class ChatPageFragment: Fragment() {
                 }
         }
 
-        //TODO now that the main activity resumes sound restore save is messing with it when it resumes looping sounds
         // running the startup navigation logic in the ViewModel
         viewModel.startupNavigationCheck(args.fromPowerOn)
 
@@ -234,10 +252,11 @@ class ChatPageFragment: Fragment() {
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf(), viewModel)
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
-        // viewModel observers go here
-
-        // chat recyclers' dataset is updated through here
-        viewModel.chatDataset.observe(viewLifecycleOwner, { lineList ->
+        /**
+         * ViewModel observers
+         */
+        // the chat recyclers' dataset is updated through here
+        val chatDataSetObserver = Observer<MutableList<ScriptLine>> { lineList ->
             val dataset = chatRecyclerAdapter.dataset
 
             if (lineList.isNotEmpty()) {
@@ -255,10 +274,13 @@ class ChatPageFragment: Fragment() {
                     binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
             }
-        })
+        }
+        // subscribing to the live data
+        viewModel.chatDataset.observe(viewLifecycleOwner, chatDataSetObserver)
+
 
         // same as chat recycler dataset above^^^
-        viewModel.consoleDataset.observe(viewLifecycleOwner, { stringList ->
+        val consoleDataSetObserver = Observer<MutableList<String>> { stringList ->
             val dataset = consoleRecyclerAdapter.dataset
 
             if (stringList.isNotEmpty()) {
@@ -274,12 +296,19 @@ class ChatPageFragment: Fragment() {
                     binding.consoleRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
             }
-        })
+        }
+        // subscribing to the live data
+        viewModel.consoleDataset.observe(viewLifecycleOwner, consoleDataSetObserver)
 
-        viewModel.promptDataset.observe(viewLifecycleOwner, { promptList ->
+
+        // observer for the PromptRecyclerAdapter Dataset
+        val promptDataSetObserver = Observer<MutableList<PromptLine>> { promptList ->
+            // updates the adapters dataset value with the new data and notifies it of the change
             promptRecyclerAdapter.dataset = promptList
             promptRecyclerAdapter.notifyDataSetChanged()
-        })
+        }
+        // subscribing to the live data
+        viewModel.promptDataset.observe(viewLifecycleOwner, promptDataSetObserver)
 
 
 // observers for starting and stopping sound effects
