@@ -72,6 +72,7 @@ class ChatPageFragment: Fragment() {
         // making the gMeter available throughout all the classes functions
         gMeter = binding.gMeter
 
+
         lifecycleScope.launch { // observing one shot events from the ViewModel
             viewModel.eventFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
@@ -155,17 +156,20 @@ class ChatPageFragment: Fragment() {
                 }
         }
 
-        // running the startup navigation logic in the ViewModel
+
+        // running the startup navigation logic in the ViewModel. This is logic that needs to be
+        // run every time this fragment spins up.
         viewModel.startupNavigationCheck(args.fromPowerOn)
 
 
-        // setting up the chat recycler adapter
+        // setting up the chat recycler
         binding.chatRecycler.layoutManager = LinearLayoutManager(this.context).also {
             it.stackFromEnd = true
         }
 
-        val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf(), viewModel)
-        binding.chatRecycler.adapter = chatRecyclerAdapter
+        val chatRecyclerAdapter = ChatRecyclerAdapter(mutableListOf(), viewModel) // creating the adapter
+        binding.chatRecycler.adapter = chatRecyclerAdapter // assigning it to the recycler view
+
 
         // adding a custom OnItemTouchListener to the chat recycler view
         // this custom listener overrides the onInterceptTouchEvent method to handle user "clicks"
@@ -180,22 +184,33 @@ class ChatPageFragment: Fragment() {
                     lastDownTouchy = motionEvent.y
                 }
 
-// if the event is "finger up" then get the difference between the locations of the
-// original finger down and this finger up then only take action if they're close together
-// this is done to avoid taking action on "swipes" and other gestures
+                /**
+                 * if the event is "finger up" then get the difference between the locations of the
+                 * original finger down and this finger up then only take action if they're close
+                 * together. this is done to avoid taking action on "swipes" and other gestures
+                 */
                 else if (motionEvent.action == MotionEvent.ACTION_UP && lastDownTouchx != null && lastDownTouchy != null) {
                     val xDelta = abs(lastDownTouchx!! - motionEvent.x)
                     val yDelta = abs(lastDownTouchy!! - motionEvent.y)
 
                     if (xDelta < 30 && yDelta < 30) {
 
-// grabbing the CustomTextView from the most recent line item and handing it to the ViewModel
+                        /**
+                         * The goal with this logic is to grab the CustomTextView from the most
+                         * recent line item and hand it to the ViewModel userTouch() method so
+                         * we can react to the users tap.
+                         */
+
+                        // if the last line to be displayed was in the chatRecycler
                         if (viewModel.lastLine.type != "console") {
 
+                            // grabbing the last ScriptLine or UserLine ViewHolder class
+                            // directly from the recycler view
                             val holder = binding.chatRecycler.findViewHolderForAdapterPosition(
                                     viewModel.chatDataset.value?.size?.minus(1) ?: 0
                                 )
 
+                            // now we grab the CustomTextView from the ViewHolder we just got
                             val textView: CustomTextView? = when (holder) {
 
                                 is ChatRecyclerAdapter.ScriptLineViewHolder -> {
@@ -211,8 +226,16 @@ class ChatPageFragment: Fragment() {
                                 }
                             }
 
+                            // and finally... passing in the CustomTextView to viewModel.userTouch()
                             viewModel.userTouch(textView)
-                        } else {
+
+                        } else { // if the last line to be displayed was in the consoleRecycler
+
+                            /**
+                             * This is doing the same thing as the code just above.
+                             * With the only difference being we get the last item from the
+                             * consoleRecycler instead of the chatRecycler.
+                             */
 
                             val textView: CustomTextView?
 
@@ -229,7 +252,7 @@ class ChatPageFragment: Fragment() {
                             viewModel.userTouch(textView)
                         }
 
-                        return true
+                        return true // returning true because we successfully handled the touch event
                     }
                 }
                 //otherwise return false when we're not doing anything with the touch event
@@ -240,9 +263,11 @@ class ChatPageFragment: Fragment() {
             override fun onTouchEvent(recyclerView: RecyclerView, motionEvent: MotionEvent) {}
         })
 
+
         //setting up the prompt recycler adapter
         val promptRecyclerAdapter = PromptRecyclerAdapter(mutableListOf(), viewModel)
         binding.promptRecycler.adapter = promptRecyclerAdapter
+
 
         //setting up the console recycler adapter
         binding.consoleRecycler.layoutManager = LinearLayoutManager(this.context).also {
@@ -252,13 +277,16 @@ class ChatPageFragment: Fragment() {
         val consoleRecyclerAdapter = ConsoleRecyclerAdapter(mutableListOf(), viewModel)
         binding.consoleRecycler.adapter = consoleRecyclerAdapter
 
-        /**
-         * ViewModel observers
-         */
-        // the chat recyclers' dataset is updated through here
-        val chatDataSetObserver = Observer<MutableList<ScriptLine>> { lineList ->
-            val dataset = chatRecyclerAdapter.dataset
 
+        /**
+         * ViewModel LiveData observers for the recycler view datasets
+         */
+        // the chat recyclers' dataset is controlled by the view model
+        // and updated through this LiveData observer
+        val chatDataSetObserver = Observer<MutableList<ScriptLine>> { lineList ->
+            val dataset = chatRecyclerAdapter.dataset // quick reference to the adapters dataset
+
+            // if the list from the viewModel is empty we obviously don't need to do anything
             if (lineList.isNotEmpty()) {
 
                 //if adapter dataset is already populated just add the new value to save resources
@@ -267,19 +295,19 @@ class ChatPageFragment: Fragment() {
                     chatRecyclerAdapter.notifyItemInserted(dataset.size - 1)
                     binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
-                //else copy the whole list from the viewModel
-                else {
+
+                else { // else simply copy the whole list from the viewModel
                     dataset.addAll(lineList)
                     chatRecyclerAdapter.notifyDataSetChanged()
                     binding.chatRecycler.smoothScrollToPosition(dataset.size - 1)
                 }
             }
         }
-        // subscribing to the live data
+        // subscribing our new observer to the live data
         viewModel.chatDataset.observe(viewLifecycleOwner, chatDataSetObserver)
 
 
-        // same as chat recycler dataset above^^^
+        // same as chat recycler dataset above^^^ but for the consoleRecycler
         val consoleDataSetObserver = Observer<MutableList<String>> { stringList ->
             val dataset = consoleRecyclerAdapter.dataset
 
@@ -311,69 +339,24 @@ class ChatPageFragment: Fragment() {
         viewModel.promptDataset.observe(viewLifecycleOwner, promptDataSetObserver)
 
 
-// observers for starting and stopping sound effects
-        /*
-        viewModel.stopSound.observe(viewLifecycleOwner, { stopSound() })
-
-        viewModel.startSound.observe(viewLifecycleOwner, { trigger ->
-            if (trigger != null) {
-                val resourceId = getResourceId(trigger.resourceId!!)
-                startSound(resourceId, trigger.loop)
-            }
-        })
-
-        viewModel.startSoundOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            if (trigger != null) {
-                val resourceId = getResourceId(trigger.resourceId!!)
-                startSoundOneAndDone(resourceId)
-            }
-        })
-
-// observers for starting and stopping animations
-        viewModel.stopAnim.observe(viewLifecycleOwner, { stopAnim() })
-
-        viewModel.startAnim.observe(viewLifecycleOwner, { trigger ->
-            if (trigger != null) {
-                val resourceId = getResourceId(trigger.resourceId!!)
-                startAnim(resourceId, trigger.loop)
-            }
-        })
-
-        viewModel.startAnimOneAndDone.observe(viewLifecycleOwner, { trigger ->
-            if (trigger != null) {
-                val resourceId = getResourceId(trigger.resourceId!!)
-                startAnimOneAndDone(resourceId)
-            }
-        })
-        */
         setHasOptionsMenu(true)
+
 
         return binding.root
     }
 
-// if the fragment is paused (ie: user goes home or closes their phone) but not destroyed
-// (like when the user navigates to the settings screen) then the view model observers won't
-// fire and thus no sound is played even when it should.
 
-// so to fix this we're checking if there is a valid start sound trigger in the view model
-// and playing it if so
-    /*
-    override fun onStart() {
-        if (viewModel.startSound.value != null) {
-            val trigger = viewModel.startSound.value!!
-
-            if(trigger.resourceId != null) {
-                val resourceId = getResourceId(trigger.resourceId)
-                startMediaPlayback(resourceId, trigger.loop)
-            }
-        }
-        super.onStart()
-    }
-    */
-
-    //methods for starting and stopping sound effects
-    private fun stopSound() {
-
+    /**
+     * Methods for starting and stopping sound effects + animations.
+     *
+     * I know sound effects could be handled in the view model and there's no reason for them to be
+     * here in the fragment. The reason these methods are located in the fragment is because the
+     * mediaPlayer used to be stored locally here in the fragment instead of in the view model like
+     * it is now. I've left them here because it doesn't make a difference (at least so far as I'm
+     * aware). And the one shot event handling system the view model uses to trigger these methods
+     * is kinda cool in my opinion :)
+     */
+    private fun stopSound() { // stops any sounds currently being played
         if (viewModel.mediaPlayer != null) {
             if (viewModel.mediaPlayer!!.isPlaying) {
                 viewModel.mediaPlayer?.stop()
@@ -386,20 +369,20 @@ class ChatPageFragment: Fragment() {
         startMediaPlayback(sound, isLooping)
     }
 
-    //meant for interrupting looping sounds with one sound that plays one time
+    //this is meant for interrupting looping sounds with one sound that plays one time
     //then goes back to the original loop it was on before
     private fun startSoundOneAndDone(lastSoundTrigger: Trigger, sound: Int) {
-        stopSound()
-        startMediaPlayback(sound, false)
+        stopSound() // stopping the looping sound effect
+        startMediaPlayback(sound, false) // starting the new one
 
+        // setting an OnCompletionListener so the old looping sound is restarted when this new one ends
         viewModel.mediaPlayer?.setOnCompletionListener {
             val resourceId = getResourceId(lastSoundTrigger.resourceId!!)
             startMediaPlayback(resourceId, lastSoundTrigger.loop)
         }
     }
 
-    //methods for starting and stopping animations
-    private fun stopAnim() {
+    private fun stopAnim() { // stops any animations currently running
         gMeter.setBackgroundResource(R.drawable.g_idle)
     }
 
@@ -410,23 +393,11 @@ class ChatPageFragment: Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             gMeterAnimation.onAnimationFinished {
-                Log.i("bruh" ,"onAnimationFinished")
                 val resourceId = getResourceId(lastAnimTrigger.resourceId!!)
                 startAnimation(resourceId, lastAnimTrigger.loop)
             }
         }
     }
-
-    /*
-    override fun onStop() {
-        if (mediaPlayer != null) {
-            mediaPlayer?.release()
-            mediaPlayer = null
-        }
-        super.onStop()
-    }
-
-     */
 
 // functions for starting new sound effects and animations
     private fun startMediaPlayback(resource: Int, loop: Boolean) {
