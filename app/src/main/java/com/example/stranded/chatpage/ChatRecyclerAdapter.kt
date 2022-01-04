@@ -37,22 +37,24 @@ class ChatRecyclerAdapter(
             is ScriptLineViewHolder -> {
                 holder.bind(dataset[position].line, viewModel)
 
-// auto skipping the animation if the ViewHolder is not the last one in the dataset
+                // auto skipping the animation if the ViewHolder is not the last one in the dataset
                 if (position != dataset.size - 1) {
                     holder.skipAnimation()
                 } else {
 
-// if it is the last one in the dataset than we check if it's already been animated before and if so skip
-                    if (viewModel.chatLastItemAnimated.value == position) { //
+                    // if it is the last one in the dataset than we check if it's already been
+                    // animated before and if so skip
+                    if (viewModel.chatLastItemAnimated.value == position) {
                         holder.skipAnimation()
                     } else {
-// if it hasn't yet been animated than update the ViewModel LiveData to say that it has
+                        // if it hasn't yet been animated than update the ViewModel
+                        // LiveData to say that it has
                         viewModel.chatLastItemAnimated.value = position
                     }
                 }
             }
 
-// same as above just for the UserLineViewHolder instead
+            // same as above just for the UserLineViewHolder instead
             else -> {
                 holder as UserLineViewHolder
                 holder.bind(dataset[position].line, viewModel)

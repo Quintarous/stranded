@@ -63,7 +63,7 @@ class SettingsFragment: Fragment() {
                     text.toString().toInt()
                 }
                 catch(e: NumberFormatException) {
-                    69
+                    throw Throwable("NumberFormatException in SettingsFragment")
                 }
 
                 viewModel.setLetterDuration(convertedInt)

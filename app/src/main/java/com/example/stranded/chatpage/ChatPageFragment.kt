@@ -144,7 +144,7 @@ class ChatPageFragment: Fragment() {
                                 add(Calendar.HOUR_OF_DAY, Random.nextInt(5, 13))
                             }
 
-                            // getting the pending intent
+                            // creating the pending intent
                             val intent = Intent(context, PowerOnBroadcastReceiver::class.java)
                             val pendingIntent = PendingIntent
                                 .getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -200,7 +200,6 @@ class ChatPageFragment: Fragment() {
                          * recent line item and hand it to the ViewModel userTouch() method so
                          * we can react to the users tap.
                          */
-
                         // if the last line to be displayed was in the chatRecycler
                         if (viewModel.lastLine.type != "console") {
 
@@ -421,27 +420,16 @@ class ChatPageFragment: Fragment() {
 
         gMeterAnimation.isOneShot = !isLooping
 
+        // if the animation is not a looping one stop it when it finishes
+        //TODO test this with all the one and done animations in the app
+        if (!isLooping) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                gMeterAnimation.onAnimationFinished {
+                    stopAnim()
+                }
+            }
+        }
+
         gMeterAnimation.start()
     }
-
-    /*
-    options menu used for adding test buttons delete if not needed
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.testing_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-
-            R.id.initialize_database -> {
-                viewModel.initializeDatabase()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-    */
 }

@@ -20,10 +20,10 @@ class CustomTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(
 
 
     init {
-// grabbing the attributes from the AttributeSet
+        // grabbing the attributes from the AttributeSet
         val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.CustomTextView, 0, 0)
 
-// grabbing the custom value for letterDuration or just setting it to 70 if there is none
+        // grabbing the custom value for letterDuration or just setting it to 70 if there is none
         try {
             letterDuration = typedArray.getInteger(R.styleable.CustomTextView_letterDuration, 70)
         } finally {

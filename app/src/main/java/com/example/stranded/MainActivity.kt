@@ -64,17 +64,17 @@ class MainActivity : AppCompatActivity() {
         //initializing the in memory database with test data
         lifecycleScope.launch {
             // sequence: 1 line: 80 promptResults: 15
-            val testSaveData = UserSave(1, true, 0, 7, 648,"script", false)
+            val testSaveData = UserSave(1, true, 0, 6, 0,"script", false)
             repository.updateUserSaveData(testSaveData)
             repository.insertTestScriptLines()
             repository.insertTestPromptLines()
             repository.insertTestTriggers()
 
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
 /*
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
+            repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)
             repository.insertPromptResult(0)

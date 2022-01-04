@@ -25,66 +25,111 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
+    /**
+     * Variables to hold cached data
+     */
+    // Initialized with the view model, the sequence variable always holds the current sequence being run
     lateinit var sequence: Sequence
-    lateinit var promptResults: List<Int>
+
+    // similarly these two variables hold all the triggers for the current sequence
+    private val scriptTriggers: MutableList<Trigger> = mutableListOf()
+    private val  promptTriggers: MutableList<Trigger> = mutableListOf()
+
+    // promptResults caches the retrieved database results from the PromptResult db table
+    // prompt result data is used to restore the user to their last saved position
+    private lateinit var promptResults: List<Int>
+
+    // Every time a line (of any type) is displayed it is cached here
+    // This is essentially the "last line displayed"
     lateinit var lastLine: ScriptLine
 
+    // the ChatRecyclerAdapter and ConsoleRecyclerAdapter both observe these LiveData
+    // to tell if their last item has already been animated
+    val chatLastItemAnimated = MutableLiveData<Int>()
+    val consoleLastItemAnimated = MutableLiveData<Int>()
+
+    // similarly to lastLine every fired trigger is cached by this ViewModel
+    private var lastAnimTrigger: Trigger? = null
+    private var lastSoundTrigger: Trigger? = null
+
+
+    /**
+     * LiveData that is observed by external components. All of the RecyclerViewAdapter datasets
+     * are observed by the ChatPageFragment which passes on any updates to the adapters themselves
+     */
+    // dataset for the ChatRecyclerAdapter
     private val _chatDataset = MutableLiveData(mutableListOf<ScriptLine>())
     val chatDataset: LiveData<MutableList<ScriptLine>>
         get() = _chatDataset
 
-    val chatLastItemAnimated = MutableLiveData<Int>() // adapter observes this to tell if the last item has been animated already or not
-
+    // dataset for the ConsoleRecyclerAdapter
     private val _consoleDataset = MutableLiveData<MutableList<String>>(mutableListOf())
     val consoleDataset: LiveData<MutableList<String>>
         get() = _consoleDataset
 
-    val consoleLastItemAnimated = MutableLiveData<Int>() // adapter observes this to tell if the last item has been animated already or not
-
+    // dataset for the PromptRecyclerAdapter
     private val _promptDataset = MutableLiveData<MutableList<PromptLine>>(mutableListOf())
     val promptDataset: LiveData<MutableList<PromptLine>>
         get() = _promptDataset
 
-
+    // this letterDuration LiveData is observed by every CustomTextView in the ChatRecycler
+    // and ConsoleRecycler. CustomTextView uses this integer to determine how long to wait
+    // before displaying the next character in it's text.
     private val _letterDuration = MutableLiveData<Int>()
     val letterDuration: LiveData<Int>
         get() = _letterDuration
 
-    private val scriptTriggers: MutableList<Trigger> = mutableListOf()
-    private val  promptTriggers: MutableList<Trigger> = mutableListOf()
-
-    private var lastAnimTrigger: Trigger? = null
-    private var lastSoundTrigger: Trigger? = null
-
+    // a StateFlow of the current UserSave from the database
     private val _userSaveFlow = MutableStateFlow<UserSave?>(null)
     val userSaveFlow: StateFlow<UserSave?> = _userSaveFlow
 
+    // the MediaPlayer is the android component used to play sound effects (among other things
+    // but we're just using it for sound). It's stored here in the ViewModel and is paused, resumed
+    // and released by the MainActivity
     var mediaPlayer: MediaPlayer? = null
 
+
+    /**
+     * Every time this ViewModel is initialized we need to retrieve all the data necessary to
+     * run whatever sequence the user is currently on. Which is a lot!
+     */
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
+            //TODO remove this delay when finalized
             delay(1000)
-            collectUserSave()
+            collectUserSave() // getting the UserSave StateFlow flowing
 
+            // grabbing the up to date UserSave data for our own use
             val userSave = repository.getUserSave()
 
+            // grabbing the sequence we need to run from the database
             sequence = repository.getSequence(userSave.sequence)
+
+            // dumping the current letterDuration value from the userSave into our LiveData
             _letterDuration.value = userSave.letterDuration
+
+            // getting the promptResults from the database
             promptResults = repository.getPromptResults().map { it.result }
 
-            // sorting the sequence triggers into script and prompt trigger lists
+            // sorting this sequences triggers into their respective lists
             for (trigger in sequence.triggers) {
                 when (trigger.triggerType) {
-                    "script" -> scriptTriggers.add(trigger)
-                    else -> promptTriggers.add(trigger)
+                    "script" -> scriptTriggers.add(trigger) // if it's a script trigger
+                    else -> promptTriggers.add(trigger) // else it must be a prompt trigger
                 }
             }
-            restoreSave(0, "script", 0, userSave) // restoring the user to their last save point if needed
+
+            // finally calling the complex and recursive restoreSave() method to progress the app
+            // up to where the user last left off
+            restoreSave(0, "script", 0, userSave)
         }
     }
 
-    // collecting the userSaveFlow from the repository and emitting values to _userSaveFlow
+
+    /**
+     * Collecting the userSaveFlow from the repository and emitting values to _userSaveFlow.
+     */
     private fun collectUserSave() {
         viewModelScope.launch {
             repository.userSaveFlow.stateIn(viewModelScope).collect{ userSave ->
@@ -93,43 +138,70 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    // holder class for one shot events that are sent to the ChatPageFragment
+
+    /**
+     * Holder class for the one shot events that are sent to the ChatPageFragment to tell it to do stuff.
+     */
     sealed class Event {
-        object NavToNoPower: Event()
-        object NavToPowerOn: Event()
-        object NavToEnding: Event()
-        object ScheduleNotification: Event()
-        object StopSound: Event()
+        object NavToNoPower: Event() // navigates to the NoPowerFragment
+        object NavToPowerOn: Event() // navigates to the PowerOnFragment
+        object NavToEnding: Event() // navigates to the EndingFragment
+        object ScheduleNotification: Event() // schedules the one and only notification
+
+        object StopSound: Event() // stops any currently playing sound effects
+        // plays the sound effect contained in the trigger
         data class StartSound(val trigger: Trigger): Event()
+        // assumes oldTrigger is a looping sound effect and plays the newTrigger sound before
+        // switching back to the old looping one
         data class StartSoundOneAndDone(val oldTrigger: Trigger, val newTrigger: Trigger): Event()
+
+        // these are all the same as their sound trigger counterparts just for animations instead
         object StopAnim: Event()
         data class StartAnim(val trigger: Trigger): Event()
         data class StartAnimOneAndDone(val oldTrigger: Trigger, val newTrigger: Trigger): Event()
     }
 
+
+    /**
+     * eventFlow is a hot flow of Event objects observed by the ChatPageFragment. Because it is
+     * using .receiveAsFlow() on a channel, every Event is effectively one shot. They will sit in
+     * the que until the ChatPageFragment consumes them at which point they are removed.
+     */
     private val eventChannel = Channel<Event>(2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val eventFlow = eventChannel.receiveAsFlow()
 
 
+    /**
+     * startupNavigationCheck is called by the ChatPageFragment every time it is created. This is
+     * done because ChatPageFragment is the home page of the app. And if the user has not started
+     * a sequence yet then they need to be taken to either the PowerOnFragment or the NoPowerFragment
+     * (depending on whether UserSave.isPowered is currently true or false).
+     */
     fun startupNavigationCheck(fromPowerOn: Int) {
         viewModelScope.launch {
-            val userSave = repository.getUserSave()
+            val userSave = repository.getUserSave() // grabbing an up to date UserSave
 
-            if (userSave.isPowered) { // isPowered is true
+            if (userSave.isPowered) { // if isPowered is true
 
-                if (userSave.line == 0) { // if the sequence has not yet been started
+                if (userSave.line == 0) { // then check if the sequence has not yet been started
 
-                    if (fromPowerOn == userSave.sequence) { // if the "Power On" button was pressed
-                        startSequence() // only now can we start the sequence
+                    // if it hasn't been started yet then check if the "Power On" button was pressed
+                    if (fromPowerOn == userSave.sequence) {
+                        startSequence() // now can we start the sequence
+
                     } else { // "Power On" button was NOT pressed
-                        eventChannel.trySend(Event.NavToPowerOn) // user needs to hit "Power On" first
+                        // navigate back to the PowerOnFragment user needs to hit "Power On" first
+                        eventChannel.trySend(Event.NavToPowerOn)
                     }
 
                 } else { // we are mid sequence
+                    // assuming the last animation trigger isn't null fire it again
+                    // this is mostly for looping animations since if the user navigates away
+                    // then back we need to manually restart the animation
                     if (lastAnimTrigger != null) fireTrigger(lastAnimTrigger!!)
                 }
 
-            } else { // isPowered is false
+            } else { // isPowered is false so navigate to the NoPowerFragment
                 eventChannel.trySend(Event.NavToNoPower)
             }
         }
@@ -199,7 +271,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                     }
                 }
 
-                lastLine = scriptLine // caching last line displayed is required for the fragment to function
+                lastLine = scriptLine // caching the last line displayed
 
                 when (scriptLine.type) { // displaying the ScriptLine
                     "console" -> _consoleDataset.value!!.add(scriptLine.line)
