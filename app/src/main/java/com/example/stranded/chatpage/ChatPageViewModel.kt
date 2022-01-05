@@ -22,6 +22,7 @@ import javax.inject.Inject
 // TODO mix the volume of all the sound effects
 // TODO clean up all the livedata references that were replaced by eventChannel
 // TODO add the github link to the about page when code is final
+// TODO be sure to explain in the readme how lines contain data for which line comes next internally
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -207,12 +208,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-// function for setting the letterDuration both here and in the database
+    /**
+     * setLetterDuration() sets the letter duration value both here in the ViewModel (where
+     * the actual CustomTextView views in the ui get their value from) and in the database
+     * in the UserSave table so it's saved permanently.
+     */
     fun setLetterDuration(value: Int) {
 
-        _letterDuration.value = value // setting the new value
+        _letterDuration.value = value // setting the new value here
 
-        // updating the user save so their preference is saved
+        // updating the UserSave db table so their preference is saved
         viewModelScope.launch {
             val newUserSave = repository.getUserSave().apply {
                 this.letterDuration = value
@@ -222,8 +227,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-// function for updating the demoMode value in the UserSave
+
+    /**
+     * updates the database with the new demoMode value
+     */
     fun setDemoMode(value: Boolean) {
+
         viewModelScope.launch {
             val oldUserSave = repository.getUserSave()
 
@@ -235,60 +244,70 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-    fun startSequence() = displayScriptLine(sequence.scriptLines[0]) // starts the sequence with the first ScriptLine
+    // "starts" the sequence by displaying the first line
+    fun startSequence() = displayScriptLine(sequence.scriptLines[0])
 
-    /** restoreSave is a recursive method that progresses the app to whatever line the user was on
-     according the the UserSave line and lineType.
 
-    lineIndex: the index of a ScriptLine or prompt set.
-
-    lineType: either "script" or "prompt" this determines whether lineIndex is referring to a
-    ScriptLine or prompt set.
-
-    promptResultIndex: (starts at 0) used by restoreSave() to keep track of which prompt result
-    value it needs to look at when recreating the users choices.
-    */
+    /**
+     * restoreSave is a recursive method that progresses the app to whatever line the user was on
+     * according the the UserSave line and lineType. It is called with a specific line and
+     * determines whether that line is the stopping point, needs a trigger fired on it, or simply
+     * needs to be displayed before moving on to the next.
+     *
+     * lineIndex: the index of a ScriptLine or prompt set.
+     *
+     * lineType: either "script" or "prompt" this determines whether the lineIndex is referring to a
+     * ScriptLine or prompt set.
+     *
+     * promptResultIndex: used by restoreSave() to keep track of which prompt result
+     * value it needs to look at when recreating the users choices. It starts at 0 and increments
+     * every time a prompt result is chosen. Thus recreating the users dialogue options from the
+     * first to the last.
+     */
     private fun restoreSave(lineIndex: Int, lineType: String, promptResultIndex: Int, userSave: UserSave) {
+
         if (userSave.line == 0) return // if we're on line 0 then there's nothing to do so return
 
-        when(lineType) { // different logic needs to be run if we're given a ScriptLine vs a set number
-            "script" -> {
+        when(lineType) { // different logic needs to be run if we're given a ScriptLine vs a prompt Set
+
+            "script" -> { // if it's a ScriptLine
                 val scriptLine = sequence.scriptLines[lineIndex] // grabbing the ScriptLine object
 
                 for (trigger in scriptTriggers) {
+                    /**
+                     * So the triggerId goes off of a ScriptLines index + 1 as opposed to just the
+                     * id of that unique ScriptLine. This was done because I had to manually create
+                     * the entire database one entry at a time and being able to reference lines
+                     * by count ie: line 1, line 69, line 72 etc... Was WAY easier than looking
+                     * up that lines individual id that room assigned to it.
+                     */
                     // if the trigger is supposed to fire on this scriptLine
                     if (trigger.triggerId == sequence.scriptLines.indexOf(scriptLine) + 1) {
-                        //TODO consider firing all triggers so oneAndDone and non looping triggers still play when the user comes back after a restart
-                        // only fire if it's a looping or stop trigger (ignores every other type of trigger)
-                        fireTrigger(trigger)
-
-                        /*
-                        if (trigger.loop) fireTrigger(trigger)
-                        else {
-                            if (trigger.resourceId == null) fireTrigger(trigger)
-                        }
-                        */
+                        fireTrigger(trigger) // then fire it
                     }
                 }
 
                 lastLine = scriptLine // caching the last line displayed
 
-                when (scriptLine.type) { // displaying the ScriptLine
+                when (scriptLine.type) { // actually displaying the ScriptLine in the ui
                     "console" -> _consoleDataset.value!!.add(scriptLine.line)
 
                     else -> _chatDataset.value!!.add(scriptLine)
                 }
 
-                // if this script line is the stopping point then return
+                // if this script line is the stopping point as defined in the UserSave then return
                 if (userSave.lineType == "script" && scriptLine.id == userSave.line) {
+                    // telling the ui recycler views they've got new data to display
                     _chatDataset.notifyObserver()
                     _consoleDataset.notifyObserver()
                     _promptDataset.notifyObserver()
                     return
                 }
 
-                // this is the recursive part. after displaying the line and knowing it's not the
-                // stopping point we gotta move on and do the same thing for the next line/prompt.
+                /**
+                 * This is the recursive part. After displaying the line and knowing it's not the
+                 * stopping point we gotta move on and do the same thing for the next line/prompt.
+                 */
                 restoreSave(
                     scriptLine.next - 1,
                     scriptLine.nextType,
@@ -298,19 +317,14 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 return
             }
 
-            else -> { // this runs if restoreSave() is called with a set number
+            else -> { // if it's a prompt Set
+
                 val set = sequence.sets[lineIndex] // grabbing the set object
 
                 for (trigger in promptTriggers) { // same trigger logic as before!
-                    // if the trigger is supposed to fire on this scriptLine
-                    if (trigger.triggerId == set.number) {
 
-                        // only fire if it's a looping or stop trigger (ignores every other type of trigger)
-                        if (trigger.loop) fireTrigger(trigger)
-                        else {
-                            if (trigger.resourceId == null) fireTrigger(trigger)
-                        }
-                    }
+                    // if the trigger is supposed to fire on this Set
+                    if (trigger.triggerId == set.number) fireTrigger(trigger) // then fire it
                 }
 
                 // if this prompt set is our stopping point then display it and return
@@ -323,11 +337,11 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
 
                 // if we don't stop on the prompt we'll need to display whatever choice the user
-                // picked! So we'll use the promptResults table to determine which option they chose.
+                // picked! So we'll use the promptResults table to ascertain which PromptLine they chose.
                 val promptLine = set.lines[promptResults[promptResultIndex]]
 
-                // the _chatDataset only takes ScriptLines so we'll have to make one in order to
-                // display our promptLine
+                // the _chatDataset only takes ScriptLines so we'll need to generate one in order to
+                // display the text from our promptLine
                 val generatedScriptLine = ScriptLine(
                     0,
                     userSave.sequence,
@@ -350,7 +364,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
 
                 // if we've made it this far without returning then we know both this prompt set
-                // and the response are not the stopping point. So we keep going!
+                // and the response are not the stopping point. So we increment the
+                // promptResultIndex and keep going!
                 restoreSave(
                     promptLine.next - 1, promptLine.nextType,
                     promptResultIndex + 1,
@@ -361,8 +376,18 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
-// callback that displays the next line/prompt when the user taps the chat recycler view
-// textView is the last line that was displayed
+
+    /**
+     * Called by the block of code in the ChatPageFragment that intercepts user touch events.
+     *
+     * userTouch is called with the most recent CustomTextView to be displayed. If said
+     * CustomTextView is still animating it will simply skip the animation and return.
+     *
+     * Otherwise it Displays the next line/prompt set when the user taps on the chatRecyclerView.
+     * Unless the lastLine.nextType == "end" in which case it will end the sequence, reset
+     * the UserSave to default (thus resetting the users progress so they can play the story again),
+     * and go to the ending credits fragment.
+     */
     fun userTouch(textView: CustomTextView?) {
 
         if (textView != null) {
@@ -373,11 +398,11 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-// displaying the next line/prompt set or ending the sequence
         when (lastLine.nextType) {
-            "end" -> {
+            "end" -> { // when the last line was the last one in the sequence
+
                 viewModelScope.launch {
-                    val currentUserSave = repository.getUserSave()
+                    val currentUserSave = repository.getUserSave() // getting the UserSave
 
                     if (currentUserSave.sequence < 8) { // if the current sequence is not the last one
 
@@ -392,58 +417,78 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                         repository.clearPromptResult() // clearing the users saved choices
 
-// telling the fragment to schedule notification + powerOn work
-                        if (!newUserSave.demoMode) {
+                        if (!newUserSave.demoMode) { // if demoMode is off
+                            // tell the fragment to schedule notification + powerOn work
                             eventChannel.trySend(Event.ScheduleNotification)
                         }
 
                         eventChannel.trySend(Event.NavToNoPower)
-                    } else {
-                        val clearedUserSave = UserSave(1, true, 50, 1,
-                            0, "script", false)
 
-                        repository.updateUserSaveData(clearedUserSave)
-                        prepForNextSequence()
-                        repository.clearPromptResult()
+                    } else { // if the current sequence is the last one (the user completed the game)
 
-                        eventChannel.trySend(Event.NavToEnding)
+                        // reset the UserSave to defaults
+                        val clearedUserSave = currentUserSave.apply {
+                            isPowered = true
+                            sequence = 1
+                            line = 0
+                            lineType = "script"
+                        }
+
+                        repository.updateUserSaveData(clearedUserSave) // push the new UserSave
+                        prepForNextSequence() // clear the view model
+                        repository.clearPromptResult() // clear the PromptResult db table
+
+                        eventChannel.trySend(Event.NavToEnding) // go to the ending credits fragment
                     }
                 }
             }
 
+            // if the nextType is a ScriptLine then display it
             "script" -> displayScriptLine(sequence.scriptLines[lastLine.next - 1])
 
+            // at this point it can only be a prompt set so display that
             else -> displayPromptSet(sequence.sets[lastLine.next - 1])
         }
     }
 
-    // callback that displays the next line/prompt when the user taps on a prompt button
-    fun promptSelected(index: Int) {
-        val promptLine = promptDataset.value!![index] // grabbing the selected prompt
 
-        if (promptLine.nextType == "end") return // do nothing if this prompt ends the sequence
+    /**
+     * Called by the PromptRecyclerAdapter when a prompt button is tapped by the user.
+     *
+     * index: the index (within it's Set) of the PromptLine that was selected
+     *
+     * promptSelected() clears the adapters dataset to get the prompts off the screen, then
+     * displays the prompt in the chatRecyclerView. As well as records the index of the
+     * selected PromptLine in the PromptResult database table.
+     */
+    fun promptSelected(index: Int) {
+
+        // grabbing the selected prompt from the adapters dataset
+        val promptLine = promptDataset.value!![index]
+
+        if (promptLine.nextType == "end") return // do nothing if this PromptLine ends the sequence
 
         _promptDataset.value!!.clear() // getting the prompt buttons off the screen
         _promptDataset.notifyObserver()
 
         // generating a ScriptLine object to display the users dialogue choice
-        displayScriptLine(ScriptLine(0, 0, "user", promptLine.line, promptLine.next, promptLine.nextType))
+        displayScriptLine(ScriptLine(
+            0,
+            0,
+            "user",
+            promptLine.line,
+            promptLine.next,
+            promptLine.nextType
+        ))
 
-        // checking for any triggers that need to be fired
-        for (trigger in promptTriggers) {
-            //TODO find an equivalent way to do this like with the script line version or remove the ability to fire triggers on prompts
-            if (trigger.triggerId == promptLine.id) {
-                fireTrigger(trigger)
-            }
-        }
-
-// updating the PromptResult database table with the users dialogue choice
+        // updating the PromptResult database table with the users choice
         viewModelScope.launch {
             repository.insertPromptResult(index)
         }
     }
 
-// takes a ScriptLine object and displays it
+
+    // takes a ScriptLine object and displays it
     private fun displayScriptLine(scriptLine: ScriptLine) {
         //displaying console lines
         when (scriptLine.type) {
@@ -537,8 +582,12 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     private fun displayPromptSet(set: Set) {
         _promptDataset.value = set.lines
         _promptDataset.notifyObserver()
+        
+        for (trigger in promptTriggers) { // if a trigger needs to be fired on this Set
+            if (trigger.triggerId == set.number) fireTrigger(trigger) // then fire it
+        }
 
-// updating the user save
+        // updating the UserSave
         viewModelScope.launch {
             val userSave = repository.getUserSave()
 
@@ -550,7 +599,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
     private fun prepForNextSequence() {
-// clearing all the cached data from the last sequence
+        // clearing all the cached data from the last sequence
         _chatDataset.value = mutableListOf()
         _consoleDataset.value = mutableListOf()
         chatLastItemAnimated.value = 0
@@ -561,7 +610,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         lastSoundTrigger = null
         lastAnimTrigger = null
 
-// setting up required data to run the next sequence
+        // setting up required data to run the next sequence
         viewModelScope.launch {
             val userSave = repository.getUserSave()
 
