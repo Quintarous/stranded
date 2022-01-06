@@ -49,7 +49,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     val chatLastItemAnimated = MutableLiveData<Int>()
     val consoleLastItemAnimated = MutableLiveData<Int>()
 
-    // similarly to lastLine every fired trigger is cached by this ViewModel
+    // similarly to lastLine every trigger fired is cached by this ViewModel
     private var lastAnimTrigger: Trigger? = null
     private var lastSoundTrigger: Trigger? = null
 
@@ -474,7 +474,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         // generating a ScriptLine object to display the users dialogue choice
         displayScriptLine(ScriptLine(
             0,
-            0,
+            promptLine.sequence,
             "user",
             promptLine.line,
             promptLine.next,
@@ -488,17 +488,21 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
 
-    // takes a ScriptLine object and displays it
+    /**
+     * Displays a ScriptLine in the appropriate recycler view, as well as fires any triggers
+     * for said ScriptLine. Finally displayScriptLine() will update the UserSave to reflect
+     * what line, prompt set, or response the user is now on.
+     */
     private fun displayScriptLine(scriptLine: ScriptLine) {
-        //displaying console lines
+
         when (scriptLine.type) {
-            "console" -> {
+            "console" -> { // if it's a console line put it in the console recycler view
                 _consoleDataset.value!!.add(scriptLine.line)
                 lastLine = scriptLine
                 _consoleDataset.notifyObserver()
             }
 
-            else -> {
+            else -> { // if it's a script line put it in the chat recycler view
                 _chatDataset.value!!.add(scriptLine)
                 lastLine = scriptLine
                 _chatDataset.notifyObserver()
@@ -512,18 +516,22 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
 
-        // updating the user save
+        /**
+         * if the line being displayed is a user response leave the UserSave.line as the prompt
+         * set # and only change the lineType to "response" (to indicate the user ended on a
+         * prompt response as opposed to the prompt set itself). Otherwise we change the line
+         * to the scriptLine.id as usual.
+         */
         viewModelScope.launch {
-            // if the line being displayed is a user response leave the UserSave.line as the prompt
-            // set # and only change the lineType to "response" (to indicate the user ended on a
-            // prompt response as opposed to the prompt set itself)
-            val userSave = repository.getUserSave()
+            val userSave = repository.getUserSave() // getting the UserSave
 
+            // if lastLine was a user response then ONLY change the lineType
             if (scriptLine.type == "user") {
                 repository.updateUserSaveData(userSave.apply {
                     this.lineType = "response"
                 })
-            // else update the user save with the most recent script lines data as normal
+
+            // else update the UserSave with the most recent script lines data as normal
             } else {
                 repository.updateUserSaveData(userSave.apply {
                     this.line = scriptLine.id
@@ -533,53 +541,85 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+
+    /**
+     * Takes a Trigger, determines what kind it is, fires it, and caches it as the last played
+     * trigger of that type (sound or animation).
+     */
     private fun fireTrigger(trigger: Trigger) { // tells the fragment to fire the trigger
-        when (trigger.resourceType) {
+
+        when (trigger.resourceType) { // if the trigger is a sound trigger
             "sound" -> {
-                if (trigger.resourceId == null) {
-                    eventChannel.trySend(Event.StopSound)
-                    //_stopSound.value = trigger
-                } else {
-                    if (trigger.oneAndDone) {
+
+                if (trigger.resourceId == null) { // if resourceId == null then it's a stop trigger
+                    eventChannel.trySend(Event.StopSound) // so tell the fragment to stop any sound
+
+                } else { // else if it's not a stop trigger
+
+                    if (trigger.oneAndDone) { // then check if it's a oneAndDone trigger
+
+                        /**
+                         * If it's oneAndDone then the last played sound trigger should be the
+                         * looping one that needs to be interrupted (since that's what oneAndDone
+                         * triggers are for). So make sure lastSoundTrigger isn't null and send
+                         * the event to the fragment.
+                         */
                         if (lastSoundTrigger != null) {
                             eventChannel.trySend(Event.StartSoundOneAndDone(lastSoundTrigger!!, trigger))
-                            //_startSoundOneAndDone.value = trigger
-                        } else {
-                            Log.i("bruh" ,"tried to send Event.StartSoundOneAndDone but lastSoundTrigger was null")
+
+                        } else { // it should never be null and if it is I wanna know about it
+                            throw Throwable("tried to send Event.StartSoundOneAndDone but lastSoundTrigger was null")
                         }
                     }
-                    else {
+
+                    else { // if it's not a oneAndDone trigger than it must just be a standard one
                         eventChannel.trySend(Event.StartSound(trigger))
-                        //_startSound.value = trigger
                     }
                 }
 
+                // after sending the event to the fragment cache the trigger as usual
                 lastSoundTrigger = trigger
             }
 
-            "animation" -> {
-                if (trigger.resourceId == null) {
-                    eventChannel.trySend(Event.StopAnim)
+            "animation" -> { // if it's an animation trigger
+
+                if (trigger.resourceId == null) { // check if it's a stop trigger
+                    eventChannel.trySend(Event.StopAnim) // if it is fire the StopAnim event
                 }
-                else {
+
+                else { // if it's not a stop trigger check if it's a oneAndDone trigger
+
                     if (trigger.oneAndDone) {
-                        if (lastAnimTrigger != null) {
+
+                        if (lastAnimTrigger != null) { // same logic as the sound trigger
                             eventChannel.trySend(Event.StartAnimOneAndDone(lastAnimTrigger!!, trigger))
-                        } else {
+
+                        } else { // it should never be null and if it is I wanna know about it
                             throw Throwable("tried to send Event.StartAnimOneAndDone but lastAnimTrigger was null")
                         }
                     }
-                    else {
+
+                    else { // at this point it can only be a standard animation trigger
                         eventChannel.trySend(Event.StartAnim(trigger))
                     }
                 }
 
-                lastAnimTrigger = trigger
+                lastAnimTrigger = trigger // caching the trigger as usual
             }
         }
     }
 
+
+    /**
+     * Displays a Set, fires any trigger setup to fire on this Set, and updates the UserSave to
+     * reflect that the user progressed up to this Set number.
+     *
+     * NOTE: As a reminder, a Set object is just a list (or "set" if you will) of PromptLine
+     * objects to be displayed together.
+     */
     private fun displayPromptSet(set: Set) {
+
+        // displaying the PromptLines
         _promptDataset.value = set.lines
         _promptDataset.notifyObserver()
         
@@ -598,8 +638,16 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         }
     }
 
+
+    /**
+     * The ChatPageViewModel (where we currently are) is where all the logic for executing a
+     * sequence is. It literally acts as the UI controller. As such it caches a lot of data
+     * that is required for said logic. So when one sequence ends we need to clear out all that
+     * cached data before we can execute the next sequence.
+     */
     private fun prepForNextSequence() {
-        // clearing all the cached data from the last sequence
+
+        // clearing all the cached data related to the last sequence
         _chatDataset.value = mutableListOf()
         _consoleDataset.value = mutableListOf()
         chatLastItemAnimated.value = 0
@@ -610,7 +658,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
         lastSoundTrigger = null
         lastAnimTrigger = null
 
-        // setting up required data to run the next sequence
+        // grabbing required data to run the next sequence
         viewModelScope.launch {
             val userSave = repository.getUserSave()
 
