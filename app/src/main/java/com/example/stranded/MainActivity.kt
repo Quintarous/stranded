@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
 
+
         // configures an app bar with a set of all the top level destinations
         // and the drawer layout from the xml layout file
         appBarConfiguration = AppBarConfiguration(
@@ -51,14 +52,17 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
+
         // removing the app title from the appbar and adding a background to it
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         supportActionBar!!.setBackgroundDrawable(AppCompatResources
             .getDrawable(this, R.drawable.stranded_appbar_background))
 
+
         //creating and registering our one and only notification channel
         createChannel(this, "main", "Main Channel")
+
 
         //TODO delete this when code is finalized
         //initializing the in memory database with test data

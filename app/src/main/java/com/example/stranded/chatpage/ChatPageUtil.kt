@@ -5,37 +5,30 @@ import com.example.stranded.database.PromptLine
 import com.example.stranded.database.ScriptLine
 import com.example.stranded.database.Trigger
 
-//the repository will build a sequence object from the raw database
-//tables for that sequence
-
+/**
+ * An object that contains all of the data for any given narrative sequence.
+ *
+ * The repository will build a sequence object from the database on request.
+ */
 data class Sequence constructor(
     val scriptLines: List<ScriptLine>,
     val sets: MutableList<Set>,
     val triggers: List<Trigger>
 )
 
+
+/**
+ * An object with a "set" of PromptLines and a number identifying which one it is within a sequence.
+ *
+ * A Set is the term I use to refer to a "set" of PromptLines (or dialogue options). A Set of
+ * PromptLines are always displayed together.
+ */
 data class Set constructor(
     val number: Int,
     val lines: MutableList<PromptLine>
 )
 
-data class Line constructor(
-    val id: Int,
-    val line: String,
-    val next: Int,
-    val nextType: String
-)
-
-//returns a placeholder Line object for testing purposes
-//fun placeholderLine(id: Int): Line {
-//    return Line(
-//        id,
-//        "bruh",
-//        2,
-//        "script"
-//    )
-//}
-
+/*
 fun placeholderPromptLine(id: Int, set: Int): PromptLine {
     return PromptLine(
         id,
@@ -46,17 +39,16 @@ fun placeholderPromptLine(id: Int, set: Int): PromptLine {
         "script"
     )
 }
+*/
 
-// returns a placeholder Set object for testing purposes
-fun placeholderSet(id: Int): Set {
-    val linesList = mutableListOf(
-        placeholderPromptLine(1, id),
-        placeholderPromptLine(2, id)
-    )
-
-    return Set(id, linesList)
-}
-
+/**
+ * Interprets a string into an animation or sound resource.
+ *
+ * Trigger objects do not contain direct references to the sound effect/animation they are meant
+ * to trigger. Because that integer reference changes and triggers need to stay static. So instead
+ * triggers contain a string referencing which sound/animation they want to fire and this method
+ * translates that string into a usable reference to that sound/animation resource.
+ */
 fun getResourceId(name: String): Int {
 
     return when (name) {

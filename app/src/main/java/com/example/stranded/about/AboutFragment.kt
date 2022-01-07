@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentAboutBinding
 
+/**
+ * Simple fragment with some text talking about the development of this app and what it's
+ * purpose is. Also has my email and the github link for the code.
+ */
 class AboutFragment: Fragment() {
 
     override fun onCreateView(
