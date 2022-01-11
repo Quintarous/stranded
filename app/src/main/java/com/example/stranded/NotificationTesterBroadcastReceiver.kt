@@ -9,6 +9,9 @@ import androidx.core.content.ContextCompat
 
 class NotificationTesterBroadcastReceiver : BroadcastReceiver() {
 
+    /**
+     * All this broadcast receiver does is
+     */
     override fun onReceive(context: Context, intent: Intent?) {
 
         val notificationManager = ContextCompat.getSystemService(

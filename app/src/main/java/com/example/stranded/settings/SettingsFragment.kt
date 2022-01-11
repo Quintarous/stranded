@@ -30,6 +30,10 @@ class SettingsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        /**
+         * Android housekeeping
+         */
         val binding = DataBindingUtil.inflate<FragmentSettingsBinding>(
             inflater,
             R.layout.fragment_settings,
@@ -37,12 +41,14 @@ class SettingsFragment: Fragment() {
             false
         )
 
-        val viewModel: ChatPageViewModel by activityViewModels()
+        val viewModel: ChatPageViewModel by activityViewModels() // sharing the ChatPageViewModel
 
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
 
+
+        // setting the value of the demo mode switch to reflect the database value
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.userSaveFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
@@ -54,11 +60,12 @@ class SettingsFragment: Fragment() {
         }
 
 
-// telling the viewModel to deal with the new letterDuration value when the user changes it
+        // telling the viewModel to save the new letterDuration value when the user changes it
         binding.letterDurationEditText.addTextChangedListener { text ->
 
-            if (text.toString() != "") {
+            if (text.toString() != "") { // if the user actually put in a value
 
+                // try to convert the string to an integer
                 val convertedInt: Int = try {
                     text.toString().toInt()
                 }
@@ -66,11 +73,13 @@ class SettingsFragment: Fragment() {
                     throw Throwable("NumberFormatException in SettingsFragment")
                 }
 
-                viewModel.setLetterDuration(convertedInt)
+                viewModel.setLetterDuration(convertedInt) // if successful save and apply the new value
             }
 
         }
 
+
+        // when the user toggles the demo mode switch save and apply the change
         binding.demoModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setDemoMode(isChecked)
         }

@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment
 import com.example.stranded.R
 import com.example.stranded.databinding.FragmentEndingBinding
 
+/**
+ * Simple credits screen that displays the name of the game and my name when a user finishes the
+ * story.
+ */
 class EndingFragment: Fragment() {
 
     override fun onCreateView(

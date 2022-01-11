@@ -1,14 +1,12 @@
 package com.example.stranded.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface StrandedDao {
 
-    //insert methods
+    // insert methods
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSaveData(newSaveData: UserSave)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -22,7 +20,7 @@ interface StrandedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPromptResult(input: PromptResult)
 
-    //get methods
+    // get methods
     @Query("SELECT * FROM UserSave")
     fun getUserSaveFlow(): Flow<UserSave>
     @Query("SELECT * FROM UserSave")
@@ -38,7 +36,7 @@ interface StrandedDao {
     @Query("SELECT * FROM PromptResult")
     suspend fun getPromptResults(): List<PromptResult>
 
-    //clearing the promptChoices table
+    // clearing the promptChoices table
     @Query("DELETE FROM PromptResult")
     suspend fun clearPromptResults()
 }

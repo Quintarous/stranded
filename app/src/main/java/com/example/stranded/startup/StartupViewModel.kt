@@ -1,6 +1,5 @@
 package com.example.stranded.startup
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stranded.Repository
@@ -13,6 +12,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * StartupViewModel is shared by NoPowerFragment and PowerOnFragment.
+ *
+ * It's only real job is to provide the UserSave in a hot flow format or a traditional async format.
+ */
 @HiltViewModel
 class StartupViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
