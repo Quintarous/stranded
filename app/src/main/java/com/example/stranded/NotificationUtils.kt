@@ -55,6 +55,7 @@ fun createChannel(context: Context, channelId: String, channelName: String) {
             setShowBadge(false)
         }
 
+    // styling the notification channel
     notificationChannel.enableLights(true)
     notificationChannel.lightColor = Color.GREEN
     notificationChannel.enableVibration(true)

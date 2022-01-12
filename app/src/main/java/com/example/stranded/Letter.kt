@@ -5,7 +5,9 @@ import android.text.TextPaint
 import android.text.style.CharacterStyle
 import android.text.style.UpdateAppearance
 
-//used by the custom text view to edit the alpha value of individual characters
+/**
+ * Used by CustomTextView to edit the alpha(opacity) value of individual characters in it's string
+ */
 class Letter: CharacterStyle(), UpdateAppearance {
 
     private var mAlpha = 0.0f
