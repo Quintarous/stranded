@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         /**
          * android housekeeping stuff
          */
-        val repository = Repository(this)
 
         super.onCreate(savedInstanceState)
 
@@ -62,45 +61,6 @@ class MainActivity : AppCompatActivity() {
 
         //creating and registering our one and only notification channel
         createChannel(this, "main", "Main Channel")
-
-
-        //TODO delete this when code is finalized
-        //initializing the in memory database with test data
-        lifecycleScope.launch {
-            // sequence: 1 line: 80 promptResults: 15
-            val testSaveData = UserSave(1, false, 0, 2, 0,"script", true)
-            repository.updateUserSaveData(testSaveData)
-            repository.insertTestScriptLines()
-            repository.insertTestPromptLines()
-            repository.insertTestTriggers()
-
-/*
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-            repository.insertPromptResult(0)
-*/
-        }
     }
 
 

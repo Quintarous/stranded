@@ -1,7 +1,6 @@
 package com.example.stranded.chatpage
 
 import android.media.MediaPlayer
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.stranded.CustomTextView
 import com.example.stranded.Repository
@@ -18,10 +17,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO read and comment all code
 // TODO mix the volume of all the sound effects
-// TODO clean up all the livedata references that were replaced by eventChannel
-// TODO add the github link to the about page when code is final
+// TODO make the github link clickable
 // TODO be sure to explain in the readme how lines contain data for which line comes next internally
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
@@ -245,7 +242,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     }
 
     // "starts" the sequence by displaying the first line
-    fun startSequence() = displayScriptLine(sequence.scriptLines[0])
+    private fun startSequence() = displayScriptLine(sequence.scriptLines[0])
 
 
     /**

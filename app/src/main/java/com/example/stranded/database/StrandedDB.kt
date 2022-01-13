@@ -17,15 +17,16 @@ abstract class StrandedDB: RoomDatabase() {
 
 private lateinit var INSTANCE: StrandedDB
 
-//TODO switch this to a real database as opposed to an in memory one when finished testing
+
 fun getDatabase(context: Context): StrandedDB {
     synchronized(StrandedDB::class.java) {
         if (!::INSTANCE.isInitialized) {
-            INSTANCE = Room.inMemoryDatabaseBuilder(
+            INSTANCE = Room.databaseBuilder(
                 context,
-                StrandedDB::class.java
+                StrandedDB::class.java,
+                "stranded_db"
             )
-                //.createFromAsset("stranded_database.db")
+                .createFromAsset("stranded_database.db")
                 .fallbackToDestructiveMigration()
                 .enableMultiInstanceInvalidation()
                 .build()
