@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+// TODO add a reset progress button to settings
 // TODO mix the volume of all the sound effects
 // TODO make the github link clickable
 // TODO be sure to explain in the readme how lines contain data for which line comes next internally
@@ -668,5 +669,15 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+
+        if (mediaPlayer != null) {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+
+        super.onCleared()
     }
 }

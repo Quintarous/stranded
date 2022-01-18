@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,10 +12,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.stranded.chatpage.ChatPageViewModel
-import com.example.stranded.database.UserSave
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -102,16 +99,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         super.onStop()
-    }
-
-    override fun onDestroy() {
-        val viewModel: ChatPageViewModel by viewModels()
-
-        if (viewModel.mediaPlayer != null) {
-            viewModel.mediaPlayer?.release()
-            viewModel.mediaPlayer = null
-        }
-
-        super.onDestroy()
     }
 }

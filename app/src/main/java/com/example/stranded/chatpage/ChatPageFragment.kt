@@ -196,6 +196,16 @@ class ChatPageFragment: Fragment() {
                     if (xDelta < 30 && yDelta < 30) {
 
                         /**
+                         * If lastLine is not initialized yet then we can safely throw away the touch
+                         */
+                        try {
+                            viewModel.lastLine
+                        } catch(e: Exception) {
+                            Log.i("bruh", "exception caught: $e")
+                            return false
+                        }
+
+                        /**
                          * The goal with this logic is to grab the CustomTextView from the most
                          * recent line item and hand it to the ViewModel userTouch() method so
                          * we can react to the users tap.

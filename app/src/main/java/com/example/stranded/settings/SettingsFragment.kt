@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
@@ -65,12 +66,13 @@ class SettingsFragment: Fragment() {
 
             if (text.toString() != "") { // if the user actually put in a value
 
-                // try to convert the string to an integer
+                // try to convert the string to an integer if it fails default to 70
                 val convertedInt: Int = try {
                     text.toString().toInt()
                 }
                 catch(e: NumberFormatException) {
-                    throw Throwable("NumberFormatException in SettingsFragment")
+                    Toast.makeText(requireContext(), "Enter a valid number", Toast.LENGTH_SHORT).show()
+                    70
                 }
 
                 viewModel.setLetterDuration(convertedInt) // if successful save and apply the new value

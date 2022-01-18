@@ -44,7 +44,7 @@ class PromptRecyclerAdapter(var dataset: MutableList<PromptLine>, val viewModel:
 
         fun bind(text: String, viewModel: ChatPageViewModel) {
             binding.promptText.text = text
-            binding.promptText.setOnClickListener { viewModel.promptSelected(adapterPosition) }
+            binding.promptText.setOnClickListener { viewModel.promptSelected(layoutPosition) }
         }
     }
 }
