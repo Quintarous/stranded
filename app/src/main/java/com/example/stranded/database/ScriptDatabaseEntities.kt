@@ -28,7 +28,7 @@ import androidx.room.PrimaryKey
  *
  * -------------------------------------------TLDR------------------------------------------
  *
- * TLDR EXPLANATION: There is no master narrative document that determines the order lines should
+ * EXPLANATION: There is no master narrative document that determines the order lines should
  * be displayed. Instead every individual ScriptLine/PromptLine specifies which line or Set that
  * should go next. For example
  *

@@ -1,6 +1,7 @@
 package com.example.stranded.chatpage
 
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.stranded.CustomTextView
 import com.example.stranded.Repository
@@ -18,9 +19,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 // TODO add a reset progress button to settings
+// TODO create a error log fragment that remembers any caught exceptions and displays them with timestamps
 // TODO mix the volume of all the sound effects
 // TODO make the github link clickable
-// TODO be sure to explain in the readme how lines contain data for which line comes next internally
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -186,6 +187,10 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
                     // if it hasn't been started yet then check if the "Power On" button was pressed
                     if (fromPowerOn == userSave.sequence) {
+                        while (!::sequence.isInitialized) {
+                            continue
+                        }
+
                         startSequence() // now can we start the sequence
 
                     } else { // "Power On" button was NOT pressed
@@ -462,7 +467,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     fun promptSelected(index: Int) {
 
         // grabbing the selected prompt from the adapters dataset
-        val promptLine = promptDataset.value!![index]
+        val promptLine = _promptDataset.value!![index]
 
         if (promptLine.nextType == "end") return // do nothing if this PromptLine ends the sequence
 

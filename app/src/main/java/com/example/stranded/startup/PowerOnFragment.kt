@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -56,10 +57,23 @@ class PowerOnFragment: Fragment() {
         binding.powerOnButton.setOnClickListener {
             if (userSave != null) { // if the userSave was successfully loaded from the database
 
-                val action = PowerOnFragmentDirections
-                    .actionPowerOnFragmentToChatPageFragment(userSave!!.sequence)
+                /**
+                 * If for whatever reason we can't get the navigation action or the navigation
+                 * itself fails. Show a toast with the exception so the user can bug report it.
+                 */
+                try {
+                    val action = PowerOnFragmentDirections
+                        .actionPowerOnFragmentToChatPageFragment(userSave!!.sequence)
 
-                findNavController().navigate(action) // then navigate with the argument passed in
+                    findNavController().navigate(action) // then navigate with the argument passed in
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Navigation failed with exception: $e",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
             } else { // if the UserSave is null, throw an exception
                 throw Exception("PowerOnFragment: userSave was null when user clicked powerOnButton")
