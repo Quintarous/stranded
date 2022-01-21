@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/chatPageFragment"
-        android:name="com.example.stranded.chatpage.ChatPageFragment">
+        android:name="com.austin.stranded.chatpage.ChatPageFragment">
         <action
             android:id="@+id/action_chatPageFragment_to_nav_graph_power_on"
             app:destination="@id/nav_graph_power_on" />
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.stranded.settings.SettingsFragment" >
+        android:name="com.austin.stranded.settings.SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_to_chatPageFragment"
             app:destination="@id/chatPageFragment" />
@@ -34,7 +34,7 @@
         app:startDestination="@id/powerOnFragment">
         <fragment
             android:id="@+id/powerOnFragment"
-            android:name="com.example.stranded.startup.PowerOnFragment">
+            android:name="com.austin.stranded.startup.PowerOnFragment">
             <action
                 android:id="@+id/action_powerOnFragment_to_nav_graph"
                 app:destination="@id/nav_graph"
@@ -54,17 +54,17 @@
         app:startDestination="@id/noPowerFragment">
         <fragment
             android:id="@+id/noPowerFragment"
-            android:name="com.example.stranded.startup.NoPowerFragment" />
+            android:name="com.austin.stranded.startup.NoPowerFragment" />
         <action
             android:id="@+id/action_noPowerFragment_to_powerOnFragment"
             app:destination="@id/nav_graph_power_on" />
     </navigation>
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.example.stranded.about.AboutFragment"
+        android:name="com.austin.stranded.about.AboutFragment"
         android:label="AboutFragment" />
     <fragment
         android:id="@+id/endingFragment"
-        android:name="com.example.stranded.ending.EndingFragment"
+        android:name="com.austin.stranded.ending.EndingFragment"
         android:label="EndingFragment" />
 </navigation>

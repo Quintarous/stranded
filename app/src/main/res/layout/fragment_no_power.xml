@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.stranded.startup.StartupViewModel" />
+            type="com.austin.stranded.startup.StartupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
