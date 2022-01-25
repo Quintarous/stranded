@@ -1,5 +1,7 @@
 package com.austin.stranded.about
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +29,19 @@ class AboutFragment: Fragment() {
             container,
             false
         )
+
+
+        /**
+         * The "githubLink" button Opens the github page for the project.
+         */
+        binding.githubLink.setOnClickListener {
+            val gitHubIntent = Intent( // creating the intent
+                Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/Quintarous/stranded")
+            )
+
+            startActivity(gitHubIntent) // sending it to the android system
+        }
 
         return binding.root
     }

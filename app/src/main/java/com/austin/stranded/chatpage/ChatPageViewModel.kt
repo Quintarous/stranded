@@ -9,7 +9,6 @@ import com.austin.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -17,10 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-// TODO add a reset progress button to settings
-// TODO create a error log fragment that remembers any caught exceptions and displays them with timestamps
-// TODO mix the volume of all the sound effects
-// TODO make the github link clickable
+
 @HiltViewModel
 class ChatPageViewModel @Inject constructor (private val repository: Repository): ViewModel() {
 
@@ -95,8 +91,6 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
     init {
         // grabbing the sequence, letterDuration and prompt results from the repository
         viewModelScope.launch {
-            //TODO remove this delay when finalized
-            delay(1000)
             collectUserSave() // getting the UserSave StateFlow flowing
 
             // grabbing the up to date UserSave data for our own use
@@ -674,6 +668,32 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             }
         }
     }
+
+
+    /**
+     * Changes the relevant values in the UserSave to reset the users progress.
+     */
+    fun resetProgress() {
+        viewModelScope.launch {
+            repository.clearPromptResult() // clearing the prompt result table
+
+            // grabbing the old UserSave since we don't want to change the users customization settings
+            val oldUserSave = repository.getUserSave()
+
+            // applying only the changes we need
+            val newUserSave = oldUserSave.apply {
+                isPowered = true
+                sequence = 1
+                line = 0
+                lineType = "script"
+            }
+
+            repository.updateUserSaveData(newUserSave) // pushing the new UserSave to the db
+
+            prepForNextSequence() // prepping the ViewModel to start fresh with a new sequence
+        }
+    }
+
 
     /**
      * The media player needs to be released when we're done using it or else it can cause a

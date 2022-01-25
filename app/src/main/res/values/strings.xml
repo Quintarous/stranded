@@ -9,8 +9,11 @@
     <string name="skip_the_wait">Skip The Wait!</string>
     <string name="demo_mode">Demo Mode</string>
     <string name="about_the_app">About The App</string>
-    <string name="about_body">Stranded is a portfolio project meant to be a showcase of what I’m capable of as an android developer. Let me be upfront and say I am completely self taught. I started out knowing nothing and essentially just used google\'s android documentation and guides to learn kotlin, the android framework, how to do literally anything and everything, you get the gist. I did my best to follow google’s recommended app architecture and do everything “the right way™”. Hopefully it shows, even though a lot of the finer details may be somewhat janky homebrew. Anyway I hope you enjoy playing through it and if you have any questions, bug reports, or want to reach out about hiring me my email is right below! \n\n-Austin Green \n\naustinoguy51@gmail.com \n\nhttps://github.com/Quintarous/stranded</string>
+    <string name="about_body">Stranded is a portfolio project meant to be a showcase of what I’m capable of as an android developer. Let me be upfront and say I am completely self taught. I started out knowing nothing and essentially just used google\'s android documentation and guides to learn kotlin, the android framework, how to do literally anything and everything, you get the gist. I did my best to follow google’s recommended app architecture and do everything “the right way™”. Hopefully it shows, even though a lot of the finer details may be somewhat janky homebrew. Anyway I hope you enjoy playing through it and if you have any questions, bug reports, or want to reach out about hiring me my email is right below! \n\n- Austin Green \n\nEmail - austinoguy51@gmail.com</string>
     <string name="stranded">Stranded</string>
     <string name="by_austin_green">by \n\nAustin Green</string>
     <string name="a_strand_type_game">A "Strand Type" Game</string>
+    <string name="reset_progress">Reset Progress</string>
+    <string name="stranded_is_completely_open_source">Stranded is completely open source!</string>
+    <string name="link">Github Link</string>
 </resources>

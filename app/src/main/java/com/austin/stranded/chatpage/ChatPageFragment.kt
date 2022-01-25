@@ -439,7 +439,6 @@ class ChatPageFragment: Fragment() {
         gMeterAnimation.isOneShot = !isLooping
 
         // if the animation is not a looping one stop it when it finishes
-        //TODO test this with all the one and done animations in the app
         if (!isLooping) {
             viewLifecycleOwner.lifecycleScope.launch {
                 gMeterAnimation.onAnimationFinished {
