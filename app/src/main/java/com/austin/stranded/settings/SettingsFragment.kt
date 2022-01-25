@@ -1,5 +1,8 @@
 package com.austin.stranded.settings
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -83,6 +87,40 @@ class SettingsFragment: Fragment() {
             viewModel.setDemoMode(isChecked)
         }
 
+
+        /**
+         * The reset progress button opens a confirmation dialog asking if the user is sure they
+         * want to reset all their progress. If they do then the resetProgress() method in the
+         * ChatPageViewModel is called.
+         */
+        binding.resetButton.setOnClickListener {
+            ResetProgressDialog(viewModel).show(this.parentFragmentManager, "reset progress dialog")
+        }
+
         return binding.root
+    }
+
+
+    /**
+     * Class for showing a confirmation dialog before the user resets their save progress.
+     */
+    class ResetProgressDialog(val viewModel: ChatPageViewModel) : DialogFragment() {
+
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            return activity?.let {
+                val builder = AlertDialog.Builder(it)
+
+                builder.setMessage(R.string.reset_progress_dialog)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        viewModel.resetProgress()
+                    }
+
+                    .setNegativeButton(R.string.no) { _, _ ->
+                        // do nothing
+                    }
+
+                builder.create()
+            } ?: throw IllegalStateException("Settings Reset Progress Button: Activity is null!")
+        }
     }
 }

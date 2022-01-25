@@ -671,7 +671,8 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
 
 
     /**
-     * Changes the relevant values in the UserSave to reset the users progress.
+     * Changes the relevant values in the UserSave to reset the users progress. This method is
+     * called by the settings fragment when the "Reset Progress" button is pressed.
      */
     fun resetProgress() {
         viewModelScope.launch {

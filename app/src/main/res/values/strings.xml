@@ -16,4 +16,7 @@
     <string name="reset_progress">Reset Progress</string>
     <string name="stranded_is_completely_open_source">Stranded is completely open source!</string>
     <string name="link">Github Link</string>
+    <string name="reset_progress_dialog">Are you sure you want to reset your progress?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 </resources>
