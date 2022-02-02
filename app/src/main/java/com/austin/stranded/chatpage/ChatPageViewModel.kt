@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import androidx.lifecycle.*
 import com.austin.stranded.Repository
 import com.austin.stranded.CustomTextView
+import com.austin.stranded.createSetsList
 import com.austin.stranded.database.*
 import com.austin.stranded.notifyObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -269,7 +270,7 @@ class ChatPageViewModel @Inject constructor (private val repository: Repository)
             "script" -> { // if it's a ScriptLine
                 val scriptLine = sequence.scriptLines[lineIndex] // grabbing the ScriptLine object
 
-                for (trigger in scriptTriggers) {
+                for (trigger in scriptTriggers) { // firing any required triggers
                     /**
                      * So the triggerId goes off of a ScriptLines index + 1 as opposed to just the
                      * id of that unique ScriptLine. This was done because I had to manually create

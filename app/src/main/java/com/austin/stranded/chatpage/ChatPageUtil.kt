@@ -28,18 +28,6 @@ data class Set constructor(
     val lines: MutableList<PromptLine>
 )
 
-/*
-fun placeholderPromptLine(id: Int, set: Int): PromptLine {
-    return PromptLine(
-        id,
-        1,
-        set,
-        "bruh prompt",
-        2,
-        "script"
-    )
-}
-*/
 
 /**
  * Interprets a string into an animation or sound resource.

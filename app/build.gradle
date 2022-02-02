@@ -19,8 +19,8 @@ android {
         applicationId "com.austin.stranded"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 2
-        versionName "Version 1.0"
+        versionCode 3
+        versionName "Version 1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -80,12 +80,13 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:$hilt_version")
 
     // For instrumentation tests
-    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.37'
-    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.37'
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     // For local unit tests
-    testImplementation 'com.google.dagger:hilt-android-testing:2.37'
-    kaptTest 'com.google.dagger:hilt-compiler:2.37'
+    // TODO possibly change testImplementation back to version 2.37 if broken
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     //room
     implementation "androidx.room:room-runtime:$room_version"
@@ -107,10 +108,10 @@ dependencies {
 
     //general dependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:1.5.0"
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$android_material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
