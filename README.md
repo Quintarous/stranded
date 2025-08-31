@@ -15,4 +15,4 @@ This design allows the app itself to essentially act as a machine that executes 
 
 DESIGN DETAILS:
 
-While I did my best to go through the entire codebase and comment everything with as much detail as I could. There are certainly things I missed or just didn't explain enough, perhaps I missed a detail that is leaving you confused as to what a given piece of code is for. If you have any questions don't hesitate to start a discussion on this github or email me (austinoguy51@gmail.com). I'm still learning and appreciate any advice or observations you may have!
+While I did my best to go through the entire codebase and comment everything with as much detail as I could. There are certainly things I missed or just didn't explain enough, perhaps I missed a detail that is leaving you confused as to what a given piece of code is for. If you have any questions don't hesitate to start a discussion on this github or email me (austinoguy51@gmail.com).
